@@ -31,7 +31,7 @@ CREATE TABLE transaction (
     vendeur_id INTEGER REFERENCES utilisateur(id),
     acheteur_id INTEGER REFERENCES utilisateur(id),
     cryptomonnaie_id INTEGER REFERENCES cryptomonnaie(id),
-    montant VARCHAR(10),
+    montant DECIMAL(15, 8) DEFAULT 0,,
     est_valide BOOLEAN DEFAULT FALSE,
     date_transaction TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -39,9 +39,8 @@ CREATE TABLE transaction (
 CREATE TABLE mvt_fond (
     id SERIAL PRIMARY KEY,
     utilisateur_id INTEGER REFERENCES utilisateur(id),
-    depot VARCHAR(10),
-    retrait VARCHAR(10),
-    montant DECIMAL(15, 2),
+    depot DECIMAL(15, 8) DEFAULT 0,,
+    retrait DECIMAL(15, 8) DEFAULT 0,,
     date_mvt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
