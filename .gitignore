@@ -74,5 +74,5 @@ Thumbs.db
 # Generated files
 *.generated.*
 
-cloud/src/main/resources/application.properties
-cloud/target/classes/application.properties
+crypto/src/main/resources/application.properties
+crypto/target/classes/application.properties
