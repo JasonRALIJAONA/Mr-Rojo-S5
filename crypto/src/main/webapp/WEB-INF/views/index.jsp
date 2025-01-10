@@ -1,3 +1,5 @@
+<%@ include file="head.jsp" %>
+
 <main>
     <div class="container">
 
@@ -53,4 +55,5 @@
       </section>
 
     </div>
+    <%@ include file="footer.jsp" %>
   </main>
