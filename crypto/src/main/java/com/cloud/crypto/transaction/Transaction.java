@@ -9,6 +9,7 @@ import com.cloud.crypto.utilisateur.Utilisateur;
 
 
 @Entity
+@Table(name = "transaction")
 public class Transaction {
 
     @Id
@@ -16,26 +17,39 @@ public class Transaction {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "utilisateur_id", nullable = false)
-    private Utilisateur utilisateur;
+    @JoinColumn(name = "vendeur_id", nullable = false)
+    private Utilisateur vendeur;
+
+    @ManyToOne
+    @JoinColumn(name = "acheteur_id", nullable = false)
+    private Utilisateur acheteur;
 
     @ManyToOne
     @JoinColumn(name = "cryptomonnaie_id", nullable = false)
     private Cryptomonnaie cryptomonnaie;
 
-    private String achat;
-    private String vente;
+    @Column(nullable = false)
+    private BigDecimal montant = BigDecimal.ZERO;
 
-    @Column(precision = 15, scale = 8)
-    private BigDecimal quantite;
+    @Column(name = "est_valide", nullable = false)
+    private Boolean estValide = false;
 
-    @Column(precision = 15, scale = 8)
-    private BigDecimal montant;
-
-    private Boolean valide;
-
-    @Column(name = "date_transaction", columnDefinition = "TIMESTAMP")
+    @Column(name = "date_transaction", updatable = false)
     private LocalDateTime dateTransaction = LocalDateTime.now();
+
+    public Transaction() {
+    }
+
+    public Transaction(Long id, Utilisateur vendeur, Utilisateur acheteur, Cryptomonnaie cryptomonnaie,
+            BigDecimal montant, Boolean estValide, LocalDateTime dateTransaction) {
+        this.id = id;
+        this.vendeur = vendeur;
+        this.acheteur = acheteur;
+        this.cryptomonnaie = cryptomonnaie;
+        this.montant = montant;
+        this.estValide = estValide;
+        this.dateTransaction = dateTransaction;
+    }
 
     public Long getId() {
         return id;
@@ -45,12 +59,20 @@ public class Transaction {
         this.id = id;
     }
 
-    public Utilisateur getUtilisateur() {
-        return utilisateur;
+    public Utilisateur getVendeur() {
+        return vendeur;
     }
 
-    public void setUtilisateur(Utilisateur utilisateur) {
-        this.utilisateur = utilisateur;
+    public void setVendeur(Utilisateur vendeur) {
+        this.vendeur = vendeur;
+    }
+
+    public Utilisateur getAcheteur() {
+        return acheteur;
+    }
+
+    public void setAcheteur(Utilisateur acheteur) {
+        this.acheteur = acheteur;
     }
 
     public Cryptomonnaie getCryptomonnaie() {
@@ -61,30 +83,6 @@ public class Transaction {
         this.cryptomonnaie = cryptomonnaie;
     }
 
-    public String getAchat() {
-        return achat;
-    }
-
-    public void setAchat(String achat) {
-        this.achat = achat;
-    }
-
-    public String getVente() {
-        return vente;
-    }
-
-    public void setVente(String vente) {
-        this.vente = vente;
-    }
-
-    public BigDecimal getQuantite() {
-        return quantite;
-    }
-
-    public void setQuantite(BigDecimal quantite) {
-        this.quantite = quantite;
-    }
-
     public BigDecimal getMontant() {
         return montant;
     }
@@ -93,12 +91,12 @@ public class Transaction {
         this.montant = montant;
     }
 
-    public Boolean getValide() {
-        return valide;
+    public Boolean getEstValide() {
+        return estValide;
     }
 
-    public void setValide(Boolean valide) {
-        this.valide = valide;
+    public void setEstValide(Boolean estValide) {
+        this.estValide = estValide;
     }
 
     public LocalDateTime getDateTransaction() {
@@ -109,6 +107,6 @@ public class Transaction {
         this.dateTransaction = dateTransaction;
     }
 
-    // Getters and setters
 }
+
 

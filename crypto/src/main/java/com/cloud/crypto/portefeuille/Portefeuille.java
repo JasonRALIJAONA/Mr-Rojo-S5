@@ -7,6 +7,7 @@ import com.cloud.crypto.cryptomonnaie.Cryptomonnaie;
 import com.cloud.crypto.utilisateur.Utilisateur;
 
 @Entity
+@Table(name = "portefeuille")
 public class Portefeuille {
 
     @Id
@@ -21,17 +22,17 @@ public class Portefeuille {
     @JoinColumn(name = "cryptomonnaie_id", nullable = false)
     private Cryptomonnaie cryptomonnaie;
 
-    @Column(precision = 15, scale = 8)
-    private BigDecimal quantite = BigDecimal.ZERO;
+    @Column(nullable = false)
+    private BigDecimal montant = BigDecimal.ZERO;
 
     public Portefeuille() {
     }
 
-    public Portefeuille(Long id, Utilisateur utilisateur, Cryptomonnaie cryptomonnaie, BigDecimal quantite) {
+    public Portefeuille(Long id, Utilisateur utilisateur, Cryptomonnaie cryptomonnaie, BigDecimal montant) {
         this.id = id;
         this.utilisateur = utilisateur;
         this.cryptomonnaie = cryptomonnaie;
-        this.quantite = quantite;
+        this.montant = montant;
     }
 
     public Long getId() {
@@ -58,13 +59,15 @@ public class Portefeuille {
         this.cryptomonnaie = cryptomonnaie;
     }
 
-    public BigDecimal getQuantite() {
-        return quantite;
+    public BigDecimal getMontant() {
+        return montant;
     }
 
-    public void setQuantite(BigDecimal quantite) {
-        this.quantite = quantite;
+    public void setMontant(BigDecimal montant) {
+        this.montant = montant;
     }
 
+    // Getters and Setters
 }
+
 

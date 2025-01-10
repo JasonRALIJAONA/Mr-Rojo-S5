@@ -11,20 +11,33 @@ public class Utilisateur {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nom_utilisateur", unique = true, nullable = false, length = 50)
+    @Column(name = "nom_utilisateur", unique = true, nullable = false)
     private String nomUtilisateur;
 
-    @Column(unique = true, nullable = false, length = 50)
+    @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(name = "mot_de_passe", nullable = false, length = 255)
+    @Column(name = "mot_de_passe", nullable = false)
     private String motDePasse;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String token;
 
-    @Column(name = "date_creation_compte", nullable = false, updatable = false)
+    @Column(name = "date_creation_compte", updatable = false)
     private LocalDateTime dateCreationCompte = LocalDateTime.now();
+
+    public Utilisateur() {
+    }
+
+    public Utilisateur(Long id, String nomUtilisateur, String email, String motDePasse, String token,
+            LocalDateTime dateCreationCompte) {
+        this.id = id;
+        this.nomUtilisateur = nomUtilisateur;
+        this.email = email;
+        this.motDePasse = motDePasse;
+        this.token = token;
+        this.dateCreationCompte = dateCreationCompte;
+    }
 
     public Long getId() {
         return id;
@@ -73,4 +86,6 @@ public class Utilisateur {
     public void setDateCreationCompte(LocalDateTime dateCreationCompte) {
         this.dateCreationCompte = dateCreationCompte;
     }
+
+    // Getters and Setters
 }
