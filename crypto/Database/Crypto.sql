@@ -16,35 +16,36 @@ CREATE TABLE utilisateur (
 CREATE TABLE cryptomonnaie (
     id SERIAL PRIMARY KEY,
     nom VARCHAR(50) UNIQUE,
-    symbole VARCHAR(10) UNIQUE,
-    prix DECIMAL(15, 8) DEFAULT 0,
-    variation DECIMAL(5, 2) DEFAULT 0
+    symbole VARCHAR(10) UNIQUE
 );
 
 CREATE TABLE portefeuille (
     id SERIAL PRIMARY KEY,
     utilisateur_id INTEGER REFERENCES utilisateur(id) ON DELETE CASCADE,
     cryptomonnaie_id INTEGER REFERENCES cryptomonnaie(id),
-    quantite DECIMAL(15, 8) DEFAULT 0
+    montant DECIMAL(15, 8) DEFAULT 0
 );
 
 CREATE TABLE transaction (
     id SERIAL PRIMARY KEY,
-    utilisateur_id INTEGER REFERENCES utilisateur(id),
+    vendeur_id INTEGER REFERENCES utilisateur(id),
+    acheteur_id INTEGER REFERENCES utilisateur(id),
     cryptomonnaie_id INTEGER REFERENCES cryptomonnaie(id),
-    achat VARCHAR(10),
-    vente VARCHAR(10),
-    quantite DECIMAL(15, 8),
-    montant DECIMAL(15, 8),
-    valide BOOLEAN,
+    montant VARCHAR(10),
+    est_valide BOOLEAN DEFAULT FALSE,
     date_transaction TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE fond (
+CREATE TABLE mvt_fond (
     id SERIAL PRIMARY KEY,
     utilisateur_id INTEGER REFERENCES utilisateur(id),
     depot VARCHAR(10),
     retrait VARCHAR(10),
     montant DECIMAL(15, 2),
-    date_fond TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    date_mvt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE OR REPLACE VIEW v_fond_actuel as 
+SELECT utilisateur_id, SUM(depot) - SUM(retrait) as fond_actuel 
+FROM mvt_fond;
+
