@@ -48,8 +48,6 @@ public class Cryptomonnaie {
     public void setSymbole(String symbole) {
         this.symbole = symbole;
     }
-
-    // Getters and Setters
 }
 
 
