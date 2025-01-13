@@ -1,6 +1,6 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import LoginPage from './components/LoginPage.vue';
+// import HelloWorld from './components/HelloWorld.vue'
+import LoginPage from './components/Login/LoginPage.vue';
 </script>
 
 <template>
