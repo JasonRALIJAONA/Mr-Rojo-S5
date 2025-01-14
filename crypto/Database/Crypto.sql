@@ -31,7 +31,7 @@ CREATE TABLE transaction (
     vendeur_id INTEGER REFERENCES utilisateur(id),
     acheteur_id INTEGER REFERENCES utilisateur(id),
     cryptomonnaie_id INTEGER REFERENCES cryptomonnaie(id),
-    montant DECIMAL(15, 8) DEFAULT 0,,
+    montant DECIMAL(15, 8) DEFAULT 0,
     est_valide BOOLEAN DEFAULT FALSE,
     date_transaction TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

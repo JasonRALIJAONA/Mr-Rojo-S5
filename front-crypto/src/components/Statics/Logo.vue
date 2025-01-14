@@ -3,7 +3,7 @@
       <h1>CryptoTrade</h1>
       <div class="subtitle">Your Gateway to Digital Assets</div>
     </div>
-  </template>
+</template>
   
   <style scoped>
   .logo {
