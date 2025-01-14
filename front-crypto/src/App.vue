@@ -1,12 +1,24 @@
 <script setup>
 // import HelloWorld from './components/HelloWorld.vue'
 import LoginPage from './components/Login/LoginPage.vue';
+import CardList from './components/Vente/CardList.vue';
+import VenteForm from './components/Vente/VenteForm.vue';
+import TableCrypto from './components/Crypto/TableCrypto.vue';
+import ListePorteFeuille from './components/PorteFeuille/ListePorteFeuille.vue';
+import Wallet from './components/PorteFeuille/Wallet.vue';
+
+const cryptoData = [
+  { id: 1, nom: 'Bitcoin', cours: 45.000, quantite: 2 },
+  { id: 2, nom: 'Ethereum', cours: 3.200, quantite:5 },
+  { id: 3, nom: 'Cardano', cours: 1.50, quantite:5  },
+  { id: 4, nom: 'Dogecoin', cours: 0.25, quantite:5  },
+];
+
 </script>
 
 <template>
-  <div>
-    <LoginPage/>
-  </div>
+    <!-- <LoginPage/> -->
+    <Wallet />  
   <!-- <HelloWorld msg="Vite + Vue" /> -->
 </template>
 

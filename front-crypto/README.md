@@ -9,5 +9,6 @@ Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://
 npx tailwindcss init -p
 ## installer le projet:
 npm install
+npm install vue-router
 ## run le projet:
 npm run dev
