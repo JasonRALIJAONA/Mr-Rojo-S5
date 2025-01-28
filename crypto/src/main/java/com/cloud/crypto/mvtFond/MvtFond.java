@@ -77,7 +77,5 @@ public class MvtFond {
     public void setDateMvt(LocalDateTime dateMvt) {
         this.dateMvt = dateMvt;
     }
-
-    // Getters and Setters
 }
 
