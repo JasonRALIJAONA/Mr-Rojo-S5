@@ -1,72 +1,72 @@
 CREATE TABLE utilisateur(
-   id_utilisateur SERIAL,
+   id SERIAL,
    nom_utilisateur VARCHAR(50)  NOT NULL,
-   mot_de_passe VARCHAR(255)  NOT NULL,
    email VARCHAR(50)  NOT NULL,
+   mot_de_passe VARCHAR(255)  NOT NULL,
    token VARCHAR(255)  NOT NULL,
    date_creation_compte TIMESTAMP NOT NULL,
-   PRIMARY KEY(id_utilisateur),
+   PRIMARY KEY(id),
    UNIQUE(nom_utilisateur),
    UNIQUE(email)
 );
 
 CREATE TABLE cryptomonnaie(
-   id_cryptomonnaie SERIAL,
+   id SERIAL,
    nom VARCHAR(50)  NOT NULL,
    symbole VARCHAR(10) ,
-   PRIMARY KEY(id_cryptomonnaie),
+   PRIMARY KEY(id),
    UNIQUE(nom),
    UNIQUE(symbole)
 );
 
 CREATE TABLE portefeuille(
-   id_portefeuille SERIAL,
+   id SERIAL,
    montant NUMERIC(15,8)  ,
-   id_cryptomonnaie_cryptomonnaie INTEGER NOT NULL,
-   id_utilisateur_utilisateur INTEGER NOT NULL,
-   PRIMARY KEY(id_portefeuille),
-   FOREIGN KEY(id_cryptomonnaie_cryptomonnaie) REFERENCES cryptomonnaie(id_cryptomonnaie),
-   FOREIGN KEY(id_utilisateur_utilisateur) REFERENCES utilisateur(id_utilisateur)
+   id_cryptomonnaie INTEGER NOT NULL,
+   id_utilisateur INTEGER NOT NULL,
+   PRIMARY KEY(id),
+   FOREIGN KEY(id_cryptomonnaie) REFERENCES cryptomonnaie(id),
+   FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id)
 );
 
 CREATE TABLE transaction(
-   id_transaction SERIAL,
+   id SERIAL,
    montant NUMERIC(15,8)  ,
    est_valide BOOLEAN,
    date_transaction TIMESTAMP,
-   id_utilisateur_vendeur INTEGER NOT NULL,
-   id_utilisateur_acheteur INTEGER NOT NULL,
-   PRIMARY KEY(id_transaction),
-   FOREIGN KEY(id_utilisateur_vendeur) REFERENCES utilisateur(id_utilisateur),
-   FOREIGN KEY(id_utilisateur_acheteur) REFERENCES utilisateur(id_utilisateur)
+   id_vendeur INTEGER NOT NULL,
+   id_acheteur INTEGER NOT NULL,
+   PRIMARY KEY(id),
+   FOREIGN KEY(id_vendeur) REFERENCES utilisateur(id),
+   FOREIGN KEY(id_acheteur) REFERENCES utilisateur(id)
 );
 
 CREATE TABLE mvt_fond(
-   id_mvt_fond SERIAL,
+   id SERIAL,
    depot NUMERIC(15,8)  ,
    retrait NUMERIC(15,8)  ,
    date_mvt TIMESTAMP,
-   id_utilisateur_utilisateur INTEGER NOT NULL,
-   PRIMARY KEY(id_mvt_fond),
-   FOREIGN KEY(id_utilisateur_utilisateur) REFERENCES utilisateur(id_utilisateur)
+   id_utilisateur INTEGER NOT NULL,
+   PRIMARY KEY(id),
+   FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id)
 );
 
 CREATE TABLE cours_crypto(
-   id_cours_crypto SERIAL,
+   id SERIAL,
    date_cours TIMESTAMP NOT NULL,
    montant INTEGER NOT NULL,
-   id_cryptomonnaie INTEGER NOT NULL,
-   PRIMARY KEY(id_cours_crypto),
+   id_1 INTEGER NOT NULL,
+   PRIMARY KEY(id),
    UNIQUE(date_cours),
-   FOREIGN KEY(id_cryptomonnaie) REFERENCES cryptomonnaie(id_cryptomonnaie)
+   FOREIGN KEY(id_1) REFERENCES cryptomonnaie(id)
 );
 
 CREATE TABLE validation_mvt(
-   id_validation SERIAL,
+   id SERIAL,
    date_validation DATE NOT NULL,
-   id_utilisateur_utilisateur INTEGER NOT NULL,
-   id_mvt_fond_mvt_fond INTEGER NOT NULL,
-   PRIMARY KEY(id_validation),
-   FOREIGN KEY(id_utilisateur_utilisateur) REFERENCES utilisateur(id_utilisateur),
-   FOREIGN KEY(id_mvt_fond_mvt_fond) REFERENCES mvt_fond(id_mvt_fond)
+   id_utilisateur INTEGER NOT NULL,
+   id_mvt_fond INTEGER NOT NULL,
+   PRIMARY KEY(id),
+   FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
+   FOREIGN KEY(id_mvt_fond) REFERENCES mvt_fond(id)
 );
