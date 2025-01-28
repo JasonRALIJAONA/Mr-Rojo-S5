@@ -1,0 +1,217 @@
+{
+    "info": {
+        "name": "FournisseurIdentite API Collection",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Utilisateur",
+            "item": [
+                {
+                    "name": "Inscription",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"username\": \"testUser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"Password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5092/api/utilisateur/inscription",
+                            "host": [
+                                "http://localhost:5092"
+                            ],
+                            "path": [
+                                "api",
+                                "utilisateur",
+                                "inscription"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Login",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"Password123\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5092/api/utilisateur/login",
+                            "host": [
+                                "http://localhost:5092"
+                            ],
+                            "path": [
+                                "api",
+                                "utilisateur",
+                                "login"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Valider PIN",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"test@example.com\",\n  \"pin\": \"12345\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5092/api/utilisateur/validerPin",
+                            "host": [
+                                "http://localhost:5092"
+                            ],
+                            "path": [
+                                "api",
+                                "utilisateur",
+                                "validerPin"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Valider Compte",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/x-www-form-urlencoded"
+                            }
+                        ],
+                        "body": {
+                            "mode": "urlencoded",
+                            "urlencoded": [
+                                {
+                                    "key": "id",
+                                    "value": "1"
+                                }
+                            ]
+                        },
+                        "url": {
+                            "raw": "http://localhost:5092/api/utilisateur/validerCompte",
+                            "host": [
+                                "http://localhost:5092"
+                            ],
+                            "path": [
+                                "api",
+                                "utilisateur",
+                                "validerCompte"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Email",
+            "item": [
+                {
+                    "name": "Send Email",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"toEmail\": \"recipient@example.com\",\n  \"subject\": \"Test Email\",\n  \"body\": \"This is a test email.\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5092/api/email/send",
+                            "host": [
+                                "http://localhost:5092"
+                            ],
+                            "path": [
+                                "api",
+                                "email",
+                                "send"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Auth",
+            "item": [
+                {
+                    "name": "Hash Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "\"Password123\""
+                        },
+                        "url": {
+                            "raw": "http://localhost:5092/api/auth/hash",
+                            "host": [
+                                "http://localhost:5092"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "hash"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Verify Password",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"password\": \"Password123\",\n  \"storedHash\": \"hashedPasswordHere\"\n}"
+                        },
+                        "url": {
+                            "raw": "http://localhost:5092/api/auth/verify",
+                            "host": [
+                                "http://localhost:5092"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "verify"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
