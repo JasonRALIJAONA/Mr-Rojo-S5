@@ -18,11 +18,6 @@ public class CryptomonnaieController {
         return service.getAllCryptos();
     }
 
-    @GetMapping("/test")
-    public String testEndpoint() {
-        return "L'API fonctionne !";
-    }
-
     @GetMapping("/{id}")
     public Optional<Cryptomonnaie> getCryptoById(@PathVariable Long id) {
         return service.getCryptoById(id);
