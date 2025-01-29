@@ -22,12 +22,12 @@
   import axios from 'axios';
   
   const pin = ref('');
-  const isFormValid = computed(() => pin.value.length === 6);
+  const isFormValid = computed(() => pin.value.length === 5);
   
   const handleSubmit = async () => {
     if (isFormValid.value) {
       try {
-        const response = await axios.post('http://localhost:5092/api/utilisateur/valider-pin', {
+        const response = await axios.post('http://localhost:5092/api/utilisateur/ValiderPin', {
           Pin: pin.value,
         });
   

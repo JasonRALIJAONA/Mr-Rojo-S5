@@ -81,6 +81,8 @@ public class UtilisateurController : ControllerBase
         // Génération du PIN
         string pin = _pinService.CreatePIN(5);
         HttpContext.Session.SetString(PinSessionKey, pin);
+
+        Console.WriteLine("pinnnn", HttpContext.Session.GetString(PinSessionKey) ?? "tsisyy");
         HttpContext.Session.SetString(PinExpirationSessionKey, DateTime.UtcNow.AddSeconds(90).ToString("o"));
 
         // Envoi de l'e-mail avec le PIN
