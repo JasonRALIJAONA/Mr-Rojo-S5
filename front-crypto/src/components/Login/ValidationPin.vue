@@ -19,20 +19,30 @@
   
   <script setup>
   import { ref, computed } from 'vue';
+  import { useRouter, useRoute } from 'vue-router';
   import axios from 'axios';
   
   const pin = ref('');
   const isFormValid = computed(() => pin.value.length === 5);
+
+  // Récupérer l'email de l'URL
+  const route = useRoute();
+  const router = useRouter();
+
+  const email = route.query.email;
   
   const handleSubmit = async () => {
     if (isFormValid.value) {
       try {
         const response = await axios.post('http://localhost:5092/api/utilisateur/ValiderPin', {
           Pin: pin.value,
+          Email: email, // Ajouter l'email avec le PIN
         });
   
         if (response.status === 200) {
           console.log('PIN validé:', response.data);
+          await router.push('/listeCrypto');
+        // Après une connexion réussie dans la méthode handleSubmit
         } else {
           console.error('Erreur de validation du PIN:', response.data);
         }

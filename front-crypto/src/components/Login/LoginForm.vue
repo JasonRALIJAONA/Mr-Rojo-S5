@@ -56,7 +56,7 @@ const handleSubmit = async () => {
       if (response.status === 200) {
         console.log('Login success:', response.data);
         // Rediriger l'utilisateur vers la page des ventes après une connexion réussie
-        await router.push('/listeCrypto');
+        await router.push({ path: '/validerPin', query: { email: email.value } });
       } else {
         console.error('Erreur de login:', response.data);
         // Tu peux ajouter ici une gestion d'erreur (ex : afficher un message d'erreur)

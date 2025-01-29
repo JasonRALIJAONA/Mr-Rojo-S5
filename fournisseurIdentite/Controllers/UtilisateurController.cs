@@ -4,6 +4,7 @@ using fournisseurIdentite.Services;
 using fournisseurIdentite.src.DTO;
 using fournisseurIdentite.Models;
 using fournisseurIdentite.src.Utils;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace fournisseurIdentite.Controllers;
 
@@ -19,15 +20,16 @@ public class UtilisateurController : ControllerBase
      private readonly PINService _pinService;
     private readonly UtilisateurService _service;
     // Simuler une base de données (en mémoire)
-
+    private readonly IMemoryCache _cache;
     
-    public UtilisateurController(IPasswordService passwordService, EmailService emailService, FournisseurIdentiteContext context, PINService pinservice, UtilisateurService service) 
+    public UtilisateurController(IPasswordService passwordService, EmailService emailService, FournisseurIdentiteContext context, PINService pinservice, UtilisateurService service,IMemoryCache memoryCache) 
     {
         _context = context;
         _passwordService = passwordService;
         _pinService = pinservice;
         _emailService = emailService;
         _service = service;
+        _cache = memoryCache;
     }
 
     [HttpPost("inscription")]
@@ -56,84 +58,58 @@ public class UtilisateurController : ControllerBase
         if (string.IsNullOrEmpty(loginRequest.Email) || string.IsNullOrEmpty(loginRequest.Password))
             return BadRequest("Email ou mot de passe manquant.");
 
-        // Recherche de l'utilisateur dans la base
         var user = _context.Utilisateurs.FirstOrDefault(u => u.Email == loginRequest.Email);
-
         if (user == null)
             return Unauthorized("Utilisateur non trouvé.");
 
-        // Vérification du nombre de tentatives
         if (user.NbTentative >= 3)
             return Unauthorized("Compte verrouillé après plusieurs tentatives. Veuillez réinitialiser votre mot de passe.");
 
-        // Vérification du mot de passe
         var isPasswordValid = _passwordService.VerifyPassword(loginRequest.Password, user.MotDePasse ?? "");
-
         if (!isPasswordValid)
         {
             _service.AddTentative(loginRequest.Email);
-
             return Unauthorized("Email ou mot de passe incorrect.");
         }
 
         _service.ReinitializeTentative(loginRequest.Email);
 
-        // Génération du PIN
         string pin = _pinService.CreatePIN(5);
-        HttpContext.Session.SetString(PinSessionKey, pin);
 
-        Console.WriteLine("pinnnn", HttpContext.Session.GetString(PinSessionKey) ?? "tsisyy");
-        HttpContext.Session.SetString(PinExpirationSessionKey, DateTime.UtcNow.AddSeconds(90).ToString("o"));
+        Console.WriteLine("hito le pin "+ pin);
 
-        // Envoi de l'e-mail avec le PIN
+        // Stocker le PIN dans le cache pour 90 secondes
+        _cache.Set(user.Email, pin, TimeSpan.FromSeconds(90));
+
+        // Envoyer l'e-mail avec le PIN
         await _emailService.SendEmailAsync(user.Email ?? "", "Validation du compte", EmailBuilder.buildPINMail(pin, user.NomUtilisateur ?? ""));
 
         return Ok(new { message = "Un PIN a été envoyé pour validation. Vous avez 90 secondes pour le valider." });
     }
 
-
     [HttpPost("validerPin")]
     public IActionResult ValiderPin([FromBody] PinValidationRequest request)
     {
-        // Vérifier si le PIN existe dans la session
-        string? sessionPin = HttpContext.Session.GetString(PinSessionKey);
-        string? sessionPinExpiration = HttpContext.Session.GetString(PinExpirationSessionKey);
-
-        if (string.IsNullOrEmpty(sessionPin) || string.IsNullOrEmpty(sessionPinExpiration))
+        if (!_cache.TryGetValue(request.Email, out string? cachedPin))
         {
-            return Unauthorized("PIN non trouvé ou session expirée.");
+            return Unauthorized("PIN non trouvé ou expiré.");
         }
 
-        var user = _context.Utilisateurs.FirstOrDefault(u => u.Email == request.email);
+        var user = _context.Utilisateurs.FirstOrDefault(u => u.Email == request.Email);
         if (user == null)
-        {
             return NotFound("Utilisateur non trouvé.");
-        }
 
         if (user.NbTentative >= 3)
             return Unauthorized("Compte verrouillé après plusieurs tentatives. Veuillez réinitialiser votre mot de passe.");
 
-        // Vérifier si le PIN correspond
-        if (sessionPin != request.Pin)
+        if (cachedPin != request.Pin)
         {
             _service.AddTentative(user.Email ?? "");
             return Unauthorized("PIN incorrect.");
         }
 
-        // Vérifier si le PIN a expiré
-        if (DateTime.TryParse(sessionPinExpiration, null, System.Globalization.DateTimeStyles.RoundtripKind, out DateTime expirationDate))
-        {
-            if (DateTime.UtcNow > expirationDate)
-            {
-                return Unauthorized("Le PIN a expiré.");
-            }
-        }
-        else
-        {
-            return BadRequest("Erreur dans le format d'expiration du PIN.");
-        }
-
         _service.ReinitializeTentative(user.Email ?? "");
+        _cache.Remove(request.Email); // Supprimer le PIN une fois validé
 
         var userData = new
         {
@@ -144,6 +120,7 @@ public class UtilisateurController : ControllerBase
 
         return Ok(userData);
     }
+
 
 
     [HttpGet("formValiderIncription")]

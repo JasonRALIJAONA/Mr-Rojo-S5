@@ -25,17 +25,14 @@ builder.Services.AddScoped<EmailService>(provider => new EmailService(
     "jasonralijaona@gmail.com", // Utilisateur SMTP
     "ngddkrpplobkmkzj"      // Mot de passe SMTP
 ));
-    //"hajainaraz28@gmail.com", // Utilisateur SMTP
-    //"thmc dxau fbtd jsoy"      // Mot de passe SMTP000.
 builder.Services.AddScoped<IPasswordService, PasswordService>();
-
 builder.Services.AddScoped<PINService>();
 
 // Configuration de la gestion des sessions
 builder.Services.AddDistributedMemoryCache(); // Nécessaire pour stocker les sessions en mémoire
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(20); // Durée de validité des sessions
+    options.IdleTimeout = TimeSpan.FromMinutes(90); // Durée de validité des sessions
     options.Cookie.HttpOnly = true;                // Sécurise l'accès cookie côté serveur
     options.Cookie.IsEssential = true;             // Essentiel pour les fonctionnalités critiques
 });
@@ -51,6 +48,8 @@ builder.Services.AddDbContext<FournisseurIdentiteContext>(options =>
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<UtilisateurService>();
 
+builder.Services.AddMemoryCache();
+
 var app = builder.Build();
 
 // Configuration du pipeline HTTP
@@ -60,22 +59,23 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+// Utilisation de CORS
 app.UseCors("AllowFrontend");
 
-app.UseRouting();
-
-// Activer la gestion des sessions
+// Utilisation de la session (Doit être avant UseRouting)
 app.UseSession();
+
+app.UseRouting();
 
 app.UseAuthorization();
 
 app.MapControllers();
 
 // Exemple d'API simple
-var summaries = new[]
+var summaries = new[] 
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
