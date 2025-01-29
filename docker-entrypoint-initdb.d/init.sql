@@ -1,10 +1,16 @@
+CREATE DATABASE fournisseur_identite;
+\c fournisseur_identite;
+
+CREATE DATABASE crypto;
+\c crypto;
+
 CREATE TABLE utilisateur(
    id SERIAL,
    nom_utilisateur VARCHAR(50)  NOT NULL,
    email VARCHAR(50)  NOT NULL,
    mot_de_passe VARCHAR(255)  NOT NULL,
    token VARCHAR(255)  NOT NULL,
-   date_creation_compte TIMESTAMP NOT NULL,
+   date_creation_compte TIMESTAMP ,
    PRIMARY KEY(id),
    UNIQUE(nom_utilisateur),
    UNIQUE(email)
