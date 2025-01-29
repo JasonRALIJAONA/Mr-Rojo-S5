@@ -11,10 +11,15 @@
         required
         placeholder="Entrez votre email"
       />
+      <input
+        type="password"
+        id="password"
+        v-model="password"
+        required
+        placeholder="Entrez votre mot de passe"
+      />
     </div>
     <button type="submit" :disabled="!isFormValid">Login</button>
-
-    <!-- Submit Button -->
 
     <!-- Links -->
     <div class="links">
@@ -27,20 +32,39 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 const router = useRouter();
 const email = ref('');
-
-// Validation logic
+const password = ref('');
 const isFormValid = computed(() => {
-  return email.value.includes('@');
+  // Validation simple : email doit contenir un "@" et le mot de passe doit être présent
+  return email.value.includes('@') && password.value.length > 0;
 });
 
 // Handle form submission
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (isFormValid.value) {
-    // Navigation après validation du formulaire
-    router.push('/ListeVente');
+    try {
+      // Envoi des données via Axios à l'API
+      const response = await axios.post('http://localhost:5092/api/utilisateur/login', {
+        Email: email.value,
+        Password: password.value,
+      });
+
+      // Vérifier la réponse de l'API
+      if (response.status === 200) {
+        console.log('Login success:', response.data);
+        // Rediriger l'utilisateur vers la page des ventes après une connexion réussie
+        router.push('/ListeVente');
+      } else {
+        console.error('Erreur de login:', response.data);
+        // Tu peux ajouter ici une gestion d'erreur (ex : afficher un message d'erreur)
+      }
+    } catch (error) {
+      console.error('Erreur lors de la connexion:', error);
+      // Gérer l'erreur, par exemple afficher un message d'erreur dans l'interface
+    }
   }
 };
 </script>
@@ -49,7 +73,6 @@ const handleSubmit = () => {
 .login-form {
   background-color: #f9f9f9;
   padding: 2rem;
-  
   border-radius: 8px;
   width: 350px;
   margin: 2rem auto;

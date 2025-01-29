@@ -17,8 +17,8 @@ const cryptoData = [
 </script>
 
 <template>
-    <!-- <LoginPage/> -->
-    <Wallet />  
+    <LoginPage/>
+    <!-- <Wallet />   -->
   <!-- <HelloWorld msg="Vite + Vue" /> -->
 </template>
 
