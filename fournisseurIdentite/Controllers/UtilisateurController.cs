@@ -205,4 +205,10 @@ public class UtilisateurController : ControllerBase
         }
     }
 
+    [HttpGet("test")]
+    public IActionResult Test()
+    {
+        return Ok("Test");
+    }
+
 }
