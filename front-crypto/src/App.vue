@@ -17,9 +17,7 @@ const cryptoData = [
 </script>
 
 <template>
-    <LoginPage/>
-    <!-- <Wallet />   -->
-  <!-- <HelloWorld msg="Vite + Vue" /> -->
+  <router-view />
 </template>
 
 <!-- <style scoped>
