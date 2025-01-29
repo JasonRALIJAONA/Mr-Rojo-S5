@@ -1,15 +1,21 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 // Importez vos composants
-import Login from '../components/Login/LoginPage.vue';
-import VenteForme from '../components/Vente/VenteForm.vue';
-import CardList  from '../components/Vente/CardList.vue';
+import Login from './components/Login/LoginPage.vue';
+import ValiderPin from './components/Login/ValidationPin.vue';
+import VenteForme from './components/Vente/VenteForm.vue';
+import CardList  from './components/Vente/CardList.vue';
 
 const routes = [
   {
     path: '/',
     name: 'Login',
     component: Login,
+  },
+  {
+    path: '/validerPin',
+    name: 'validerPin',
+    component: ValiderPin,
   },
   {
     path: '/VenteForm',

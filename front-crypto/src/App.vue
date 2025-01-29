@@ -18,8 +18,6 @@ const cryptoData = [
 
 <template>
     <LoginPage/>
-    <!-- <CardList/> -->
-
     <!-- <Wallet />   -->
   <!-- <HelloWorld msg="Vite + Vue" /> -->
 </template>
