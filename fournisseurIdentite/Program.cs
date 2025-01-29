@@ -4,6 +4,19 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configuration de la politique CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5173")  // Frontend autorisé
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials(); // Si vous avez besoin des cookies ou des sessions
+        });
+});
+
 // Configuration des services
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<EmailService>(provider => new EmailService(
@@ -47,8 +60,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseCors("AllowFrontend");
 
 app.UseRouting();
 

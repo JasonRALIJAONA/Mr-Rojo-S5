@@ -4,8 +4,8 @@ using fournisseurIdentite.src.DTO;
 
 namespace fournisseurIdentite.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly IPasswordService _passwordService;
