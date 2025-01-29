@@ -5,6 +5,7 @@ import Login from './components/Login/LoginPage.vue';
 import ValiderPin from './components/Login/ValidationPin.vue';
 import VenteForme from './components/Vente/VenteForm.vue';
 import CardList  from './components/Vente/CardList.vue';
+import listeCrypto from './components/Crypto/TableCrypto.vue';
 
 const routes = [
   {
@@ -21,6 +22,11 @@ const routes = [
     path: '/VenteForm',
     name: 'VenteForm',
     component: VenteForme,
+  },
+  {
+    path: '/listeCrypto',
+    name: 'listeCrypto',
+    component: listeCrypto,
   },
   {
     path: '/ListeVente',

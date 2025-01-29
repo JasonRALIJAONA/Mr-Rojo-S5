@@ -1,63 +1,54 @@
 <template>
-    <div class="crypto-section">
-      <h2 class="title">{{ title }}</h2>
-      <div class="table-container">
-        <table class="crypto-table">
-          <thead>
-            <tr>
-              <th>Nom</th>
-              <th>Cours</th>
-              <th>Variation</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="crypto in cryptos" :key="crypto.id" class="crypto-row">
-              <td class="name-cell">
-                <div class="crypto-name">
-                  <span class="crypto-icon">{{ crypto.nom.charAt(0) }}</span>
-                  {{ crypto.nom }}
-                </div>
-              </td>
-              <td class="price-cell">{{ crypto.cours }}</td>
-              <td class="change-cell">
-                <span class="change-indicator" :class="getRandomTrend()">
-                  {{ getRandomChange() }}%
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <div class="crypto-section">
+    <h2 class="title">{{ title }}</h2>
+    <div v-if="cryptos.length" class="table-container">
+      <table class="crypto-table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Symbole</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="crypto in cryptos" :key="crypto.id" class="crypto-row">
+            <td class="name-cell">
+              <div class="crypto-name">
+                <span class="crypto-icon">{{ crypto.nom.charAt(0) }}</span>
+                {{ crypto.nom }}
+              </div>
+            </td>
+            <td class="price-cell">{{ crypto.symbole }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </template>
+    <p v-else>Aucune cryptomonnaie trouvée.</p>
+  </div>
+</template>
+
   
-  <script setup>
-  import { ref } from 'vue';
-  
-  defineProps({
-    cryptos: {
-      type: Array,
-      required: true,
-      default: () => [
-        { id: 1, nom: 'Bitcoin', cours: '$45,000' },
-        { id: 2, nom: 'Ethereum', cours: '$3,200' },
-      ],
-    },
-    title: {
-      type: String,
-      required: true,
-      default: 'Liste des cryptomonnaies',
+<script setup>
+import { ref, onMounted } from 'vue';
+
+const cryptos = ref([]);
+const title = 'Liste des cryptomonnaies';
+
+const fetchCryptos = async () => {
+  try {
+    const response = await fetch('http://localhost:8080/api/cryptos');
+    if (response.ok) {
+      cryptos.value = await response.json();
+    } else {
+      console.error('Erreur lors du chargement des cryptomonnaies.');
     }
-  });
-  
-  const getRandomTrend = () => {
-    return Math.random() > 0.5 ? 'positive' : 'negative';
-  };
-  
-  const getRandomChange = () => {
-    return (Math.random() * 10 - 5).toFixed(2);
-  };
-  </script>
+  } catch (error) {
+    console.error('Erreur réseau:', error);
+  }
+};
+
+onMounted(fetchCryptos);
+</script>
+
   
   <style scoped>
   .crypto-section {
