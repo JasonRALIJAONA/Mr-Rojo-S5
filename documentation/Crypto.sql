@@ -17,11 +17,11 @@ CREATE TABLE utilisateur(
 
 CREATE TABLE cryptomonnaie(
    id SERIAL,
-   nom VARCHAR(50)  NOT NULL,
    symbole VARCHAR(10) ,
+   nom VARCHAR(50)  NOT NULL,
    PRIMARY KEY(id),
-   UNIQUE(nom),
-   UNIQUE(symbole)
+   UNIQUE(symbole),
+   UNIQUE(nom)
 );
 
 CREATE TABLE portefeuille(
@@ -39,9 +39,11 @@ CREATE TABLE transaction(
    montant NUMERIC(15,8)  ,
    est_valide BOOLEAN,
    date_transaction TIMESTAMP,
+   id_cryptomonnaie INTEGER NOT NULL,
    id_vendeur INTEGER NOT NULL,
    id_acheteur INTEGER NOT NULL,
    PRIMARY KEY(id),
+   FOREIGN KEY(id_cryptomonnaie) REFERENCES cryptomonnaie(id),
    FOREIGN KEY(id_vendeur) REFERENCES utilisateur(id),
    FOREIGN KEY(id_acheteur) REFERENCES utilisateur(id)
 );
@@ -75,3 +77,7 @@ CREATE TABLE validation_mvt(
    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
    FOREIGN KEY(id_mvt_fond) REFERENCES mvt_fond(id)
 );
+
+CREATE OR REPLACE VIEW v_fond_actuel as 
+SELECT id_utilisateur, SUM(depot) - SUM(retrait) as fond_actuel 
+FROM mvt_fond GROUP BY id_utilisateur;
