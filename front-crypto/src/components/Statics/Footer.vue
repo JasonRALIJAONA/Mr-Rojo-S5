@@ -1,7 +1,6 @@
 <template>
     <footer class="app-footer">
-      <p>&copy; 2023 CryptoTrade. All rights reserved.</p>
-      <p>Cryptocurrency trading involves risks. Trade responsibly.</p>
+      <p>&copy; ETU2529 - ETU2610 - ETU2669 - ETU2752.</p>
     </footer>
   </template>
   

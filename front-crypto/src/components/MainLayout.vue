@@ -38,11 +38,13 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-blue-700 text-white py-4 text-center">
-      &copy; ETU2529 - ETU2610 - ETU2669 - ETU2752.
-    </footer>
+    <AppFooter />
   </div>
 </template>
+
+<script setup>
+  import AppFooter from './Statics/Footer.vue';
+</script>
 
 <script>
 import { SunIcon, MoonIcon } from '@heroicons/vue/solid';

@@ -1,32 +1,44 @@
 <template>
-  <form @submit.prevent="handleSubmit" class="login-form">
-    <h1 class="form-title">Login</h1>
+  <div class="h-screen flex items-center justify-center">
+    <form @submit.prevent="handleSubmit" class="bg-gray-100 p-8 rounded-lg shadow-md w-96">
+      <h1 class="text-2xl text-center text-blue-900 mb-6">Login</h1>
 
-    <!-- Email Field -->
-    <div class="form-group">
-      <input
-        type="email"
-        id="email"
-        v-model="email"
-        required
-        placeholder="Entrez votre email"
-      />
-      <input
-        type="password"
-        id="password"
-        v-model="password"
-        required
-        placeholder="Entrez votre mot de passe"
-      />
-    </div>
-    <button type="submit" :disabled="!isFormValid">Login</button>
+      <!-- Email Field -->
+      <div class="mb-4">
+        <input
+          type="email"
+          id="email"
+          v-model="email"
+          required
+          placeholder="Entrez votre email"
+          class="w-full p-3 border border-gray-300 rounded-md text-gray-800"
+        />
+      </div>
+      <div class="mb-6">
+        <input
+          type="password"
+          id="password"
+          v-model="password"
+          required
+          placeholder="Entrez votre mot de passe"
+          class="w-full p-3 border border-gray-300 rounded-md text-gray-800"
+        />
+      </div>
+      <button 
+        type="submit" 
+        :disabled="!isFormValid" 
+        class="w-full py-3 bg-blue-900 text-white rounded-md font-semibold disabled:bg-gray-400 hover:bg-blue-700 focus:outline-none"
+      >
+        Login
+      </button>
 
-    <!-- Links -->
-    <div class="links">
-      <a href="#">Mot de passe oublié?</a>
-      <a href="#">Créer un compte</a>
-    </div>
-  </form>
+      <!-- Links -->
+      <div class="flex justify-between mt-4">
+        <a href="#" class="text-blue-900 hover:underline">Mot de passe oublié?</a>
+        <a href="#" class="text-blue-900 hover:underline">Créer un compte</a>
+      </div>
+    </form>
+  </div>
 </template>
 
 <script setup>
@@ -70,73 +82,5 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
-.login-form {
-  background-color: #f9f9f9;
-  padding: 2rem;
-  border-radius: 8px;
-  width: 350px;
-  margin: 2rem auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.form-title {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  font-size: 1.5rem;
-  color: #0F2573;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #0F2573;
-}
-
-input {
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  color: #444;
-  border-radius: 4px;
-}
-
-button {
-  width: 105%;
-  padding: 0.75rem;
-  background-color: #0F2573;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  background-color: #0d1f5b;
-}
-
-button:disabled {
-  background-color: #9ca3af;
-  cursor: not-allowed;
-}
-
-.links {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1rem;
-}
-
-a {
-  color: #0F2573;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
+/* Tailwind CSS prend déjà en charge le centrage et la mise en page */
 </style>
