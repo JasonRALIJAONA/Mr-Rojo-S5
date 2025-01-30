@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen flex flex-col bg-gray-800">
-    <div class="flex flex-1 mx-auto my-10 overflow-hidden shadow-lg rounded-lg">
+    <div class="flex flex-1 w-full max-w-[90%] mx-auto my-20 overflow-hidden shadow-lg rounded-lg">
       <!-- Section Image -->
       <div class="w-1/2 relative hidden lg:block">
         <img src="../../assets/imagecrypto.jpg" alt="Crypto" class="w-full h-full object-cover transform hover:scale-105 transition duration-300" />
