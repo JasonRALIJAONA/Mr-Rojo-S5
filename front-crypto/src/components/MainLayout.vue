@@ -22,7 +22,7 @@
           </li>
           <li>
             <router-link to="/home/CryptoChart" class="hover:text-yellow-300 transition">
-              CryptoChart
+              Crypto Chart
             </router-link>
           </li>
         </ul>
