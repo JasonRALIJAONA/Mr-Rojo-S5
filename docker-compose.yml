@@ -8,29 +8,30 @@ services:
     depends_on:
       - postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/crypto
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5433/crypto
       SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: itu16
+      SPRING_DATASOURCE_PASSWORD: admin
 
   fournisseuridentite:
     build:
       context: .
-      dockerfile: fournisseurIdentite/Dockerfile
+      dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "5093:80"
     depends_on:
       - postgres
     environment:
-      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=crypto;Username=postgres;Password=itu16
+      ASPNETCORE_URLS: http://+:80
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5433;Database=crypto;Username=postgres;Password=admin
 
   postgres:
-    image: postgres:15
+    image: postgres:15.2
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
-      POSTGRES_DB: crypto
+      # POSTGRES_DB: crypto
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
     - postgres_data:/var/lib/postgresql/data
     - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d

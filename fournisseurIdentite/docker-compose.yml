@@ -1,5 +1,3 @@
-version: '3.4'
-
 services:
   fournisseuridentite:
     image: fournisseuridentite
@@ -7,8 +5,9 @@ services:
       context: .
       dockerfile: fournisseurIdentite/Dockerfile
     ports:
-      - "8080:80"
+      - "5093:80"
     environment:
+      # - ASPNETCORE_URLS: http://+:80
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=postgres;Port=5433;Database=fournisseur_identite;Username=postgres;Password=admin
     depends_on:
@@ -17,13 +16,14 @@ services:
   postgres:
     image: postgres:15.2
     environment:
-      POSTGRES_DB: fournisseur_identite
+      # POSTGRES_DB: fournisseur_identite
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
 
 volumes:
   postgres_data:
