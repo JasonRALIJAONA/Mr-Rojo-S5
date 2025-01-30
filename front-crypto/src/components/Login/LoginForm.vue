@@ -1,6 +1,7 @@
 <template>
   <div class="h-screen flex items-center justify-center">
-    <form @submit.prevent="handleSubmit" class="bg-gray-100 p-8 rounded-lg shadow-md w-96">
+    <!-- Formulaire Login -->
+    <form v-if="!isPinFormVisible" @submit.prevent="handleLogin" class="bg-gray-100 p-8 rounded-lg shadow-md w-96">
       <h1 class="text-2xl text-center text-blue-900 mb-6">Login</h1>
 
       <!-- Email Field -->
@@ -24,9 +25,9 @@
           class="w-full p-3 border border-gray-300 rounded-md text-gray-800"
         />
       </div>
-      <button 
-        type="submit" 
-        :disabled="!isFormValid" 
+      <button
+        type="submit"
+        :disabled="!isLoginFormValid"
         class="w-full py-3 bg-blue-900 text-white rounded-md font-semibold disabled:bg-gray-400 hover:bg-blue-700 focus:outline-none"
       >
         Login
@@ -37,6 +38,31 @@
         <a href="#" class="text-blue-900 hover:underline">Mot de passe oublié?</a>
         <a href="#" class="text-blue-900 hover:underline">Créer un compte</a>
       </div>
+    </form>
+
+    <!-- Formulaire PIN -->
+    <form v-if="isPinFormVisible" @submit.prevent="handlePinSubmit" class="bg-gray-100 p-8 rounded-lg shadow-md w-96">
+      <h1 class="text-2xl text-center text-blue-900 mb-6">Validation du PIN</h1>
+
+      <!-- PIN Field -->
+      <div class="mb-4">
+        <input
+          type="password"
+          id="pin"
+          v-model="pin"
+          required
+          placeholder="Entrez votre PIN"
+          maxlength="6"
+          class="w-full p-3 border border-gray-300 rounded-md text-gray-800"
+        />
+      </div>
+      <button
+        type="submit"
+        :disabled="!isPinFormValid"
+        class="w-full py-3 bg-blue-900 text-white rounded-md font-semibold disabled:bg-gray-400 hover:bg-blue-700 focus:outline-none"
+      >
+        Valider
+      </button>
     </form>
   </div>
 </template>
@@ -49,38 +75,57 @@ import axios from 'axios';
 const router = useRouter();
 const email = ref('');
 const password = ref('');
-const isFormValid = computed(() => {
-  // Validation simple : email doit contenir un "@" et le mot de passe doit être présent
+const pin = ref('');
+const isPinFormVisible = ref(false); // Contrôle l'affichage du formulaire PIN
+const isLoginFormValid = computed(() => {
   return email.value.includes('@') && password.value.length > 0;
 });
+const isPinFormValid = computed(() => pin.value.length === 5);
 
-// Handle form submission
-const handleSubmit = async () => {
-  if (isFormValid.value) {
+// Handle Login
+const handleLogin = async () => {
+  if (isLoginFormValid.value) {
     try {
-      // Envoi des données via Axios à l'API
       const response = await axios.post('http://localhost:5092/api/utilisateur/login', {
         Email: email.value,
         Password: password.value,
       });
 
-      // Vérifier la réponse de l'API
       if (response.status === 200) {
         console.log('Login success:', response.data);
-        // Rediriger l'utilisateur vers la page des ventes après une connexion réussie
-        await router.push({ path: '/validerPin', query: { email: email.value } });
+        // Transition vers la validation du PIN après une connexion réussie
+        isPinFormVisible.value = true;
       } else {
         console.error('Erreur de login:', response.data);
-        // Tu peux ajouter ici une gestion d'erreur (ex : afficher un message d'erreur)
       }
     } catch (error) {
       console.error('Erreur lors de la connexion:', error);
-      // Gérer l'erreur, par exemple afficher un message d'erreur dans l'interface
+    }
+  }
+};
+
+// Handle PIN submission
+const handlePinSubmit = async () => {
+  if (isPinFormValid.value) {
+    try {
+      const response = await axios.post('http://localhost:5092/api/utilisateur/ValiderPin', {
+        Pin: pin.value,
+        Email: email.value,
+      });
+
+      if (response.status === 200) {
+        console.log('PIN validé:', response.data);
+        await router.push('/home/listeCrypto');
+      } else {
+        console.error('Erreur de validation du PIN:', response.data);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la validation du PIN:', error);
     }
   }
 };
 </script>
 
 <style scoped>
-/* Tailwind CSS prend déjà en charge le centrage et la mise en page */
+/* Utilisation du même style pour les deux formulaires */
 </style>
