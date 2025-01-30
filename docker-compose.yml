@@ -15,7 +15,7 @@ services:
   fournisseuridentite:
     build:
       context: .
-      dockerfile: fournisseurIdentite/Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "5093:80"
     depends_on:

@@ -7,7 +7,7 @@ services:
     ports:
       - "5093:80"
     environment:
-      - ASPNETCORE_URLS: http://+:80
+      # - ASPNETCORE_URLS: http://+:80
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Host=postgres;Port=5433;Database=fournisseur_identite;Username=postgres;Password=admin
     depends_on:
