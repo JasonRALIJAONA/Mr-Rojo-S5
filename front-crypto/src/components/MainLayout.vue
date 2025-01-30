@@ -20,6 +20,11 @@
               Liste Crypto
             </router-link>
           </li>
+          <li>
+            <router-link to="/home/CryptoChart" class="hover:text-yellow-300 transition">
+              CryptoChart
+            </router-link>
+          </li>
         </ul>
         <button @click="toggleDarkMode" class="ml-4 p-2 bg-gray-700 rounded text-white">
           <component :is="isDarkMode ? 'MoonIcon' : 'SunIcon'" class="w-6 h-6" />
