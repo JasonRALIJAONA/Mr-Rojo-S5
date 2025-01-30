@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-// Importez vos composants
+// Import des composants
 import Login from './components/Login/LoginPage.vue';
 import ValiderPin from './components/Login/ValidationPin.vue';
 import VenteForme from './components/Vente/VenteForm.vue';
-import CardList  from './components/Vente/CardList.vue';
+import CardList from './components/Vente/CardList.vue';
 import listeCrypto from './components/Crypto/TableCrypto.vue';
 
 const routes = [
@@ -15,24 +15,30 @@ const routes = [
   },
   {
     path: '/validerPin',
-    name: 'validerPin',
+    name: 'ValiderPin',
     component: ValiderPin,
   },
   {
-    path: '/VenteForm',
-    name: 'VenteForm',
-    component: VenteForme,
+    path: '/home',
+    component: () => import('./components/MainLayout.vue'), // Layout principal avec navbar
+    children: [
+      {
+        path: 'VenteForm',
+        name: 'VenteForm',
+        component: VenteForme,
+      },
+      {
+        path: 'listeCrypto',
+        name: 'ListeCrypto',
+        component: listeCrypto,
+      },
+      {
+        path: 'ListeVente',
+        name: 'CardList',
+        component: CardList,
+      },
+    ],
   },
-  {
-    path: '/listeCrypto',
-    name: 'listeCrypto',
-    component: listeCrypto,
-  },
-  {
-    path: '/ListeVente',
-    name: 'CardList',
-    component: CardList,
-  }
 ];
 
 const router = createRouter({

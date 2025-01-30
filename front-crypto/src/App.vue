@@ -6,6 +6,7 @@ import VenteForm from './components/Vente/VenteForm.vue';
 import TableCrypto from './components/Crypto/TableCrypto.vue';
 import ListePorteFeuille from './components/PorteFeuille/ListePorteFeuille.vue';
 import Wallet from './components/PorteFeuille/Wallet.vue';
+import './assets/tailwind.css';
 
 const cryptoData = [
   { id: 1, nom: 'Bitcoin', cours: 45.000, quantite: 2 },

@@ -41,7 +41,7 @@
   
         if (response.status === 200) {
           console.log('PIN validé:', response.data);
-          await router.push('/listeCrypto');
+          await router.push('/home/listeCrypto');
         // Après une connexion réussie dans la méthode handleSubmit
         } else {
           console.error('Erreur de validation du PIN:', response.data);

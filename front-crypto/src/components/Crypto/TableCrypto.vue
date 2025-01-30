@@ -1,32 +1,33 @@
 <template>
-  <div class="crypto-section">
-    <h2 class="title">{{ title }}</h2>
-    <div v-if="cryptos.length" class="table-container">
-      <table class="crypto-table">
+  <div class="container mx-auto py-8">
+    <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">{{ title }}</h2>
+
+    <div v-if="cryptos.length" class="overflow-x-auto bg-white dark:bg-gray-800 shadow rounded-2xl">
+      <table class="w-full min-w-full table-auto border-collapse text-left">
         <thead>
-          <tr>
-            <th>Nom</th>
-            <th>Symbole</th>
+          <tr class="bg-blue-700 text-white">
+            <th class="py-3 px-4 text-sm font-semibold">Nom</th>
+            <th class="py-3 px-4 text-sm font-semibold">Symbole</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="crypto in cryptos" :key="crypto.id" class="crypto-row">
-            <td class="name-cell">
-              <div class="crypto-name">
-                <span class="crypto-icon">{{ crypto.nom.charAt(0) }}</span>
-                {{ crypto.nom }}
-              </div>
+          <tr v-for="crypto in cryptos" :key="crypto.id" class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+            <td class="py-3 px-4 flex items-center gap-4 font-medium text-gray-700 dark:text-white">
+              <span class="w-8 h-8 bg-blue-700 text-white flex items-center justify-center rounded-full font-bold">
+                {{ crypto.nom.charAt(0) }}
+              </span>
+              {{ crypto.nom }}
             </td>
-            <td class="price-cell">{{ crypto.symbole }}</td>
+            <td class="py-3 px-4 font-mono text-gray-600 dark:text-gray-300">{{ crypto.symbole }}</td>
           </tr>
         </tbody>
       </table>
     </div>
-    <p v-else>Aucune cryptomonnaie trouvée.</p>
+
+    <p v-else class="text-gray-600 dark:text-gray-400 mt-4">Aucune cryptomonnaie trouvée.</p>
   </div>
 </template>
 
-  
 <script setup>
 import { ref, onMounted } from 'vue';
 
@@ -49,155 +50,14 @@ const fetchCryptos = async () => {
 onMounted(fetchCryptos);
 </script>
 
-  
-  <style scoped>
-  .crypto-section {
-    padding: 2rem;
-    max-width: 1200px; /* Increased from default */
-    margin: 0 auto;
-    width: 90%; /* Added to ensure some margin on the sides */
+<style scoped>
+.container {
+  max-width: 1200px;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 1rem;
   }
-  
-  .title {
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 1.5rem;
-    font-weight: 600;
-    text-align: left;
-  }
-  
-  .table-container {
-    width: 100%;
-    overflow-x: auto;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .crypto-table {
-    width: 100%;
-    min-width: 800px; /* Added minimum width to prevent squishing */
-    border-collapse: separate;
-    border-spacing: 0;
-    text-align: left;
-    font-family: system-ui, -apple-system, sans-serif;
-  }
-  
-  .crypto-table th,
-  .crypto-table td {
-    padding: 1.25rem 2rem; /* Increased horizontal padding */
-  }
-  
-  .crypto-table th {
-    background-color: #0F2573;
-    color: #fff;
-    font-weight: 500;
-    text-transform: uppercase;
-    font-size: 0.875rem;
-    letter-spacing: 0.05em;
-  }
-  
-  .crypto-table th:first-child {
-    border-top-left-radius: 12px;
-  }
-  
-  .crypto-table th:last-child {
-    border-top-right-radius: 12px;
-  }
-  
-  .crypto-row {
-    transition: background-color 0.2s ease;
-    border-bottom: 1px solid #edf2f7;
-  }
-  
-  .crypto-row:last-child {
-    border-bottom: none;
-  }
-  
-  .crypto-row:hover {
-    background-color: #f8fafc;
-  }
-  
-  .name-cell {
-    font-weight: 500;
-    color: #2d3748;
-    width: 40%; /* Added to give more space to the name column */
-  }
-  
-  .crypto-name {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  
-  .crypto-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    background-color: #0F2573;
-    color: white;
-    border-radius: 50%;
-    font-weight: bold;
-  }
-  
-  .price-cell {
-    font-family: 'Monaco', monospace;
-    color: #2d3748;
-    font-weight: 500;
-    width: 30%; /* Added to balance column widths */
-  }
-  
-  .change-cell {
-    text-align: right;
-    width: 30%; /* Added to balance column widths */
-  }
-  
-  .change-indicator {
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-weight: 500;
-    font-size: 0.875rem;
-  }
-  
-  .positive {
-    background-color: #def7ec;
-    color: #03543f;
-  }
-  
-  .negative {
-    background-color: #fde8e8;
-    color: #9b1c1c;
-  }
-  
-  @media (max-width: 1024px) {
-    .crypto-section {
-      width: 95%;
-      padding: 1rem;
-    }
-  }
-  
-  @media (max-width: 640px) {
-    .crypto-section {
-      width: 100%;
-      padding: 0.5rem;
-    }
-  
-    .title {
-      font-size: 1.5rem;
-      padding: 0 1rem;
-    }
-  
-    .crypto-table th,
-    .crypto-table td {
-      padding: 1rem;
-    }
-  
-    .crypto-icon {
-      width: 1.5rem;
-      height: 1.5rem;
-      font-size: 0.875rem;
-    }
-  }
-  </style>
+}
+</style>
