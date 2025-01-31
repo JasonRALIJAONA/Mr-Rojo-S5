@@ -16,7 +16,7 @@ public class UtilisateurController {
     private UtilisateurService utilisateurService;
     
     @GetMapping("/test")
-    public ResponseEntity<String> test(){
+    public ResponseEntity<String> test() {
         return ResponseEntity.ok("Mandeha ilay izy");
     }
     
