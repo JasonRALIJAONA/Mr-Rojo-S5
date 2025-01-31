@@ -26,7 +26,7 @@ public class UtilisateurController {
         if (utilisateur.isPresent()) {
             return ResponseEntity.ok(utilisateur.get());
         } else {
-            return ResponseEntity.status(404).body("Utilisateur non trouvé");
+            return ResponseEntity.ok("L'utilisateur n'existe pas!!");
         }
     }
 }
