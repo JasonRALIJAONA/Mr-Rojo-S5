@@ -1,5 +1,3 @@
-\c postgres;
-DROP DATABASE crypto;
 CREATE DATABASE crypto;
 \c crypto;
 
