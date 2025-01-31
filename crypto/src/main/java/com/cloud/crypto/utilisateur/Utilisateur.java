@@ -36,7 +36,7 @@ public class Utilisateur {
     @Column(name = "date_creation_compte", nullable = false)
     private LocalDateTime dateCreationCompte;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "id_role", nullable = false)
     private Role role;
 

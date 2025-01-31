@@ -59,6 +59,8 @@ const submitMvtFond = async () => {
     return;
   }
 
+  
+
   try {
     const params = {};
     if (typeTransaction.value === 'depot') {
@@ -71,9 +73,10 @@ const submitMvtFond = async () => {
 
     // Récupération du message depuis la réponse backend
     message.value = response.data.message || 'Opération effectuée avec succès.';
+
   } catch (error) {
     console.error('Erreur lors de l\'enregistrement:', error);
-    message.value = 'Erreur lors de l\'enregistrement du mouvement.';
+    message.value = error.response.data || 'Erreur lors de l\'enregistrement du mouvement.';
   }
 
   montant.value = 0;

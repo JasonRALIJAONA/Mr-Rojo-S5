@@ -3,6 +3,7 @@ package com.cloud.crypto.mvtFond;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.cloud.crypto.utilisateur.Utilisateur;
+import com.cloud.crypto.utilisateur.*;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -22,22 +23,27 @@ public class MvtFondController {
     @Autowired
     private MvtFondService mvtFondService;
 
+    @Autowired
+    private UtilisateurService utilisateurService;
+
     @GetMapping("/insertMvt")
     public ResponseEntity<?> insertMvt(
         @RequestParam(required = false) BigDecimal depot,
         @RequestParam(required = false) BigDecimal retrait,
         HttpSession session) {
 
-        Utilisateur user = (Utilisateur) session.getAttribute("UserConnecte");
+        // Utilisateur user = (Utilisateur) session.getAttribute("UserConnecte");
 
-        if (user == null) {
-            return ResponseEntity.status(401).body("Utilisateur non connecté.");
-        }
+        // if (user == null) {
+        //     return ResponseEntity.status(401).body("Utilisateur non connecté.");
+        // }
+
+        Optional<Utilisateur> user = utilisateurService.getUtilisateurById((long) 1);
 
         LocalDateTime mvtDate = LocalDateTime.now();
         MvtFond newMvt = new MvtFond();
         newMvt.setDateMvt(mvtDate);
-        // newMvt.setIdUtilisateur(idUtilisateur);
+        newMvt.setUtilisateur(user.get());
 
         String message;
         if (depot != null) {
