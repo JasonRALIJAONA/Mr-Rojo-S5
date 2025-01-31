@@ -86,7 +86,7 @@ const isPinFormValid = computed(() => pin.value.length === 5);
 const handleLogin = async () => {
   if (isLoginFormValid.value) {
     try {
-      const response = await axios.post('http://localhost:5092/api/utilisateur/login', {
+      const response = await axios.post('http://localhost:80/api/utilisateur/login', {
         Email: email.value,
         Password: password.value,
       });
@@ -108,7 +108,7 @@ const handleLogin = async () => {
 const handlePinSubmit = async () => {
   if (isPinFormValid.value) {
     try {
-      const response = await axios.post('http://localhost:5092/api/utilisateur/ValiderPin', {
+      const response = await axios.post('http://localhost:80/api/utilisateur/ValiderPin', {
         Pin: pin.value,
         Email: email.value,
       });

@@ -6,6 +6,8 @@ import VenteForme from './components/Vente/VenteForm.vue';
 import CardList from './components/Vente/CardList.vue';
 import listeCrypto from './components/Crypto/TableCrypto.vue';
 import CryptoChart from './components/Crypto/CryptoChart.vue';
+import EvolutionCrypto from './components/Crypto/EvolutionCrypto.vue';
+import GestionFonds from './components/Fond/GestionFonds.vue';
 import InscriptionPage from './components/Inscription/InscriptionPage.vue';
 
 const routes = [
@@ -37,6 +39,16 @@ const routes = [
         path: 'CryptoChart',
         name: 'CryptoChart',
         component: CryptoChart,
+      },
+      {
+        path: 'GestionFonds',
+        name: 'GestionFonds',
+        component: GestionFonds,
+      },
+      {
+        path: 'EvolutionCrypto',
+        name: 'EvolutionCrypto',
+        component: EvolutionCrypto,
       },
       {
         path: 'ListeVente',
