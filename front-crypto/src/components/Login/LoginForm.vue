@@ -137,16 +137,13 @@ const verifierUser = async () => {
       console.log('Utilisateur trouvé:', user.data);
       await router.push('/home/listeCrypto'); // Correction du chemin ici
     } 
-    // Si l'utilisateur n'est pas trouvé (404), on redirige vers la page d'inscription
-    else if (user.status === 404) {
-      console.log('Utilisateur non trouvé, redirection vers InscriptionPage');
-      await router.push({ path: '/InscriptionPage', query: { email: email.value } });
-    } 
     else {
       console.error('Erreur lors de la récupération de l\'utilisateur:', user.data);
     }
   } catch (error) {
     console.error('Erreur lors de l\'appel à l\'API:', error);
+    console.log('Utilisateur non trouvé, redirection vers InscriptionPage');
+    await router.push({ path: '/InscriptionPage', query: { email: email.value } });
   }
 };
 </script>
