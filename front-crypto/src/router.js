@@ -6,13 +6,18 @@ import VenteForme from './components/Vente/VenteForm.vue';
 import CardList from './components/Vente/CardList.vue';
 import listeCrypto from './components/Crypto/TableCrypto.vue';
 import CryptoChart from './components/Crypto/CryptoChart.vue';
-
+import InscriptionPage from './components/Inscription/InscriptionPage.vue';
 
 const routes = [
   {
     path: '/',
     name: 'Login',
     component: Login,
+  },
+  {
+    path: '/InscriptionPage', // Déplacé en dehors de `/home`
+    name: 'InscriptionPage',
+    component: InscriptionPage,
   },
   {
     path: '/home',

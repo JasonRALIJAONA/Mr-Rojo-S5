@@ -30,13 +30,13 @@
         :disabled="!isLoginFormValid"
         class="w-full py-3 bg-blue-900 text-white rounded-md font-semibold disabled:bg-gray-400 hover:bg-blue-700 focus:outline-none"
       >
-        Login
+        Continuer avec l'idP
       </button>
 
       <!-- Links -->
       <div class="flex justify-between mt-4">
         <a href="#" class="text-blue-900 hover:underline">Mot de passe oublié?</a>
-        <a href="#" class="text-blue-900 hover:underline">Créer un compte</a>
+        <!-- <a href="InscriptionPage" class="text-blue-900 hover:underline">Créer un compte</a> -->
       </div>
     </form>
 
@@ -115,8 +115,9 @@ const handlePinSubmit = async () => {
 
       if (response.status === 200) {
         console.log('PIN validé:', response.data);
-        await router.push('/home/listeCrypto');
-      } else {
+        await callAnotherApi();
+        // await router.push('/home:listeCrypto');
+      }else {
         console.error('Erreur de validation du PIN:', response.data);
       }
     } catch (error) {
@@ -124,6 +125,27 @@ const handlePinSubmit = async () => {
     }
   }
 };
+const verifierUser = async () => {
+  try {
+    const user = await axios.get('http://localhost:8080/api/utilisateurs', {
+      params: { email: email.value }
+    });
+
+    if (user.status === 200) {
+      console.log('Utilisateur trouvé:', user.data);
+      await router.push('/home:listeCrypto');
+    } else if (user.status === 404) {
+      console.log('Utilisateur non trouvé, redirection vers InscriptionPage');
+      // Envoie l'email à la page d'inscription
+      await router.push({ path: '/InscriptionPage', query: { email: email.value } });
+    } else {
+      console.error('Erreur lors de la récupération de l\'utilisateur:', user.data);
+    }
+  } catch (error) {
+    console.error('Erreur lors de l\'appel à l\'API:', error);
+  }
+};
+
 </script>
 
 <style scoped>
