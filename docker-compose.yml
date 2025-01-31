@@ -2,27 +2,27 @@ services:
   crypto:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: crypto/Dockerfile
     ports:
       - "8080:8080"
     depends_on:
       - postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5433/crypto
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/crypto
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: admin
 
   fournisseuridentite:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: fournisseuridentite/Dockerfile
     ports:
       - "5093:80"
     depends_on:
       - postgres
     environment:
       ASPNETCORE_URLS: http://+:80
-      ConnectionStrings__DefaultConnection: Host=postgres;Port=5433;Database=crypto;Username=postgres;Password=admin
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=crypto;Username=postgres;Password=admin
 
   postgres:
     image: postgres:15.2
