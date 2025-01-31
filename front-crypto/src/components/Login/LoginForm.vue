@@ -115,7 +115,7 @@ const handlePinSubmit = async () => {
 
       if (response.status === 200) {
         console.log('PIN validé:', response.data);
-        await callAnotherApi();
+        await verifierUser();
         // await router.push('/home:listeCrypto');
       }else {
         console.error('Erreur de validation du PIN:', response.data);
