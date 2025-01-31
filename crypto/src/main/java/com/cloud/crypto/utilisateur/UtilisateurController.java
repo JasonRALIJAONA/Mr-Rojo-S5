@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController()
+@RestController
 @RequestMapping("/api/utilisateurs")
 public class UtilisateurController {
     @Autowired
@@ -20,13 +20,13 @@ public class UtilisateurController {
         return ResponseEntity.ok("Mandeha ilay izy");
     }
     
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<?> getUtilisateurByEmail(@RequestParam(name = "email") String email) {
         Optional<Utilisateur> utilisateur = utilisateurService.getUtilisateurByEmail(email);
         if (utilisateur.isPresent()) {
             return ResponseEntity.ok(utilisateur.get());
         } else {
-            return ResponseEntity.ok("L'utilisateur n'existe pas!!");
+            return ResponseEntity.status(404).body("Utilisateur non trouvé");
         }
     }
 }
