@@ -2,13 +2,19 @@ package com.cloud.crypto.mvtFond;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.cloud.crypto.utilisateur.Utilisateur;
+
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/MvtFond")
@@ -17,25 +23,40 @@ public class MvtFondController {
     private MvtFondService mvtFondService;
 
     @GetMapping("/insertMvt")
-    public ModelAndView insertMvt(@RequestParam int idUtilisateur,
-                                 @RequestParam(required = false) BigDecimal depot,
-                                 @RequestParam(required = false) BigDecimal retrait,  // ageMin peut être null
-                                 @RequestParam String dateMvt) {
+    public ResponseEntity<?> insertMvt(
+        @RequestParam(required = false) BigDecimal depot,
+        @RequestParam(required = false) BigDecimal retrait,
+        HttpSession session) {
 
-        LocalDateTime MvtDate = null;
-    
-        // Conversion des dates si elles sont présentes dans la requête
-        if (dateMvt != null && !dateMvt.isEmpty()) {
-            MvtDate = LocalDateTime.parse(dateMvt);
+        Utilisateur user = (Utilisateur) session.getAttribute("UserConnecte");
+
+        if (user == null) {
+            return ResponseEntity.status(401).body("Utilisateur non connecté.");
         }
 
+        LocalDateTime mvtDate = LocalDateTime.now();
         MvtFond newMvt = new MvtFond();
+        newMvt.setDateMvt(mvtDate);
+        // newMvt.setIdUtilisateur(idUtilisateur);
 
-        newMvt.setDateMvt(MvtDate);
+        String message;
+        if (depot != null) {
+            newMvt.setDepot(depot);
+            message = "Mouvement enregistré avec un dépôt de " + depot + " unités.";
+        } else if (retrait != null) {
+            newMvt.setRetrait(retrait);
+            message = "Mouvement enregistré avec un retrait de " + retrait + " unités.";
+        } else {
+            message = "Aucune opération enregistrée.";
+        }
 
-        ModelAndView m = new ModelAndView();
-        return m;
+        return ResponseEntity.ok().body(Map.of(
+            "status", "success",
+            "message", message,
+            "mvtDetails", newMvt
+        ));
     }
+
 
     @GetMapping("/formMvt")
     public ModelAndView formMvt() {

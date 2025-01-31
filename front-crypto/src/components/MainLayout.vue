@@ -22,7 +22,12 @@
           </li>
           <li>
             <router-link to="/home/CryptoChart" class="hover:text-yellow-300 transition">
-              CryptoChart
+              Crypto Chart
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/home/GestionFonds" class="hover:text-yellow-300 transition">
+              Gestion Fonds
             </router-link>
           </li>
         </ul>
