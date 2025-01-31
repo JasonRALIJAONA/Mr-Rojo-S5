@@ -23,6 +23,7 @@ public class UtilisateurController {
     @GetMapping
     public ResponseEntity<?> getUtilisateurByEmail(@RequestParam(name = "email") String email) {
         Optional<Utilisateur> utilisateur = utilisateurService.getUtilisateurByEmail(email);
+
         if (utilisateur.isPresent()) {
             return ResponseEntity.ok(utilisateur.get());
         } else {
