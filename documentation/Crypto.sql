@@ -156,8 +156,16 @@ VALUES
 -- Insérer des cryptomonnaies
 INSERT INTO cryptomonnaie (symbole, nom) 
 VALUES 
-('BTC', 'Bitcoin'), 
-('ETH', 'Ethereum');
+('LTC', 'Litecoin'),
+('XRP', 'Ripple'),
+('ADA', 'Cardano'),
+('SOL', 'Solana'),
+('DOGE', 'Dogecoin'),
+('DOT', 'Polkadot'),
+('MATIC', 'Polygon'),
+('BCH', 'Bitcoin Cash'),
+('XLM', 'Stellar'),
+('AVAX', 'Avalanche');
 
 -- Insérer des mouvements de fonds validés
 INSERT INTO mvt_fond (depot, retrait, date_mvt, id_utilisateur) 
