@@ -127,25 +127,28 @@ const handlePinSubmit = async () => {
 };
 const verifierUser = async () => {
   try {
+    // Envoie la requête GET avec le paramètre email dans l'URL
     const user = await axios.get('http://localhost:8080/api/utilisateurs', {
       params: { email: email.value }
     });
 
+    // Si l'utilisateur est trouvé, on passe à la page home
     if (user.status === 200) {
       console.log('Utilisateur trouvé:', user.data);
-      await router.push('/home:listeCrypto');
-    } else if (user.status === 404) {
+      await router.push('/home/listeCrypto'); // Correction du chemin ici
+    } 
+    // Si l'utilisateur n'est pas trouvé (404), on redirige vers la page d'inscription
+    else if (user.status === 404) {
       console.log('Utilisateur non trouvé, redirection vers InscriptionPage');
-      // Envoie l'email à la page d'inscription
       await router.push({ path: '/InscriptionPage', query: { email: email.value } });
-    } else {
+    } 
+    else {
       console.error('Erreur lors de la récupération de l\'utilisateur:', user.data);
     }
   } catch (error) {
     console.error('Erreur lors de l\'appel à l\'API:', error);
   }
 };
-
 </script>
 
 <style scoped>
