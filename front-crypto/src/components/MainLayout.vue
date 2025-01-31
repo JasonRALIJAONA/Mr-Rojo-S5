@@ -25,6 +25,11 @@
               Crypto Chart
             </router-link>
           </li>
+          <li>
+            <router-link to="/home/GestionFonds" class="hover:text-yellow-300 transition">
+              Gestion Fonds
+            </router-link>
+          </li>
         </ul>
         <button @click="toggleDarkMode" class="ml-4 p-2 bg-gray-700 rounded text-white">
           <component :is="isDarkMode ? 'MoonIcon' : 'SunIcon'" class="w-6 h-6" />

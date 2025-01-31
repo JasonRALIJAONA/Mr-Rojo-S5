@@ -7,6 +7,7 @@ import CardList from './components/Vente/CardList.vue';
 import listeCrypto from './components/Crypto/TableCrypto.vue';
 import CryptoChart from './components/Crypto/CryptoChart.vue';
 import EvolutionCrypto from './components/Crypto/EvolutionCrypto.vue';
+import GestionFonds from './components/Fond/GestionFonds.vue';
 
 
 const routes = [
@@ -33,6 +34,11 @@ const routes = [
         path: 'CryptoChart',
         name: 'CryptoChart',
         component: CryptoChart,
+      },
+      {
+        path: 'GestionFonds',
+        name: 'GestionFonds',
+        component: GestionFonds,
       },
       {
         path: 'EvolutionCrypto',
