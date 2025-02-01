@@ -38,29 +38,31 @@ public class MvtFondController {
             return ResponseEntity.status(401).body("Utilisateur non connecté.");
         }
 
-        LocalDateTime mvtDate = LocalDateTime.now();
-        MvtFond newMvt = new MvtFond();
-        newMvt.setDateMvt(mvtDate);
-        newMvt.setUtilisateur(user);
+        else{
+            LocalDateTime mvtDate = LocalDateTime.now();
+            MvtFond newMvt = new MvtFond();
+            newMvt.setDateMvt(mvtDate);
+            newMvt.setUtilisateur(user);
 
-        String message;
-        if (depot != null) {
-            newMvt.setDepot(depot);
-            message = "Mouvement enregistré avec un dépôt de " + depot + " unités.";
-        } else if (retrait != null) {
-            newMvt.setRetrait(retrait);
-            message = "Mouvement enregistré avec un retrait de " + retrait + " unités.";
-        } else {
-            message = "Aucune opération enregistrée.";
+            String message;
+            if (depot != null) {
+                newMvt.setDepot(depot);
+                message = "Mouvement enregistré avec un dépôt de " + depot + " unités.";
+            } else if (retrait != null) {
+                newMvt.setRetrait(retrait);
+                message = "Mouvement enregistré avec un retrait de " + retrait + " unités.";
+            } else {
+                message = "Aucune opération enregistrée.";
+            }
+
+            mvtFondService.createMvtFond(newMvt);
+
+            return ResponseEntity.ok().body(Map.of(
+                "status", "success",
+                "message", message,
+                "mvtDetails", newMvt
+            ));
         }
-
-        mvtFondService.createMvtFond(newMvt);
-
-        return ResponseEntity.ok().body(Map.of(
-            "status", "success",
-            "message", message,
-            "mvtDetails", newMvt
-        ));
     }
 
 }

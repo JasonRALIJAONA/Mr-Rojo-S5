@@ -15,7 +15,7 @@ public class MvtFond {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "utilisateur_id", nullable = false)
+    @JoinColumn(name = "id_utilisateur", nullable = false)
     private Utilisateur utilisateur;
 
     @Column(nullable = false)
