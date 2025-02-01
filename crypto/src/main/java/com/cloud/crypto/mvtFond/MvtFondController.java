@@ -32,18 +32,16 @@ public class MvtFondController {
         @RequestParam(required = false) BigDecimal retrait,
         HttpSession session) {
 
-        // Utilisateur user = (Utilisateur) session.getAttribute("UserConnecte");
+        Utilisateur user = (Utilisateur) session.getAttribute("utilisateurConnecte");
 
-        // if (user == null) {
-        //     return ResponseEntity.status(401).body("Utilisateur non connecté.");
-        // }
-
-        Optional<Utilisateur> user = utilisateurService.getUtilisateurById((long) 1);
+        if (user == null) {
+            return ResponseEntity.status(401).body("Utilisateur non connecté.");
+        }
 
         LocalDateTime mvtDate = LocalDateTime.now();
         MvtFond newMvt = new MvtFond();
         newMvt.setDateMvt(mvtDate);
-        newMvt.setUtilisateur(user.get());
+        newMvt.setUtilisateur(user);
 
         String message;
         if (depot != null) {
@@ -56,18 +54,13 @@ public class MvtFondController {
             message = "Aucune opération enregistrée.";
         }
 
+        mvtFondService.createMvtFond(newMvt);
+
         return ResponseEntity.ok().body(Map.of(
             "status", "success",
             "message", message,
             "mvtDetails", newMvt
         ));
-    }
-
-
-    @GetMapping("/formMvt")
-    public ModelAndView formMvt() {
-        ModelAndView m = new ModelAndView();
-        return m;
     }
 
 }
