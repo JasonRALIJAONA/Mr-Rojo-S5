@@ -129,7 +129,7 @@
   const handleRegister = async () => {
     if (isRegisterFormValid.value) {
       try {
-        const response = await axios.post('http://localhost:5092/api/utilisateur/register', {
+        const response = await axios.post('http://localhost:8080/api/utilisateur/register', {
           Nom: nom.value,
           Prenom: prenom.value,
           Username: username.value,
