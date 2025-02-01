@@ -22,7 +22,7 @@ services:
       - postgres
     environment:
       ASPNETCORE_URLS: http://+:5092
-      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=crypto;Username=postgres;Password=admin
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=fournisseur_identite;Username=postgres;Password=admin
 
   front-crypto:
     build:
