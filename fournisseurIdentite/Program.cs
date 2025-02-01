@@ -10,7 +10,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173")  // Frontend autorisé
+            policy.WithOrigins("http://localhost:80")  // Frontend autorisé
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials(); // Si vous avez besoin des cookies ou des sessions
