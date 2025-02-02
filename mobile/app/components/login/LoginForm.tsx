@@ -1,120 +1,102 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
-import axios from 'axios';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { View, TextInput, Button, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-type RootStackParamList = {
-  Login: undefined;
-  PinValidation: { email: string };
-};
-
-type LoginProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
-
-const Login: React.FC<LoginProps> = ({ navigation }) => {
+export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const isLoginFormValid = email.includes('@') && password.length > 0;
+  const isLoginFormValid = email && password;
 
-  const handleLogin = async () => {
-    if (!isLoginFormValid) return;
-    try {
-      const response = await axios.post('http://localhost:80/api/utilisateur/login', {
-        Email: email,
-        Password: password,
-      });
-      if (response.status === 200) {
-        Alert.alert('Succès', 'Connexion réussie.');
-        navigation.navigate('PinValidation', { email });
-      } else {
-        Alert.alert('Erreur', 'Email ou mot de passe incorrect.');
-      }
-    } catch (error) {
-      Alert.alert('Erreur', 'Problème de connexion.');
-    }
+  const handleSubmit = () => {
+    // Ajoutez ici la logique pour gérer la soumission du formulaire
+    console.log('Email:', email);
+    console.log('Password:', password);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text>Login</Text>
       <TextInput
         style={styles.input}
         placeholder="Entrez votre email"
-        keyboardType="email-address"
-        autoCapitalize="none"
+        placeholderTextColor="#64748b" // Ajouté ici
         value={email}
         onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
       />
       <TextInput
         style={styles.input}
         placeholder="Entrez votre mot de passe"
-        secureTextEntry
+        placeholderTextColor="#64748b" // Ajouté ici
         value={password}
         onChangeText={setPassword}
+        secureTextEntry
       />
-      <TouchableOpacity 
-        style={[styles.button, !isLoginFormValid && styles.buttonDisabled]} 
-        onPress={handleLogin} 
+      <TouchableOpacity
+        style={[styles.button, !isLoginFormValid && styles.disabledButton]}
+        onPress={handleSubmit}
         disabled={!isLoginFormValid}
       >
         <Text style={styles.buttonText}>Continuer avec l'idP</Text>
       </TouchableOpacity>
+
+      {/* Links */}
+      <View style={styles.linksContainer}>
+        <TouchableOpacity>
+          <Text style={styles.linkText}>Mot de passe oublié?</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
-};
-
-const PinValidation: React.FC<{ route: { params: { email: string } }; navigation: any }> = ({ route, navigation }) => {
-  const { email } = route.params;
-  const [pin, setPin] = useState('');
-  const isPinFormValid = pin.length === 6;
-
-  const handlePinSubmit = async () => {
-    if (!isPinFormValid) return;
-    try {
-      const response = await axios.post('http://localhost:80/api/utilisateur/ValiderPin', {
-        Pin: pin,
-        Email: email,
-      });
-      if (response.status === 200) {
-        Alert.alert('Succès', 'PIN validé.');
-        navigation.navigate('Login');
-      } else {
-        Alert.alert('Erreur', 'PIN incorrect.');
-      }
-    } catch (error) {
-      Alert.alert('Erreur', 'Problème de connexion.');
-    }
-  };
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Validation du PIN</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Entrez votre PIN"
-        keyboardType="numeric"
-        maxLength={6}
-        value={pin}
-        onChangeText={setPin}
-      />
-      <TouchableOpacity 
-        style={[styles.button, !isPinFormValid && styles.buttonDisabled]} 
-        onPress={handlePinSubmit} 
-        disabled={!isPinFormValid}
-      >
-        <Text style={styles.buttonText}>Valider</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
+}
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f3f4f6' },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#1e3a8a', marginBottom: 20 },
-  input: { width: '80%', padding: 10, borderWidth: 1, borderColor: '#ccc', borderRadius: 8, backgroundColor: '#fff', marginBottom: 10 },
-  button: { width: '80%', padding: 15, backgroundColor: '#1e3a8a', borderRadius: 8, alignItems: 'center' },
-  buttonDisabled: { backgroundColor: '#ccc' },
-  buttonText: { color: '#fff', fontWeight: 'bold' },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 16,
+    backgroundColor: '#0a1a2f', // Fond bleu nuit
+  },
+  input: {
+    width: '100%',
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#1e3a8a', // Bordure bleu foncé
+    borderRadius: 8,
+    marginBottom: 16,
+    backgroundColor: '#1e293b', // Fond input bleu ardoise
+    color: '#ffffff', // Texte blanc
+  },
+  button: {
+    width: '100%',
+    padding: 14,
+    backgroundColor: '#2563eb', // Bleu vif (accent)
+    borderRadius: 8,
+    alignItems: 'center',
+    shadowColor: '#2563eb', // Ombre néon
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5, // Pour Android
+  },
+  disabledButton: {
+    backgroundColor: '#334155', // Bleu grisâtre pour bouton désactivé
+    shadowColor: 'transparent', // Pas d'ombre quand désactivé
+  },
+  buttonText: {
+    color: '#ffffff', // Texte blanc
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  linksContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
+  },
+  linkText: {
+    color: '#60a5fa', // Bleu clair pour les liens
+    textDecorationLine: 'underline',
+    fontSize: 14,
+  },
 });
-
-export { Login, PinValidation };

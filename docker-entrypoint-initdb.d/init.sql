@@ -90,6 +90,9 @@ CREATE TABLE mvt_fond(
    PRIMARY KEY(id),
    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id)
 );
+CREATE OR REPLACE VIEW V_detail_mvt_fond AS 
+SELECT MVT_fond.*, utilisateur.nom_utilisateur
+FROM Mvt_fond JOIN Utilisateur on utilisateur.id=mvt_fond.id_utilisateur;
 
 CREATE TABLE validation_mvt(
    id SERIAL,

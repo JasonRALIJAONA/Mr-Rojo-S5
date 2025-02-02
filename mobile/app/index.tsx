@@ -1,15 +1,13 @@
-import { Text, View } from "react-native";
+// App.tsx
+import React from 'react';
+import { SafeAreaView, StatusBar } from 'react-native';
+import LoginForm from './components/login/LoginForm'; // Importez le composant LoginPage
 
-export default function Index() {
+export default function App() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <StatusBar barStyle="dark-content" />
+      <LoginForm /> {/* Utilisez le composant LoginPage ici */}
+    </SafeAreaView>
   );
 }
