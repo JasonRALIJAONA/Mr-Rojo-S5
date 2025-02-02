@@ -85,7 +85,7 @@ CREATE TABLE mvt_fond(
    id SERIAL,
    depot NUMERIC(15,8)  ,
    retrait NUMERIC(15,8)  ,
-   date_mvt TIMESTAMP,
+   date_mvt TIMESTAMP NOT NULL,
    id_utilisateur INTEGER NOT NULL,
    PRIMARY KEY(id),
    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id)
@@ -93,7 +93,7 @@ CREATE TABLE mvt_fond(
 
 CREATE TABLE validation_mvt(
    id SERIAL,
-   date_validation DATE NOT NULL,
+   date_validation TIMESTAMP NOT NULL,
    id_utilisateur INTEGER NOT NULL,
    id_mvt_fond INTEGER NOT NULL,
    PRIMARY KEY(id),
