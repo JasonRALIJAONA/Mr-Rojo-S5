@@ -3,7 +3,6 @@ package com.cloud.crypto.mvtFond;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.cloud.crypto.utilisateur.*;
 
@@ -22,9 +20,6 @@ import jakarta.servlet.http.HttpSession;
 public class MvtFondController {
     @Autowired
     private MvtFondService mvtFondService;
-
-    @Autowired
-    private UtilisateurService utilisateurService;
 
     @GetMapping("/insertMvt")
     public ResponseEntity<?> insertMvt(
@@ -64,5 +59,12 @@ public class MvtFondController {
             ));
         }
     }
+
+    @GetMapping("/validerMvtFond")
+    public ResponseEntity<?> validerMvtFond(@RequestParam(required = true)Long idMvtFond) {
+        
+        return ResponseEntity.ok().body(null);
+    }
+    
 
 }
