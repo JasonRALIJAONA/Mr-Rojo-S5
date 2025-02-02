@@ -25,7 +25,7 @@ public class MvtFond {
     private BigDecimal retrait = BigDecimal.ZERO;
 
     @Column(name = "date_mvt", updatable = false)
-    private LocalDateTime dateMvt = LocalDateTime.now();
+    private LocalDateTime dateMvt;
 
     public MvtFond() {
     }
