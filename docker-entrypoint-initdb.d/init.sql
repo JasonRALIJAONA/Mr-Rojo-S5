@@ -1,5 +1,17 @@
+CREATE DATABASE fournisseur_identite;
+\c fournisseur_identite;
+
+CREATE TABLE utilisateur(
+    id serial PRIMARY KEY, 
+    nom_utilisateur varchar(50) unique,
+    email varchar(50) unique,
+    mot_de_passe varchar(100) not null,
+    est_valide boolean default false,
+    nb_tentative integer default 0
+);
+
 \c postgres;
-DROP DATABASE crypto;
+
 CREATE DATABASE crypto;
 \c crypto;
 
@@ -73,7 +85,7 @@ CREATE TABLE mvt_fond(
    id SERIAL,
    depot NUMERIC(15,8)  ,
    retrait NUMERIC(15,8)  ,
-   date_mvt TIMESTAMP,
+   date_mvt TIMESTAMP NOT NULL,
    id_utilisateur INTEGER NOT NULL,
    PRIMARY KEY(id),
    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id)
@@ -81,7 +93,7 @@ CREATE TABLE mvt_fond(
 
 CREATE TABLE validation_mvt(
    id SERIAL,
-   date_validation DATE NOT NULL,
+   date_validation TIMESTAMP NOT NULL,
    id_utilisateur INTEGER NOT NULL,
    id_mvt_fond INTEGER NOT NULL,
    PRIMARY KEY(id),
@@ -141,7 +153,7 @@ INSERT INTO Role (role) VALUES ('Utilisateur'), ('Administrateur');
 -- Insérer des utilisateurs
 INSERT INTO utilisateur (nom_utilisateur, nom, prenom, dtn, email, token, date_creation_compte, id_role) 
 VALUES 
-('user1', 'Nom1', 'Prenom1', '1995-01-01', 'user1@example.com', 'token1', NOW(), 1),
+('user1', 'Nom1', 'Prenom1', '1995-01-01', 'rakotomanjatonekena@gmail.com', 'token1', NOW(), 1),
 ('user2', 'Nom2', 'Prenom2', '1996-02-02', 'user2@example.com', 'token2', NOW(), 1),
 ('user3', 'Nom3', 'Prenom3', '1997-03-03', 'user3@example.com', 'token3', NOW(), 1),
 ('user4', 'Nom4', 'Prenom4', '1998-04-04', 'user4@example.com', 'token4', NOW(), 1),

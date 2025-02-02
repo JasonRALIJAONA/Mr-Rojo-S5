@@ -15,7 +15,7 @@ public class MvtFond {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "utilisateur_id", nullable = false)
+    @JoinColumn(name = "id_utilisateur", nullable = false)
     private Utilisateur utilisateur;
 
     @Column(nullable = false)
@@ -25,7 +25,7 @@ public class MvtFond {
     private BigDecimal retrait = BigDecimal.ZERO;
 
     @Column(name = "date_mvt", updatable = false)
-    private LocalDateTime dateMvt = LocalDateTime.now();
+    private LocalDateTime dateMvt;
 
     public MvtFond() {
     }

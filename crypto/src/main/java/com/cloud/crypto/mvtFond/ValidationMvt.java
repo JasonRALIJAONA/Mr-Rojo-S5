@@ -1,7 +1,7 @@
 package com.cloud.crypto.mvtFond;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.cloud.crypto.utilisateur.Utilisateur;
 
@@ -14,7 +14,7 @@ public class ValidationMvt {
     private Long id;
 
     @Column(name = "date_validation", nullable = false)
-    private LocalDate dateValidation;
+    private LocalDateTime dateValidation;
 
     @ManyToOne
     @JoinColumn(name = "id_utilisateur", nullable = false)
@@ -27,7 +27,7 @@ public class ValidationMvt {
     // Constructeurs
     public ValidationMvt() {}
 
-    public ValidationMvt(LocalDate dateValidation, Utilisateur utilisateur, MvtFond mvtFond) {
+    public ValidationMvt(LocalDateTime dateValidation, Utilisateur utilisateur, MvtFond mvtFond) {
         this.dateValidation = dateValidation;
         this.utilisateur = utilisateur;
         this.mvtFond = mvtFond;
@@ -42,11 +42,11 @@ public class ValidationMvt {
         this.id = id;
     }
 
-    public LocalDate getDateValidation() {
+    public LocalDateTime getDateValidation() {
         return dateValidation;
     }
 
-    public void setDateValidation(LocalDate dateValidation) {
+    public void setDateValidation(LocalDateTime dateValidation) {
         this.dateValidation = dateValidation;
     }
 

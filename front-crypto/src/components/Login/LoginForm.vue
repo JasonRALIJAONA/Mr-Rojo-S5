@@ -86,7 +86,7 @@ const isPinFormValid = computed(() => pin.value.length === 5);
 const handleLogin = async () => {
   if (isLoginFormValid.value) {
     try {
-      const response = await axios.post('http://localhost:80/api/utilisateur/login', {
+      const response = await axios.post('http://localhost:5093/api/utilisateur/login', {
         Email: email.value,
         Password: password.value,
       });
@@ -108,7 +108,7 @@ const handleLogin = async () => {
 const handlePinSubmit = async () => {
   if (isPinFormValid.value) {
     try {
-      const response = await axios.post('http://localhost:80/api/utilisateur/ValiderPin', {
+      const response = await axios.post('http://localhost:5093/api/utilisateur/ValiderPin', {
         Pin: pin.value,
         Email: email.value,
       });
@@ -128,27 +128,29 @@ const handlePinSubmit = async () => {
 const verifierUser = async () => {
   try {
     // Envoie la requête GET avec le paramètre email dans l'URL
-    const user = await axios.get('http://localhost:8080/api/utilisateurs', {
+    const response = await axios.get('http://localhost:8080/api/utilisateurs', {
       params: { email: email.value }
     });
 
     // Si l'utilisateur est trouvé, on passe à la page home
-    if (user.status === 200) {
-      console.log('Utilisateur trouvé:', user.data);
+    if (response.status === 200) {
+      console.log('Utilisateur trouvé:', response.data);
       await router.push('/home/listeCrypto'); // Correction du chemin ici
     } 
     // Si l'utilisateur n'est pas trouvé (404), on redirige vers la page d'inscription
     else {
-      console.error('Erreur lors de la récupération de l\'utilisateur:', user.data);
+      console.error('Erreur lors de la récupération de l\'utilisateur:', response.data);
     }
   } catch (error) {
-    if (user.status === 404) {
+    if (error.response && error.response.status === 404) {
       console.log('Utilisateur non trouvé, redirection vers InscriptionPage');
       await router.push({ path: '/InscriptionPage', query: { email: email.value } });
-    } 
-    console.error('Erreur lors de l\'appel à l\'API:', error);
+    } else {
+      console.error('Erreur lors de l\'appel à l\'API:', error);
+    }
   }
 };
+
 </script>
 
 <style scoped>

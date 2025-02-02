@@ -1,7 +1,6 @@
 package com.cloud.crypto.portefeuille;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
 
 import com.cloud.crypto.cryptomonnaie.Cryptomonnaie;
 import com.cloud.crypto.utilisateur.Utilisateur;
@@ -14,21 +13,21 @@ public class Portefeuille {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "utilisateur_id", nullable = false)
-    private Utilisateur utilisateur;
+    @Column(nullable = false)
+    private Integer montant;
 
     @ManyToOne
-    @JoinColumn(name = "cryptomonnaie_id", nullable = false)
+    @JoinColumn(name = "id_cryptomonnaie", nullable = false)
     private Cryptomonnaie cryptomonnaie;
 
-    @Column(nullable = false)
-    private BigDecimal montant = BigDecimal.ZERO;
+    @ManyToOne
+    @JoinColumn(name = "id_utilisateur", nullable = false)
+    private Utilisateur utilisateur;
 
     public Portefeuille() {
     }
 
-    public Portefeuille(Long id, Utilisateur utilisateur, Cryptomonnaie cryptomonnaie, BigDecimal montant) {
+    public Portefeuille(Long id, Utilisateur utilisateur, Cryptomonnaie cryptomonnaie, Integer montant) {
         this.id = id;
         this.utilisateur = utilisateur;
         this.cryptomonnaie = cryptomonnaie;
@@ -59,11 +58,11 @@ public class Portefeuille {
         this.cryptomonnaie = cryptomonnaie;
     }
 
-    public BigDecimal getMontant() {
+    public Integer getMontant() {
         return montant;
     }
 
-    public void setMontant(BigDecimal montant) {
+    public void setMontant(Integer montant) {
         this.montant = montant;
     }
 

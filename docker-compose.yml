@@ -17,19 +17,25 @@ services:
       context: .
       dockerfile: fournisseuridentite/Dockerfile
     ports:
-      - "5093:80"
+      - "5093:5092"
     depends_on:
       - postgres
     environment:
-      ASPNETCORE_URLS: http://+:80
-      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=crypto;Username=postgres;Password=admin
+      ASPNETCORE_URLS: http://+:5092
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=fournisseur_identite;Username=postgres;Password=admin
 
+  front-crypto:
+    build:
+      context: .
+      dockerfile: front-crypto/Dockerfile
+    ports:
+      - "3000:80"
+      
   postgres:
     image: postgres:15.2
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
-      # POSTGRES_DB: crypto
     ports:
       - "5433:5432"
     volumes:
