@@ -1,14 +1,16 @@
 import React from "react";
 import { View, Text, FlatList, SafeAreaView, StyleSheet } from 'react-native';
 import CryptoCard from './CryptoCard';
+import axios from "axios";
 
-const cards = [
-    { id: '1', nom: 'Bitcoin', prix: '$45,000', username: 'satoshi_nakamoto' },
-    { id: '2', nom: 'Ethereum', prix: '$3,200', username: 'vitalik_buterin' },
-    { id: '3', nom: 'Cardano', prix: '$1.50', username: 'charles_hoskinson' },
-    { id: '4', nom: 'Dogecoin', prix: '$0.25', username: 'elon_musk' },
-    { id: '5', nom: 'Polkadot', prix: '$28', username: 'gavin_wood' },
-  ];
+const baseUrl = 'http://localhost:8080/api';
+let cards = [];
+
+  // Invoking the get method to perform a GET request
+axios.get(`${baseUrl}/cryptos`).then((response) => {
+    cards = response.data;
+    console.log(response.data);
+});
 
 export default function CryptoListe(){
     return (
@@ -21,7 +23,7 @@ export default function CryptoListe(){
                 keyExtractor={(item)=>item.id}
                 renderItem={({item}) => (
                     <CryptoCard
-                        symbole={item.nom}
+                        symbole={item.symbole}
                         nom={item.nom}
                         prix={item.prix}
                         username={item.username}
