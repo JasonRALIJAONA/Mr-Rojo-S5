@@ -1,48 +1,52 @@
-import React, { useState } from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { useState } from "react"
+import { TouchableOpacity, StyleSheet } from "react-native"
+import { Ionicons } from "@expo/vector-icons"
 
 interface FavoriteButtonProps {
-  buttonText: string;
-  // onPress: () => void;
+  initialState?: boolean
+  onPress?: (isFavorite: boolean) => void
+  size?: number
 }
 
-export default function FavoriteButton({ buttonText, onPress }: FavoriteButtonProps) {
-  const [isFavorite, setIsFavorite] = useState(false);
+export default function FavoriteButton({ initialState = false, onPress, size = 24 }: FavoriteButtonProps) {
+  const [isFavorite, setIsFavorite] = useState(initialState)
 
-  const handlePress = () => {
-    setIsFavorite(!isFavorite);
-    onPress();  // Appeler la fonction `onPress` passée en prop pour gérer l'action de clic
-  };
+  const toggleFavorite = () => {
+    const newState = !isFavorite
+    setIsFavorite(newState)
+    if (onPress) {
+      onPress(newState)
+    }
+  }
 
   return (
-    <TouchableOpacity
-      style={[styles.button, isFavorite ? styles.favoritedButton : styles.defaultButton]}
-      // onPress={handlePress}
-    >
-      <Text style={styles.buttonText}>
-        {isFavorite ? 'Retirer des favoris' : buttonText}
-      </Text>
+    <TouchableOpacity style={styles.button} onPress={toggleFavorite}>
+      <Ionicons
+        name="star"
+        size={size}
+        color={isFavorite ? styles.starFilled.color : styles.starOutline.color}
+        style={styles.star}
+      />
     </TouchableOpacity>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 8,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  defaultButton: {
-    backgroundColor: '#0F2573',
+  star: {
+    textShadowColor: "rgba(0, 0, 0, 0.1)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 1,
   },
-  favoritedButton: {
-    backgroundColor: '#ff6347', // Couleur pour l'état favori (rouge tomate)
+  starFilled: {
+    color: "#FFD700", // Gold color for the filled star
   },
-  buttonText: {
-    color: '#ffffff',
-    fontSize: 14,
-    fontWeight: 'bold',
+  starOutline: {
+    color: "#A9A9A9", // Dark gray color for the unfilled star
   },
-});
+})
+

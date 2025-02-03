@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text, FlatList, SafeAreaView, StyleSheet } from 'react-native';
 import CryptoCard from './components/crypto/CryptoCard'; // Assure-toi que le chemin est correct
-
+import CryptoListe  from './components/crypto/CryptoListe';
+import MainNavigation from './components/statics/MainNavigation';
+import { NavigationContainer } from '@react-navigation/native';
 // Définir les données des cartes
 const cards = [
   { id: '1', nom: 'Bitcoin', prix: '$45,000', username: 'satoshi_nakamoto' },
@@ -13,27 +15,7 @@ const cards = [
 
 export default function App() {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.header}>Liste des Cryptos</Text>
-      </View>
-
-      <FlatList
-        data={cards}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <CryptoCard
-            symbole={item.nom}
-            nom={item.nom}
-            prix={item.prix}
-            username={item.username}
-            buttonText="Acheter"
-          />
-        )}
-        numColumns={2} // Afficher les cartes en 2 colonnes
-        contentContainerStyle={styles.cardsContainer}
-      />
-    </SafeAreaView>
+      <MainNavigation />
   );
 }
 

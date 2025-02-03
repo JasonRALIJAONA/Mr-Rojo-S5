@@ -22,7 +22,7 @@ export default function CryptoCard({
       <Text style={styles.cardSymbole}>{symbole}</Text>
       <Text style={styles.cardPrix}>{prix}</Text>
       <Text style={styles.cardUsername}>{username}</Text>
-      <FavoriteButton buttonText='favoris'></FavoriteButton>
+      <FavoriteButton></FavoriteButton>
       {/* <TouchableOpacity style={styles.cardButton}>
         <Text style={styles.buttonText}>{buttonText}</Text>
       </TouchableOpacity> */}
