@@ -46,7 +46,8 @@ CREATE TABLE utilisateur(
    prenom VARCHAR(50)  NOT NULL,
    dtn DATE NOT NULL,
    email VARCHAR(50)  NOT NULL,
-   token VARCHAR(255)  NOT NULL,
+   token VARCHAR(255),
+   date_expiration TIMESTAMP,
    date_creation_compte TIMESTAMP NOT NULL,
    id_role INTEGER NOT NULL,
    PRIMARY KEY(id),
@@ -89,6 +90,9 @@ CREATE TABLE mvt_fond(
    PRIMARY KEY(id),
    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id)
 );
+CREATE OR REPLACE VIEW V_detail_mvt_fond AS 
+SELECT MVT_fond.*, utilisateur.nom_utilisateur
+FROM Mvt_fond JOIN Utilisateur on utilisateur.id=mvt_fond.id_utilisateur;
 
 CREATE TABLE validation_mvt(
    id SERIAL,

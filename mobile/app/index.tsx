@@ -1,15 +1,54 @@
-import { Text, View } from "react-native";
+import React from 'react';
+import { View, Text, FlatList, SafeAreaView, StyleSheet } from 'react-native';
+import CryptoCard from './components/crypto/CryptoCard'; // Assure-toi que le chemin est correct
 
-export default function Index() {
+// Définir les données des cartes
+const cards = [
+  { id: '1', nom: 'Bitcoin', prix: '$45,000', username: 'satoshi_nakamoto' },
+  { id: '2', nom: 'Ethereum', prix: '$3,200', username: 'vitalik_buterin' },
+  { id: '3', nom: 'Cardano', prix: '$1.50', username: 'charles_hoskinson' },
+  { id: '4', nom: 'Dogecoin', prix: '$0.25', username: 'elon_musk' },
+  { id: '5', nom: 'Polkadot', prix: '$28', username: 'gavin_wood' },
+];
+
+export default function App() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.headerContainer}>
+        <Text style={styles.header}>Liste des Cryptos</Text>
+      </View>
+
+      <FlatList
+        data={cards}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <CryptoCard
+            symbole={item.nom}
+            nom={item.nom}
+            prix={item.prix}
+            username={item.username}
+            buttonText="Acheter"
+          />
+        )}
+        numColumns={2} // Afficher les cartes en 2 colonnes
+        contentContainerStyle={styles.cardsContainer}
+      />
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    padding: 16,
+    backgroundColor: '#0F2573',
+  },
+  header: {
+    fontSize: 24,
+    color: '#fff',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  cardsContainer: {
+    padding: 16,
+  },
+});
