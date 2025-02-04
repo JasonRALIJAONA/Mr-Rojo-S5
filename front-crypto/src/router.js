@@ -8,7 +8,8 @@ import listeCrypto from './components/Crypto/TableCrypto.vue';
 import CryptoChart from './components/Crypto/CryptoChart.vue';
 import EvolutionCrypto from './components/Crypto/EvolutionCrypto.vue';
 import GestionFonds from './components/Fond/GestionFonds.vue';
-import InscriptionPage from './components/Inscription/InscriptionPage.vue';
+import InscriptionPage from './components/Inscription/InscriptionPage.vue'
+import historiqueTransaction from './components/Transaction/historiqueTransaction.vue';
 
 const routes = [
   {
@@ -34,6 +35,11 @@ const routes = [
         path: 'listeCrypto',
         name: 'ListeCrypto',
         component: listeCrypto,
+      },
+      {
+        path: 'historiqueTransaction',
+        name: 'historiqueTransaction',
+        component: historiqueTransaction,
       },
       {
         path: 'CryptoChart',
