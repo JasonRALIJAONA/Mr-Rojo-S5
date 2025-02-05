@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +23,9 @@ public class MvtFondController {
 
     @Autowired
     private UtilisateurService utilisateurService;
+
+    @Autowired
+    ValidationMvtService validationMvtService;
 
    @GetMapping("/insertMvt")
 public ResponseEntity<?> insertMvt(
@@ -70,10 +74,41 @@ public ResponseEntity<?> insertMvt(
 
 
     @GetMapping("/validerMvtFond")
-    public ResponseEntity<?> validerMvtFond(@RequestParam(required = true)Long idMvtFond) {
+    public ResponseEntity<?> validerMvtFond(@RequestParam(required = true)Long idMvtFond,
+    @RequestHeader(value = "Authorization", required = false) String authHeader) throws Exception {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body("Token manquant ou invalide.");
+        }
+    
+        // Extraction du token après "Bearer "
+        String token = authHeader.substring(7);
+    
+        // Appeler le service pour valider et récupérer l'utilisateur via le token
+        Utilisateur user = utilisateurService.findByToken(token);
         
-        return ResponseEntity.ok().body(null);
+        if (user == null) {
+            return ResponseEntity.status(401).body("Utilisateur non trouvé.");
+        }
+
+        String message;
+
+        MvtFond newMvt = mvtFondService.getMvtFond(idMvtFond);
+        ValidationMvt validationMvt = new ValidationMvt(LocalDateTime.now(), user , newMvt);
+        validationMvtService.save(validationMvt);
+
+        message="validation effectue";
+
+        return ResponseEntity.ok().body(Map.of(
+            "status", "success",
+            "message", message,
+            "mvtDetails", newMvt
+        ));
+    }
+
+    @GetMapping("/fond/{idUtilisateur}")
+    public Map<String, BigDecimal> getFondActuel(@PathVariable Long idUtilisateur) {
+        BigDecimal fondActuel = mvtFondService.getFondActuel(idUtilisateur);
+        return Map.of("fondActuel", fondActuel);
     }
     
-
 }

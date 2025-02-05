@@ -3,6 +3,7 @@ package com.cloud.crypto.mvtFond;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -24,5 +25,13 @@ public class MvtFondService {
 
     public void deleteMvtFond(Long id) {
         MvtFondRepository.deleteById(id);
+    }
+
+    @Autowired
+    private FondActuelRepository fondActuelRepository;
+
+    public BigDecimal getFondActuel(Long idUtilisateur) {
+        FondActuel fondActuel = fondActuelRepository.findFondActuelByUtilisateur(idUtilisateur);
+        return fondActuel != null ? fondActuel.getFondActuel() : BigDecimal.ZERO;
     }
 }
