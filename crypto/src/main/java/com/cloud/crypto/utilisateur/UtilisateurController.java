@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.HttpSession;
-
 @RestController
 @RequestMapping("/api/utilisateurs")
 public class UtilisateurController {
@@ -23,23 +21,11 @@ public class UtilisateurController {
     }
     
     @GetMapping
-    public ResponseEntity<?> getUtilisateurByEmail(@RequestParam(name = "email") String email, HttpSession session) {
-        Optional<Utilisateur> utilisateur = utilisateurService.getUtilisateurByEmail(email);
+    public ResponseEntity<?> getUtilisateurByEmail(@RequestParam(name = "email") String email) {
+        String token = utilisateurService.getUtilisateurByEmail(email);
     
-        if (utilisateur.isPresent()) {
-            // Ajouter l'utilisateur dans la session
-            session.setAttribute("utilisateurConnecte", utilisateur.get());
-            
-            // Vérification si l'utilisateur est dans la session
-            Utilisateur userInSession = (Utilisateur) session.getAttribute("utilisateurConnecte");
-            if (userInSession != null) {
-                System.out.println("Utilisateur ajouté à la session : " + userInSession.getNomUtilisateur());
-            } else {
-                System.out.println("Erreur : Utilisateur non ajouté à la session");
-            }
-    
-            // Retourner l'utilisateur
-            return ResponseEntity.ok(utilisateur.get());
+        if (token!=null) {
+            return ResponseEntity.ok(token);
         } else {
             return ResponseEntity.status(404).body("Utilisateur non trouvé");
         }

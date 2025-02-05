@@ -11,10 +11,24 @@ public class UtilisateurService {
     @Autowired
     private UtilisateurRepository utilisateurRepository;
 
-    public Optional<Utilisateur> getUtilisateurByEmail(String email) {
-        // Utilisation de la méthode du repository
-        return utilisateurRepository.findByEmail(email);
-    }
+    public String getUtilisateurByEmail(String email) {
+        Optional<Utilisateur> utilisateurOpt = utilisateurRepository.findByEmail(email);
+    
+        if (utilisateurOpt.isPresent()) {
+            // Générer le token
+            String token = generateToken();
+    
+            // Mettre à jour le token dans l'utilisateur et définir une date d'expiration
+            Utilisateur utilisateur = utilisateurOpt.get();
+            utilisateur.setToken(token);
+            utilisateur.setDateExpiration(java.time.LocalDateTime.now().plusHours(1)); // Expire après 1 heure
+            utilisateurRepository.save(utilisateur);
+    
+            return token;
+        }
+    
+        return null;
+    }    
 
     public Optional<Utilisateur> getUtilisateurById(Long id) {
         // Utilisation de la méthode du repository

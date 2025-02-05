@@ -69,7 +69,19 @@ const submitMvtFond = async () => {
       params.retrait = montant.value;
     }
 
-    const response = await axios.get('http://localhost:8080/api/MvtFond/insertMvt', { params });
+    // Récupérer le token depuis le localStorage
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      message.value = 'Token manquant, veuillez vous reconnecter.';
+      return;
+    }
+
+    const response = await axios.get('http://localhost:8080/api/MvtFond/insertMvt', {
+      params,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     // Récupération du message depuis la réponse backend
     message.value = response.data.message || 'Opération effectuée avec succès.';
