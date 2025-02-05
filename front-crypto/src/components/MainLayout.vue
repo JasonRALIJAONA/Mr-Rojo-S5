@@ -35,6 +35,11 @@
               Historique Transaction
             </router-link>
           </li>
+          <li>
+            <router-link to="/home/ValidationMvtFond" class="hover:text-yellow-300 transition">
+              ValidationMvtFond
+            </router-link>
+          </li>
         </ul>
         <button @click="toggleDarkMode" class="ml-4 p-2 bg-gray-700 rounded text-white">
           <component :is="isDarkMode ? 'MoonIcon' : 'SunIcon'" class="w-6 h-6" />
