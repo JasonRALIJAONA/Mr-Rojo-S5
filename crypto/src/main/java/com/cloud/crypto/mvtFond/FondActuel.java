@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "v_fond_actuel")
 public class FondActuel {
-    
     @Id
     private Long idUtilisateur;
     

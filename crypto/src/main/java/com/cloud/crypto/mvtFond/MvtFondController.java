@@ -2,6 +2,7 @@ package com.cloud.crypto.mvtFond;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,4 +112,8 @@ public ResponseEntity<?> insertMvt(
         return Map.of("fondActuel", fondActuel);
     }
     
+    @GetMapping("/mvt-fond/non-valide")
+    public List<MvtFond> getMvtFondNonValides() {
+        return mvtFondService.getMvtFondNonValides();
+    }
 }

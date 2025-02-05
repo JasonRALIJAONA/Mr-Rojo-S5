@@ -11,6 +11,9 @@ public class MvtFondService {
     @Autowired
     private MvtFondRepository MvtFondRepository;
 
+    @Autowired
+    private FondActuelRepository fondActuelRepository;
+
     public List<MvtFond> getAllMvtFonds() {
         return MvtFondRepository.findAll();
     }
@@ -27,11 +30,12 @@ public class MvtFondService {
         MvtFondRepository.deleteById(id);
     }
 
-    @Autowired
-    private FondActuelRepository fondActuelRepository;
-
     public BigDecimal getFondActuel(Long idUtilisateur) {
         FondActuel fondActuel = fondActuelRepository.findFondActuelByUtilisateur(idUtilisateur);
         return fondActuel != null ? fondActuel.getFondActuel() : BigDecimal.ZERO;
+    }
+
+    public List<MvtFond> getMvtFondNonValides() {
+        return MvtFondRepository.findMvtFondNonValides();
     }
 }
