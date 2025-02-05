@@ -32,7 +32,7 @@ class TransactionService {
         repository.deleteById(id);
     }
 
-    public List<Transaction> getFilteredTransactions(LocalDateTime dateStart, LocalDateTime dateEnd, Long idUtilisateur, Long idCryptomonnaie) {
-        return repository.findTransactions(dateStart, dateEnd, idUtilisateur, idCryptomonnaie);
-    }
+    // public List<Transaction> getFilteredTransactions(LocalDateTime dateStart, LocalDateTime dateEnd, Long idUtilisateur, Long idCryptomonnaie) {
+    //     return repository.findTransactions(dateStart, dateEnd, idUtilisateur, idCryptomonnaie);
+    // }
 }
