@@ -16,22 +16,10 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { Line } from 'vue-chartjs';
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
-  LineElement,
-  PointElement
-} from 'chart.js';
+import { Chart as ChartJS, Title, Tooltip, Legend, CategoryScale, LinearScale, LineElement, PointElement, Filler } from 'chart.js';
 
 // Enregistrement des composants Chart.js
-ChartJS.register(Title, Tooltip, Legend, CategoryScale, LinearScale, LineElement, PointElement);
-
-// Palette de couleurs fixes
-const cryptoColors = ['#1E90FF', '#FF6347', '#32CD32', '#FFD700', '#6A5ACD'];
+ChartJS.register(Title, Tooltip, Legend, CategoryScale, LinearScale, LineElement, PointElement, Filler);
 
 // Données et options du graphique
 const chartData = ref({});
@@ -42,16 +30,15 @@ const chartOptions = ref({
       display: true,
       text: 'Prix des Cryptomonnaies',
     },
+    legend: {
+      position: 'top',
+    },
   },
   scales: {
     x: {
       title: {
         display: true,
-        text: 'Heures (12 heures)',
-      },
-      ticks: {
-        stepSize: 1,
-        callback: (value) => `${value}h`,
+        text: 'Date',
       },
     },
     y: {
@@ -59,11 +46,31 @@ const chartOptions = ref({
         display: true,
         text: 'Prix (Ariary)',
       },
-      min: 0,
-      max: 150000, // Échelle fixe
     },
   },
 });
+
+// Fonction pour générer une couleur plus vive à partir d'un nombre (id)
+const generateColorFromNumber = (number) => {
+  // Calcul pour obtenir une couleur vive
+  const r = (number * 30 + 100) % 256; // Augmentation de la composante rouge pour rendre la couleur plus vive
+  const g = (number * 80 + 150) % 256; // Augmentation de la composante verte
+  const b = (number * 100 + 200) % 256; // Augmentation de la composante bleue
+  return `rgb(${r}, ${g}, ${b})`; // Retourner une couleur RGB vive
+};
+
+// Fonction pour générer un dégradé sous la courbe avec des couleurs vives
+const getGradientColor = (color) => {
+  const ctx = document.createElement('canvas').getContext('2d');
+  const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+
+  // Extraire les valeurs RGB de la couleur
+  const [r, g, b] = color.match(/\d+/g);
+  gradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0.7)`); // Couleur plus vive avec alpha à 0.7
+  gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`); // Couleur plus douce et plus transparente à la fin
+
+  return gradient;
+};
 
 // Fonction pour charger les données du graphique
 const fetchCryptoPrices = async () => {
@@ -74,7 +81,8 @@ const fetchCryptoPrices = async () => {
     const allLabels = [];
     const datasets = [];
 
-    for (const [index, crypto] of cryptos.entries()) {
+    for (let i = 0; i < cryptos.length; i++) {
+      const crypto = cryptos[i];
       await fetch(`http://localhost:8080/api/cryptos/generate/${crypto.id}`, {
         method: 'POST',
       });
@@ -86,16 +94,19 @@ const fetchCryptoPrices = async () => {
       const dataSet = data.map(item => item.montant);
 
       if (allLabels.length === 0) {
-        allLabels.unshift(...labels.reverse()); // Inverser les labels
+        allLabels.unshift(...labels.reverse());
       }
+
+      // Générer une couleur unique pour chaque crypto en fonction de son id
+      const color = generateColorFromNumber(crypto.id);
 
       datasets.push({
         label: crypto.nom,
         data: dataSet.reverse(),
         fill: true,
-        borderColor: cryptoColors[index % cryptoColors.length],
-        backgroundColor: getGradientColor(cryptoColors[index % cryptoColors.length]),
-        tension: 0.4,
+        borderColor: color,
+        backgroundColor: getGradientColor(color),
+        tension: 0.3,
       });
     }
 
@@ -106,15 +117,6 @@ const fetchCryptoPrices = async () => {
   } catch (error) {
     console.error('Erreur lors du chargement des cours :', error);
   }
-};
-
-// Fonction pour générer un dégradé sous la courbe
-const getGradientColor = (color) => {
-  const ctx = document.createElement('canvas').getContext('2d');
-  const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-  gradient.addColorStop(0, `${color}80`); // Couleur transparente
-  gradient.addColorStop(1, `${color}00`); // Complètement transparent
-  return gradient;
 };
 
 // Rafraîchir les données toutes les 10 secondes
