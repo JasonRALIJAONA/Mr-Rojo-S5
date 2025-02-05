@@ -47,19 +47,19 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 const montant = ref(0);
 const typeTransaction = ref('depot');
 const message = ref('');
+const router = useRouter();
 
 const submitMvtFond = async () => {
   if (montant.value <= 0) {
     message.value = 'Veuillez entrer un montant valide.';
     return;
   }
-
-  
 
   try {
     const params = {};
@@ -72,6 +72,7 @@ const submitMvtFond = async () => {
     // Récupérer le token depuis le localStorage
     const token = localStorage.getItem('authToken');
     if (!token) {
+      await router.push('/');
       message.value = 'Token manquant, veuillez vous reconnecter.';
       return;
     }
