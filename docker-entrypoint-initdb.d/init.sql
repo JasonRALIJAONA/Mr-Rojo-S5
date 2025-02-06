@@ -103,7 +103,12 @@ CREATE TABLE validation_mvt(
    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
    FOREIGN KEY(id_mvt_fond) REFERENCES mvt_fond(id)
 );
-
+CREATE TABLE favoris(
+    id SERIAL PRIMARY KEY,
+    date_ajout TIMESTAMP,
+    id_cryptomonnaie INTEGER REFERENCES cryptomonnaie(id),
+    id_utilisateur INTEGER REFERENCES utilisateur(id)
+);
 
 -- Vue pour le fond actuel de chaque utilisateur
 CREATE OR REPLACE VIEW v_fond_actuel AS
