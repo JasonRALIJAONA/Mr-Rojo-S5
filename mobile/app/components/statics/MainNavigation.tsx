@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons"
 import PorteFeuille from "../porte-feuille/PorteFeuille"
 import CryptoListe from "../crypto/CryptoListe"
 import Transactions from "../transactions/Transactions"
+import Wallet from "../porte-feuille/Wallet"
 
 const Tab = createBottomTabNavigator()
 
@@ -14,7 +15,7 @@ export default function MainNavigation() {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName
 
-          if (route.name === "Porte-feuille") {
+          if (route.name === "Wallet") {
             iconName = focused ? "wallet" : "wallet-outline"
           } else if (route.name === "Transactions") {
             iconName = focused ? "list" : "list-outline"
@@ -40,7 +41,7 @@ export default function MainNavigation() {
         },
       })}
     >
-      <Tab.Screen name="Porte-feuille" component={PorteFeuille} />
+      <Tab.Screen name="Wallet" component={Wallet} />
       <Tab.Screen name="Transactions" component={Transactions} />
       <Tab.Screen name="Cours actuels" component={CryptoListe} />
     </Tab.Navigator>
