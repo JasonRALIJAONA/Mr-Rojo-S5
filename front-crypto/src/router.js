@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 // Import des composants
 import Login from './components/Login/LoginPage.vue';
+import LoginAdmin from './components/Login/LoginAdminPage.vue';
 import VenteForme from './components/Vente/VenteForm.vue';
 import CardList from './components/Vente/CardList.vue';
 import listeCrypto from './components/Crypto/TableCrypto.vue';
@@ -17,6 +18,11 @@ const routes = [
     path: '/',
     name: 'Login',
     component: Login,
+  },
+  {
+    path: '/LoginAdmin',
+    name: 'LoginAdmin',
+    component: LoginAdmin,
   },
   {
     path: '/InscriptionPage', // Déplacé en dehors de `/home`
