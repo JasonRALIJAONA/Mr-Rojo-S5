@@ -10,6 +10,24 @@ CREATE TABLE utilisateur(
     nb_tentative integer default 0
 );
 
+-- Connexion à la base de données fournisseur_identite
+\c fournisseur_identite;
+
+-- Insérer des utilisateurs avec des données réalistes
+INSERT INTO utilisateur (nom_utilisateur, email, mot_de_passe, est_valide, nb_tentative) 
+VALUES 
+('lucas_martin', 'lucas.martin@yopmail.com', 'Gp5RF+Ilc8GWG6+OZLkUBn0SVFSwU+aHt1yr6fwlunAb8yccFbnIWh2pBhBzki6i', true, 0), --motdepasse123
+('sophie_durand', 'sophie.durand@yopmail.com', 'Gp5RF+Ilc8GWG6+OZLkUBn0SVFSwU+aHt1yr6fwlunAb8yccFbnIWh2pBhBzki6i', true, 0),
+('julien_bernard', 'julien.bernard@yopmail.com', 'Gp5RF+Ilc8GWG6+OZLkUBn0SVFSwU+aHt1yr6fwlunAb8yccFbnIWh2pBhBzki6i', true, 0),
+('caroline_lemoine', 'caroline.lemoine@yopmail.com', 'Gp5RF+Ilc8GWG6+OZLkUBn0SVFSwU+aHt1yr6fwlunAb8yccFbnIWh2pBhBzki6i', true, 0),
+('nicolas_dubois', 'nicolas.dubois@yopmail.com', 'Gp5RF+Ilc8GWG6+OZLkUBn0SVFSwU+aHt1yr6fwlunAb8yccFbnIWh2pBhBzki6i', true, 0),
+('maria_roux', 'maria.roux@yopmail.com', 'Gp5RF+Ilc8GWG6+OZLkUBn0SVFSwU+aHt1yr6fwlunAb8yccFbnIWh2pBhBzki6i', true, 0),
+('olivier_fournier', 'olivier.fournier@yopmail.com', 'Gp5RF+Ilc8GWG6+OZLkUBn0SVFSwU+aHt1yr6fwlunAb8yccFbnIWh2pBhBzki6i', true, 0),
+('amelie_pires', 'amelie.pires@yopmail.com', 'Gp5RF+Ilc8GWG6+OZLkUBn0SVFSwU+aHt1yr6fwlunAb8yccFbnIWh2pBhBzki6i', true, 0),
+('thomas_morand', 'thomas.morand@yopmail.com', 'Gp5RF+Ilc8GWG6+OZLkUBn0SVFSwU+aHt1yr6fwlunAb8yccFbnIWh2pBhBzki6i', true, 0),
+('marie_dumont', 'marie.dumont@yopmail.com', 'Gp5RF+Ilc8GWG6+OZLkUBn0SVFSwU+aHt1yr6fwlunAb8yccFbnIWh2pBhBzki6i', true, 0),
+('admin_girard', 'admin.girard@yopmail.com', 'QzhtUv12c/OtkjUfPBb7ojAIJGdoYQsnI8QwGtjvBmzpeAdyrptR/AMr2I0bbFCX', true, 0); --adminpass123
+
 \c postgres;
 
 CREATE DATABASE crypto;
@@ -154,19 +172,19 @@ EXECUTE FUNCTION verifier_fonds_avant_retrait();
 INSERT INTO Role (role) VALUES ('Utilisateur'), ('Administrateur');
 
 -- Insérer des utilisateurs
-INSERT INTO utilisateur (nom_utilisateur, nom, prenom, dtn, email, token, date_creation_compte, id_role) 
+INSERT INTO utilisateur (nom_utilisateur, nom, prenom, dtn, email, date_creation_compte, id_role) 
 VALUES 
-('user1', 'Nom1', 'Prenom1', '1995-01-01', 'user1@example.com', 'token1', NOW(), 1),
-('user2', 'Nom2', 'Prenom2', '1996-02-02', 'user2@example.com', 'token2', NOW(), 1),
-('user3', 'Nom3', 'Prenom3', '1997-03-03', 'user3@example.com', 'token3', NOW(), 1),
-('user4', 'Nom4', 'Prenom4', '1998-04-04', 'user4@example.com', 'token4', NOW(), 1),
-('user5', 'Nom5', 'Prenom5', '1999-05-05', 'user5@example.com', 'token5', NOW(), 1),
-('user6', 'Nom6', 'Prenom6', '2000-06-06', 'user6@example.com', 'token6', NOW(), 1),
-('user7', 'Nom7', 'Prenom7', '2001-07-07', 'user7@example.com', 'token7', NOW(), 1),
-('user8', 'Nom8', 'Prenom8', '2002-08-08', 'user8@example.com', 'token8', NOW(), 1),
-('user9', 'Nom9', 'Prenom9', '2003-09-09', 'user9@example.com', 'token9', NOW(), 1),
-('user10', 'Nom10', 'Prenom10', '2004-10-10', 'user10@example.com', 'token10', NOW(), 1),
-('admin1', 'AdminNom', 'AdminPrenom', '1990-01-01', 'admin@example.com', 'admintoken', NOW(), 2);
+('lucas_martin', 'Martin', 'Lucas', '1988-03-22', 'lucas.martin@yopmail.com', NOW(), 1),
+('sophie_durand', 'Durand', 'Sophie', '1990-07-15', 'sophie.durand@yopmail.com', NOW(), 1),
+('julien_bernard', 'Bernard', 'Julien', '1992-11-05', 'julien.bernard@yopmail.com', NOW(), 1),
+('caroline_lemoine', 'Lemoine', 'Caroline', '1995-02-28', 'caroline.lemoine@yopmail.com', NOW(), 1),
+('nicolas_dubois', 'Dubois', 'Nicolas', '1997-09-12', 'nicolas.dubois@yopmail.com', NOW(), 1),
+('maria_roux', 'Roux', 'Maria', '1994-05-06', 'maria.roux@yopmail.com', NOW(), 1),
+('olivier_fournier', 'Fournier', 'Olivier', '1991-10-18', 'olivier.fournier@yopmail.com', NOW(), 1),
+('amelie_pires', 'Pires', 'Amélie', '1993-08-22', 'amelie.pires@yopmail.com', NOW(), 1),
+('thomas_morand', 'Morand', 'Thomas', '1989-12-30', 'thomas.morand@yopmail.com', NOW(), 1),
+('marie_dumont', 'Dumont', 'Marie', '1990-04-10', 'marie.dumont@yopmail.com', NOW(), 1),
+('admin_girard', 'Girard', 'Admin', '1985-06-15', 'admin.girard@yopmail.com', NOW(), 2);
 
 -- Insérer des cryptomonnaies
 INSERT INTO cryptomonnaie (symbole, nom) 
