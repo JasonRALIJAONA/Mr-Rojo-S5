@@ -128,6 +128,12 @@ JOIN cryptomonnaie c ON t.id_cryptomonnaie = c.id
 WHERE t.est_valide = TRUE
 GROUP BY t.id_utilisateur, t.id_cryptomonnaie, c.nom, c.symbole;
 
+CREATE TABLE photo_utilisateur(
+    id SERIAL PRIMARY KEY,
+    date_changement TIMESTAMP NOT NULL,
+    lien_photo VARCHAR(255) NOT NULL,
+    id_utilisateur INTEGER REFERENCES utilisateur(id)
+);
 -- Vue pour le fond actuel de chaque utilisateur
 CREATE OR REPLACE VIEW v_fond_actuel AS
 SELECT 

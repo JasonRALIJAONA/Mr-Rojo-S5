@@ -1,10 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { Ionicons } from "@expo/vector-icons"
-
-import PorteFeuille from "../porte-feuille/PorteFeuille"
 import CryptoListe from "../crypto/CryptoListe"
 import Transactions from "../transactions/Transactions"
 import Wallet from "../porte-feuille/Wallet"
+import Profile from "../profile/Profile"
 
 const Tab = createBottomTabNavigator()
 
@@ -21,6 +20,8 @@ export default function MainNavigation() {
             iconName = focused ? "list" : "list-outline"
           } else if (route.name === "Cours actuels") {
             iconName = focused ? "trending-up" : "trending-up-outline"
+          } else if (route.name === "Profile") {
+            iconName = focused ? "person" : "person-outline"
           }
 
           return <Ionicons name={iconName} size={size} color={color} />
@@ -44,6 +45,8 @@ export default function MainNavigation() {
       <Tab.Screen name="Wallet" component={Wallet} />
       <Tab.Screen name="Transactions" component={Transactions} />
       <Tab.Screen name="Cours actuels" component={CryptoListe} />
+      <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   )
 }
+
