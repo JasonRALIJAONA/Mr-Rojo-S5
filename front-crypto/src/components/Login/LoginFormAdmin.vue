@@ -12,7 +12,6 @@
             v-model="email"
             required
             placeholder="Entrez votre email"
-            value="admin.girard@yopmail.com"
             class="w-full p-3 border border-gray-300 rounded-md text-gray-800"
           />
         </div>
@@ -69,8 +68,8 @@
   import axios from 'axios';
   
   const router = useRouter();
-  const email = ref('');
-  const password = ref('');
+  const email = ref('admin.girard@yopmail.com');
+  const password = ref('adminpass123');
   const pin = ref('');
   const isPinFormVisible = ref(false); // Contrôle l'affichage du formulaire PIN
   const isLoginFormValid = computed(() => {
@@ -127,10 +126,11 @@
       });
   
       if (response.status === 200 && response.data) {
-        const token = response.data;
+        const {token ,role} = response.data;
   
         if (token) {
           localStorage.setItem('authToken', token);
+          localStorage.setItem('userRole', role);
           console.log('Token stocké avec succès:', token);
         }
         await router.push('/home/ValidationMvtFond');

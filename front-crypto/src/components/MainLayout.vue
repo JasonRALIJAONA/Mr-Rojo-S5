@@ -5,12 +5,12 @@
       <div class="flex justify-between items-center px-6">
         <div class="text-2xl font-extrabold tracking-wide">Crypto</div>
         <ul class="flex space-x-6">
-          <li>
+          <li v-if="isUser">
             <router-link to="/home/VenteForm" class="hover:text-yellow-300 transition">
               Ajout Vente
             </router-link>
           </li>
-          <li>
+          <li v-if="isUser">
             <router-link to="/home/ListeVente" class="hover:text-yellow-300 transition">
               Liste Vente
             </router-link>
@@ -25,7 +25,7 @@
               Crypto Chart
             </router-link>
           </li>
-          <li>
+          <li v-if="isUser">
             <router-link to="/home/GestionFonds" class="hover:text-yellow-300 transition">
               Gestion Fonds
             </router-link>
@@ -35,9 +35,10 @@
               Historique Transaction
             </router-link>
           </li>
-          <li>
+          <!-- Afficher uniquement si le rôle est 'admin' -->
+          <li v-if="isAdmin">
             <router-link to="/home/ValidationMvtFond" class="hover:text-yellow-300 transition">
-              ValidationMvtFond
+              Validation Mvt Fond
             </router-link>
           </li>
         </ul>
@@ -64,13 +65,18 @@
 <script>
 import { SunIcon, MoonIcon } from '@heroicons/vue/solid';
 
+console.log('roleee:' ,localStorage.getItem('userRole'));
+
 export default {
   name: "BaseLayout",
   data() {
     return {
       isDarkMode: false,
       SunIcon,
-      MoonIcon
+      MoonIcon,
+      // Vérifier si l'utilisateur a le rôle "admin"
+      isAdmin: localStorage.getItem('userRole') === 'Administrateur',
+      isUser: localStorage.getItem('userRole') === 'Utilisateur',      
     };
   },
   methods: {

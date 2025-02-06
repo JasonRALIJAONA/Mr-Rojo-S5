@@ -73,8 +73,8 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 const router = useRouter();
-const email = ref('');
-const password = ref('');
+const email = ref('lucas.martin@yopmail.com');
+const password = ref('motdepasse123');
 const pin = ref('');
 const isPinFormVisible = ref(false); // Contrôle l'affichage du formulaire PIN
 const isLoginFormValid = computed(() => {
@@ -131,10 +131,12 @@ const verifierUser = async () => {
     });
 
     if (response.status === 200 && response.data) {
-      const token = response.data;
+
+      const {token ,role} = response.data;
 
       if (token) {
         localStorage.setItem('authToken', token);
+        localStorage.setItem('userRole', role);
         console.log('Token stocké avec succès:', token);
       }
       await router.push('/home/listeCrypto');
