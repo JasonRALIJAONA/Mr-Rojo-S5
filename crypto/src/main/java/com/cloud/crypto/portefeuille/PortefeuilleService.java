@@ -10,24 +10,16 @@ import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
-class PortefeuilleService {
+class PorteFeuilleService {
 
     @Autowired
-    private PortefeuilleRepository repository;
+    private PorteFeuilleRepository porteFeuilleRepository;
 
-    public List<Portefeuille> findAll() {
-        return repository.findAll();
+    public List<PorteFeuille> findAll() {
+        return porteFeuilleRepository.findAll();
     }
 
-    public Optional<Portefeuille> findById(Long id) {
-        return repository.findById(id);
-    }
-
-    public Portefeuille save(Portefeuille entity) {
-        return repository.save(entity);
-    }
-
-    public void deleteById(Long id) {
-        repository.deleteById(id);
+    public List<PorteFeuille> findByIdUtilisateur(Long idUtilisateur) {
+        return porteFeuilleRepository.findByIdUtilisateur(idUtilisateur);
     }
 }
