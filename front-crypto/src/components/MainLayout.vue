@@ -5,16 +5,6 @@
       <div class="flex justify-between items-center px-6">
         <div class="text-2xl font-extrabold tracking-wide">Crypto</div>
         <ul class="flex space-x-6">
-          <li v-if="isUser">
-            <router-link to="/home/VenteForm" class="hover:text-yellow-300 transition">
-              Ajout Vente
-            </router-link>
-          </li>
-          <li v-if="isUser">
-            <router-link to="/home/ListeVente" class="hover:text-yellow-300 transition">
-              Liste Vente
-            </router-link>
-          </li>
           <li>
             <router-link to="/home/listeCrypto" class="hover:text-yellow-300 transition">
               Liste Crypto

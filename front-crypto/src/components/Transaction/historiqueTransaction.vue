@@ -82,6 +82,8 @@
 import axios from "axios";
 
 export default {
+  watch: {
+  },
   data() {
     return {
       dateStart: null,
@@ -131,6 +133,8 @@ export default {
       this.fetchUsers(),
       this.fetchCryptos()
     ]);
+    // Charger toutes les transactions au démarrage
+    await this.fetchTransactions();
   }
 };
 </script>
