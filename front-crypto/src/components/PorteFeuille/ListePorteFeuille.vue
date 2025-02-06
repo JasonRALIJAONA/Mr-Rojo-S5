@@ -6,9 +6,7 @@
           <thead>
             <tr>
               <th>Nom</th>
-              <th>Cours</th>
               <th>Quantite</th>
-              <th>Montant total</th>
               <th></th>
             </tr>
           </thead>
@@ -16,13 +14,12 @@
             <tr v-for="crypto in cryptos" :key="crypto.id" class="crypto-row">
               <td class="name-cell">
                 <div class="crypto-name">
-                  <span class="crypto-icon">{{ crypto.nom.charAt(0) }}</span>
-                  {{ crypto.nom }}
+                  <span class="crypto-icon">{{ crypto.symboleCryptomonnaie}}</span>
+                  {{ crypto.nomCryptomonnaie }}
                 </div>
               </td>
-              <td class="price-cell">{{ crypto.cours }}</td>
-              <td class="qte-cell">{{ crypto.quantite }}</td>
-              <td class="montant-cell">{{ getTotalMontant(crypto.cours, crypto.quantite) }}</td>
+              <!-- <td class="price-cell">{{ crypto.cours }}</td> -->
+              <td class="qte-cell">{{ crypto.quantiteTotale }}</td>
               <td class="button"><button>Vendre</button></td>
             </tr>
           </tbody>
@@ -32,8 +29,25 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue';
-  
+  import { ref, onMounted } from 'vue';
+
+const cryptos = ref([]);
+const title = 'Liste des cryptomonnaies';
+
+const fetchCryptos = async () => {
+  try {
+    const response = await fetch('http://localhost:8080/api/portefeuille/{1}');
+    if (response.ok) {
+      cryptos.value = await response.json();
+    } else {
+      console.error('Erreur lors du chargement des cryptomonnaies.');
+    }
+  } catch (error) {
+    console.error('Erreur réseau:', error);
+  }
+};
+
+onMounted(fetchCryptos);
   defineProps({
     cryptos: {
       type: Array,

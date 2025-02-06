@@ -3,10 +3,12 @@ package com.cloud.crypto.portefeuille;
 import java.io.Serializable;
 import java.util.Objects;
 
+import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
+@Embeddable
 public class PorteFeuilleId implements Serializable {
     private Long idUtilisateur;
     private Long idCryptomonnaie;

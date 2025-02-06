@@ -13,6 +13,7 @@ import com.cloud.crypto.utilisateur.Utilisateur;
 @Table(name = "v_porte_feuille")
 @AllArgsConstructor
 @NoArgsConstructor
+@IdClass(PorteFeuilleId.class)
 public class PorteFeuille {
 
     @Id
