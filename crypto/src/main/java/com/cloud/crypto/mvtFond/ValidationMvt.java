@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 import com.cloud.crypto.utilisateur.Utilisateur;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
+@JsonIgnoreProperties({"chronology"})
 @Table(name = "validation_mvt")
 public class ValidationMvt {
 
