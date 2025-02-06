@@ -10,9 +10,6 @@ CREATE TABLE utilisateur(
     nb_tentative integer default 0
 );
 
--- Connexion à la base de données fournisseur_identite
-\c fournisseur_identite;
-
 -- Insérer des utilisateurs avec des données réalistes
 INSERT INTO utilisateur (nom_utilisateur, email, mot_de_passe, est_valide, nb_tentative) 
 VALUES 
@@ -74,29 +71,6 @@ CREATE TABLE utilisateur(
    FOREIGN KEY(id_role) REFERENCES Role(id)
 );
 
--- CREATE TABLE portefeuille(
---    id SERIAL,
---    montant INTEGER NOT NULL,
---    id_cryptomonnaie INTEGER NOT NULL,
---    id_utilisateur INTEGER NOT NULL,
---    PRIMARY KEY(id),
---    FOREIGN KEY(id_cryptomonnaie) REFERENCES cryptomonnaie(id),
---    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id)
--- );
-
-CREATE VIEW v_porte_feuille AS
-SELECT 
-    t.id_utilisateur,
-    t.id_cryptomonnaie,
-    c.nom AS nom_cryptomonnaie,
-    c.symbole AS symbole_cryptomonnaie,
-    COALESCE(SUM(t.achat - t.vente), 0) AS quantite_totale
-FROM transaction t
-JOIN cryptomonnaie c ON t.id_cryptomonnaie = c.id
-WHERE t.est_valide = TRUE
-GROUP BY t.id_utilisateur, t.id_cryptomonnaie, c.nom, c.symbole;
-
-
 CREATE TABLE transaction(
    id SERIAL,
    est_valide BOOLEAN,
@@ -140,6 +114,19 @@ CREATE TABLE favori(
     id_cryptomonnaie INTEGER REFERENCES cryptomonnaie(id),
     id_utilisateur INTEGER REFERENCES utilisateur(id)
 );
+
+-- Vue pour le Porte_feuille 
+CREATE VIEW v_porte_feuille AS
+SELECT 
+    t.id_utilisateur,
+    t.id_cryptomonnaie,
+    c.nom AS nom_cryptomonnaie,
+    c.symbole AS symbole_cryptomonnaie,
+    COALESCE(SUM(t.achat - t.vente), 0) AS quantite_totale
+FROM transaction t
+JOIN cryptomonnaie c ON t.id_cryptomonnaie = c.id
+WHERE t.est_valide = TRUE
+GROUP BY t.id_utilisateur, t.id_cryptomonnaie, c.nom, c.symbole;
 
 -- Vue pour le fond actuel de chaque utilisateur
 CREATE OR REPLACE VIEW v_fond_actuel AS
