@@ -1,6 +1,6 @@
 package com.cloud.crypto.utilisateur;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +15,10 @@ public class UtilisateurController {
     @Autowired
     private UtilisateurService utilisateurService;
     
-    @GetMapping("/test")
-    public ResponseEntity<String> test() {
-        return ResponseEntity.ok("Mandeha ilay izy");
+    @GetMapping("/all")
+    public ResponseEntity<List<Utilisateur>> getAllUtilisateurs() {
+        List<Utilisateur> utilisateurs = utilisateurService.getAllUtilisateurs();
+        return ResponseEntity.ok(utilisateurs);
     }
     
     @GetMapping
