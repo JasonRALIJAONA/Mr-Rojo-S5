@@ -141,6 +141,12 @@ CREATE TABLE favori(
     id_utilisateur INTEGER REFERENCES utilisateur(id)
 );
 
+CREATE TABLE photo_utilisateur(
+    id SERIAL PRIMARY KEY,
+    date_changement TIMESTAMP NOT NULL,
+    lien_photo VARCHAR(255) NOT NULL,
+    id_utilisateur INTEGER REFERENCES utilisateur(id)
+);
 -- Vue pour le fond actuel de chaque utilisateur
 CREATE OR REPLACE VIEW v_fond_actuel AS
 SELECT 
