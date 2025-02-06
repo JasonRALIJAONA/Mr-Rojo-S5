@@ -197,6 +197,8 @@ VALUES
 ('marie_dumont', 'Dumont', 'Marie', '1990-04-10', 'marie.dumont@yopmail.com', NOW(), 1),
 ('admin_girard', 'Girard', 'Admin', '1985-06-15', 'admin.girard@yopmail.com', NOW(), 2);
 
+INSERT INTO photo_utilisateur values (default, CURRENT_TIMESTAMP, 'https://res.cloudinary.com/dpxgvv6x5/image/upload/v1738859341/xyb7v9tphiz3gqzptzcu.jpg', 1);
+
 -- Insérer des cryptomonnaies
 INSERT INTO cryptomonnaie (symbole, nom) 
 VALUES 
