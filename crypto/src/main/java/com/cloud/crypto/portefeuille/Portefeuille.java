@@ -6,9 +6,6 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-import com.cloud.crypto.cryptomonnaie.Cryptomonnaie;
-import com.cloud.crypto.utilisateur.Utilisateur;
-
 @Entity
 @Table(name = "v_porte_feuille")
 @AllArgsConstructor
