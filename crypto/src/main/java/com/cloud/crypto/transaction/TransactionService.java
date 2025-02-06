@@ -1,5 +1,6 @@
 package com.cloud.crypto.transaction;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,4 +31,8 @@ class TransactionService {
     public void deleteById(Long id) {
         repository.deleteById(id);
     }
+
+    // public List<Transaction> getFilteredTransactions(LocalDateTime dateStart, LocalDateTime dateEnd, Long idUtilisateur, Long idCryptomonnaie) {
+    //     return repository.findTransactions(dateStart, dateEnd, idUtilisateur, idCryptomonnaie);
+    // }
 }

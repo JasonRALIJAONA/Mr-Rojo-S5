@@ -36,9 +36,21 @@ public class Utilisateur {
     @Column(name = "date_creation_compte", nullable = false)
     private LocalDateTime dateCreationCompte;
 
+    @Column(name = "date_expiration")
+    LocalDateTime dateExpiration;
+    
     @ManyToOne
     @JoinColumn(name = "id_role", nullable = false)
     private Role role;
+    
+
+    public LocalDateTime getDateExpiration() {
+        return this.dateExpiration;
+    }
+
+    public void setDateExpiration(LocalDateTime dateExpiration) {
+        this.dateExpiration = dateExpiration;
+    }
 
     // Getters et Setters
     public Long getId() {

@@ -116,7 +116,6 @@ const handlePinSubmit = async () => {
       if (response.status === 200) {
         console.log('PIN validé:', response.data);
         await verifierUser();
-        // await router.push('/home:listeCrypto');
       }else {
         console.error('Erreur de validation du PIN:', response.data);
       }
@@ -127,22 +126,21 @@ const handlePinSubmit = async () => {
 };
 const verifierUser = async () => {
   try {
-    // Envoie la requête GET avec le paramètre email dans l'URL
     const response = await axios.get('http://localhost:8080/api/utilisateurs', {
       params: { email: email.value }
     });
 
-    // Si l'utilisateur est trouvé, on passe à la page home
-    if (response.status === 200) {
-      console.log('Utilisateur trouvé:', response.data);
-      await router.push('/home/listeCrypto'); // Correction du chemin ici
-    } 
-    // Si l'utilisateur n'est pas trouvé (404), on redirige vers la page d'inscription
-    else {
-      console.error('Erreur lors de la récupération de l\'utilisateur:', response.data);
+    if (response.status === 200 && response.data) {
+      const token = response.data;
+
+      if (token) {
+        localStorage.setItem('authToken', token);
+        console.log('Token stocké avec succès:', token);
+      }
+      await router.push('/home/listeCrypto');
     }
   } catch (error) {
-    if (error.response && error.response.status === 404) {
+    if (error.response?.status === 404) {
       console.log('Utilisateur non trouvé, redirection vers InscriptionPage');
       await router.push({ path: '/InscriptionPage', query: { email: email.value } });
     } else {

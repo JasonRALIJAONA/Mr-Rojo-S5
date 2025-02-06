@@ -8,5 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> {
     @Query("SELECT u FROM Utilisateur u WHERE u.email = :email")
     Optional<Utilisateur> findByEmail(String email);
-    
+
+    Optional<Utilisateur> findByToken (String token);
 }

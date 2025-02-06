@@ -38,4 +38,24 @@ public class CryptomonnaieController {
         service.deleteCrypto(id);
         return "Cryptomonnaie supprimée avec succès.";
     }
+
+    @PostMapping("/generate/{idCrypto}")
+    public CoursCrypto genererCours(@PathVariable Long idCrypto) {
+        return service.genererCours(idCrypto);
+    }
+
+    @GetMapping("/cours")
+    public List<CoursCrypto> getAllCours() {
+        return service.getAllCours();
+    }
+
+    @GetMapping("/cours/last50")
+    public List<CoursCrypto> getLast50Cours() {
+        return service.getLast50Cours();
+    }
+
+    @GetMapping("/cours/last50/{idCrypto}")
+    public List<CoursCrypto> getLast50ByIdCryptomonnaie(@PathVariable Long idCrypto) {
+        return service.getLast10ByIdCryptomonnaie(idCrypto);
+    }
 }

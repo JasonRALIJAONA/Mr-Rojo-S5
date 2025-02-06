@@ -3,14 +3,19 @@ package com.cloud.crypto.cryptomonnaie;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class CryptomonnaieService {
 
     @Autowired
     private CryptomonnaieRepository repository;
+
+    @Autowired
+    private CoursCryptoRepository coursCryptoRepository;
 
     public List<Cryptomonnaie> getAllCryptos() {
         return repository.findAll();
@@ -40,5 +45,35 @@ public class CryptomonnaieService {
         } else {
             throw new RuntimeException("Cryptomonnaie introuvable pour l'ID : " + id);
         }
+    }
+
+    public CoursCrypto genererCours(Long idCrypto) {
+        Optional<Cryptomonnaie> crypto = repository.findById(idCrypto);
+
+        if (crypto.isEmpty()) {
+            throw new RuntimeException("Cryptomonnaie introuvable");
+        }
+
+        Random random = new Random();
+        int montant = random.nextInt(100_000); // Valeur aléatoire de 0 à 100000
+
+        CoursCrypto cours = new CoursCrypto();
+        cours.setDateCours(LocalDateTime.now());
+        cours.setMontant(montant);
+        cours.setCryptomonnaie(crypto.get());
+
+        return coursCryptoRepository.save(cours);
+    }
+
+    public List<CoursCrypto> getAllCours() {
+        return coursCryptoRepository.findAll();
+    }
+
+    public List<CoursCrypto> getLast50Cours() {
+        return coursCryptoRepository.findTop10ByOrderByDateCoursDesc();
+    }
+
+    public List<CoursCrypto> getLast10ByIdCryptomonnaie(Long idCrypto) {
+        return coursCryptoRepository.findTop10ByCryptomonnaieIdOrderByDateCoursDesc(idCrypto);
     }
 }

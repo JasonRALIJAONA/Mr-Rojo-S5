@@ -30,7 +30,6 @@ CREATE TABLE cours_crypto(
    montant INTEGER NOT NULL,
    id_cryptomonnaie INTEGER NOT NULL,
    PRIMARY KEY(id),
-   UNIQUE(date_cours),
    FOREIGN KEY(id_cryptomonnaie) REFERENCES cryptomonnaie(id)
 );
 
@@ -47,7 +46,8 @@ CREATE TABLE utilisateur(
    prenom VARCHAR(50)  NOT NULL,
    dtn DATE NOT NULL,
    email VARCHAR(50)  NOT NULL,
-   token VARCHAR(255)  NOT NULL,
+   token VARCHAR(255),
+   date_expiration TIMESTAMP,
    date_creation_compte TIMESTAMP NOT NULL,
    id_role INTEGER NOT NULL,
    PRIMARY KEY(id),
@@ -220,3 +220,18 @@ VALUES
 (800, 1, 3),
 (400, 2, 4),
 (600, 1, 5);
+
+
+-- Insérer les données de test pour les cryptomonnaies
+INSERT INTO cours_crypto (date_cours, montant, id_cryptomonnaie)
+VALUES 
+  (NOW(), 150.00, (SELECT id FROM cryptomonnaie WHERE symbole = 'LTC')),
+  (NOW(), 0.50, (SELECT id FROM cryptomonnaie WHERE symbole = 'XRP')),
+  (NOW(), 1.20, (SELECT id FROM cryptomonnaie WHERE symbole = 'ADA')),
+  (NOW(), 250.00, (SELECT id FROM cryptomonnaie WHERE symbole = 'SOL')),
+  (NOW(), 0.07, (SELECT id FROM cryptomonnaie WHERE symbole = 'DOGE')),
+  (NOW(), 30.00, (SELECT id FROM cryptomonnaie WHERE symbole = 'DOT')),
+  (NOW(), 1.50, (SELECT id FROM cryptomonnaie WHERE symbole = 'MATIC')),
+  (NOW(), 350.00, (SELECT id FROM cryptomonnaie WHERE symbole = 'BCH')),
+  (NOW(), 0.40, (SELECT id FROM cryptomonnaie WHERE symbole = 'XLM')),
+  (NOW(), 50.00, (SELECT id FROM cryptomonnaie WHERE symbole = 'AVAX'));

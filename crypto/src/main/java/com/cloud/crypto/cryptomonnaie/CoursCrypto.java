@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 
+@Entity
+@Table(name = "cours_crypto")
 public class CoursCrypto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +20,9 @@ public class CoursCrypto {
     @ManyToOne
     @JoinColumn(name = "id_cryptomonnaie", nullable = false)
     private Cryptomonnaie cryptomonnaie;
+
+    public CoursCrypto() {
+    }
 
     public CoursCrypto(LocalDateTime dateCours, Integer montant, Cryptomonnaie cryptomonnaie) {
         this.dateCours = dateCours;

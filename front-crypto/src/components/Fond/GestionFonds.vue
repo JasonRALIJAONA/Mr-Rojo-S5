@@ -47,19 +47,19 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 const montant = ref(0);
 const typeTransaction = ref('depot');
 const message = ref('');
+const router = useRouter();
 
 const submitMvtFond = async () => {
   if (montant.value <= 0) {
     message.value = 'Veuillez entrer un montant valide.';
     return;
   }
-
-  
 
   try {
     const params = {};
@@ -69,7 +69,20 @@ const submitMvtFond = async () => {
       params.retrait = montant.value;
     }
 
-    const response = await axios.get('http://localhost:8080/api/MvtFond/insertMvt', { params });
+    // Récupérer le token depuis le localStorage
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      await router.push('/');
+      message.value = 'Token manquant, veuillez vous reconnecter.';
+      return;
+    }
+
+    const response = await axios.get('http://localhost:8080/api/MvtFond/insertMvt', {
+      params,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     // Récupération du message depuis la réponse backend
     message.value = response.data.message || 'Opération effectuée avec succès.';
