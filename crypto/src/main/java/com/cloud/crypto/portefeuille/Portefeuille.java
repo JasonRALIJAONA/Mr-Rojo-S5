@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 @Table(name = "v_porte_feuille")
 @AllArgsConstructor
 @NoArgsConstructor
+@IdClass(PorteFeuilleId.class)
 public class PorteFeuille {
 
     @Id
@@ -28,7 +29,6 @@ public class PorteFeuille {
 
     @Column(name = "quantite_totale")
     private BigDecimal quantiteTotale;
-
 
 }
 
