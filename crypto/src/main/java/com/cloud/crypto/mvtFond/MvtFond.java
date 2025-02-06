@@ -5,8 +5,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.cloud.crypto.utilisateur.Utilisateur;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
+@JsonIgnoreProperties({"chronology"})
 @Table(name = "mvt_fond")
 public class MvtFond {
 

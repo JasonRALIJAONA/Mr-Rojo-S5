@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 import com.cloud.crypto.role.Role;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.LocalDate;
 
 @Entity
+@JsonIgnoreProperties({"chronology"})
 @Table(name = "utilisateur")
 public class Utilisateur {
 
