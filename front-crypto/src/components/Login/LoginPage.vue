@@ -23,20 +23,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import AppLogo from './../Statics/Logo.vue';
 import LoginForm from './LoginForm.vue';
 import AppFooter from './../Statics/Footer.vue';
 
 const handleLogin = (credentials) => {
   console.log('Login attempted with:', credentials);
-  // Example navigation logic after login
-  if (isFormValid.value) {
-    router.push('/ListeVente');
-  }
 };
 </script>
 
 <style scoped>
-/* Styles scoped to component */
 </style>
