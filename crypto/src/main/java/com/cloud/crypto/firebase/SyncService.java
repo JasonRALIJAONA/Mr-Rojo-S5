@@ -9,11 +9,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.metamodel.EntityType;
 
-import org.hibernate.StaleObjectStateException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
@@ -39,7 +37,7 @@ public class SyncService {
         this.firestore = firestore;
     }
 
-    // @Scheduled(fixedRate = 60000) // Sync every 1 minute
+    @Scheduled(fixedRate = 60000) // Sync every 1 minute
     public void syncAllTablesToFirestore() {
         entityManager.getMetamodel().getEntities().forEach(entity -> {
             try {
@@ -51,7 +49,7 @@ public class SyncService {
     }
 
     // @Scheduled(fixedRate = 60000) // Sync every 1 minute
-    @Transactional
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=false)
     public void syncAllTablesFromFirestore() {
         entityManager.getMetamodel().getEntities().forEach(entity -> {
             try {
@@ -75,9 +73,9 @@ public class SyncService {
                 System.out.println("Syncing entity: " + entity);
     
                 // Get entity ID
-                Object entityId = getEntityId(entity);
+                // Object entityId = getEntityId(entity);
     
-                System.out.println("Entity found in DB for ID: " + entityId + ". Merging entity.");
+                // System.out.println("Entity found in DB for ID: " + entityId + ". Merging entity.");
                 entity = entityManager.merge(entity); // Update existing entity  
     
                 entityManager.flush(); // Ensure changes are saved immediately
