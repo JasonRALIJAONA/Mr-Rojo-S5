@@ -37,7 +37,7 @@ public class SyncService {
         this.firestore = firestore;
     }
 
-    @Scheduled(fixedRate = 60000) // Sync every 1 minute
+    // @Scheduled(fixedRate = 60000) // Sync every 1 minute
     public void syncAllTablesToFirestore() {
         entityManager.getMetamodel().getEntities().forEach(entity -> {
             try {
