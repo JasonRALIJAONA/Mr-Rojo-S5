@@ -14,14 +14,12 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
 
-    // @GetMapping("/historique")
-    // public List<Transaction> getTransactions(
-    //     @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateStart,
-    //     @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateEnd,
-    //     @RequestParam(required = false) Long idUtilisateur,
-    //     @RequestParam(required = false) Long idCryptomonnaie
-    // ) {
-    //     return transactionService.getFilteredTransactions(dateStart, dateEnd, idUtilisateur, idCryptomonnaie);
-    // }
+    @GetMapping("/historique")
+    public List<Transaction> getTransactions(@RequestParam(required = false) Long idUtilisateur,
+                                              @RequestParam(required = false) Long idCryptomonnaie,
+                                              @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime dateStart,
+                                              @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime dateEnd) {
+        return transactionService.getHistorique(idUtilisateur, idCryptomonnaie, dateStart, dateEnd);
+    }    
 
 }
