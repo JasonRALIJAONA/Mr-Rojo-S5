@@ -1,6 +1,8 @@
 package com.cloud.crypto.firebase;
 
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.Timestamp;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Id;
@@ -40,6 +42,59 @@ public class SyncService {
                 System.err.println("Error syncing table " + entity.getName() + ": " + e.getMessage());
             }
         });
+    }
+
+    @Scheduled(fixedRate = 60000) // Sync every 1 minute
+    public void syncAllTablesFromFirestore() {
+        entityManager.getMetamodel().getEntities().forEach(entity -> {
+            try {
+                syncTableFromFirestore(entity);
+            } catch (Exception e) {
+                System.err.println("Error syncing table " + entity.getName() + " from Firestore: " + e.getMessage());
+            }
+        });
+    }
+
+    private void syncTableFromFirestore(EntityType<?> entityType) throws Exception {
+        String tableName = entityType.getJavaType().getSimpleName(); // Use actual entity class name
+        QuerySnapshot querySnapshot = firestore.collection(tableName).get().get();
+
+        for (QueryDocumentSnapshot document : querySnapshot.getDocuments()) {
+            Map<String, Object> data = document.getData();
+            Object entity = convertMapToEntity(entityType.getJavaType(), data);
+            entityManager.merge(entity);
+        }
+
+        System.out.println("Synced " + tableName + " from Firestore successfully.");
+    }
+
+    @SuppressWarnings("unchecked")
+    private Object convertMapToEntity(Class<?> entityClass, Map<String, Object> data) throws Exception {
+        Object entity = entityClass.getDeclaredConstructor().newInstance();
+
+        for (Field field : entityClass.getDeclaredFields()) {
+            field.setAccessible(true);
+            Object value = data.get(field.getName());
+
+            if (value != null) {
+                if (field.getType() == LocalDate.class) {
+                    field.set(entity, LocalDate.parse((String) value)); // Convert String to LocalDate
+                } else if (field.getType() == LocalDateTime.class) {
+                    field.set(entity, convertToLocalDateTime((Timestamp) value)); // Convert Timestamp to LocalDateTime
+                } else if (field.getType() == String.class || field.getType() == Number.class || field.getType() == Boolean.class) {
+                    field.set(entity, value); // Handle simple types
+                } else {
+                    // Handle nested objects recursively
+                    field.set(entity, convertMapToEntity(field.getType(), (Map<String, Object>) value));
+                }
+            }
+        }
+
+        return entity;
+    }
+
+    private LocalDateTime convertToLocalDateTime(Timestamp timestamp) {
+        return timestamp.toDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
     private void syncTable(EntityType<?> entityType) throws Exception {
