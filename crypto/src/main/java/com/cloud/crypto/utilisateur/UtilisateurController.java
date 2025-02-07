@@ -34,4 +34,9 @@ public class UtilisateurController {
         }
     }
 
+    // @GetMapping("/photo")
+    // public ResponseEntity<String> findMostRecentPhotoByUtilisateur(@RequestParam(name = "userId") Long userId) {
+
+    // }  
+
 }

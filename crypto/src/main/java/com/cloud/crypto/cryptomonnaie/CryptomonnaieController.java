@@ -1,6 +1,7 @@
 package com.cloud.crypto.cryptomonnaie;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,6 +43,14 @@ public class CryptomonnaieController {
     @PostMapping("/generate/{idCrypto}")
     public CoursCrypto genererCours(@PathVariable Long idCrypto) {
         return service.genererCours(idCrypto);
+    }
+
+    @Scheduled(fixedRate = 10000) // Exécution toutes les 10 secondes
+    public void genererAllCours() {
+        List<Cryptomonnaie> allcrypto = getAllCryptos();
+        for (Cryptomonnaie cryptomonnaie : allcrypto) {
+            genererCours(cryptomonnaie.getId());
+        }
     }
 
     @GetMapping("/cours")

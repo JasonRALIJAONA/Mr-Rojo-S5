@@ -73,7 +73,6 @@ CREATE TABLE utilisateur(
 
 CREATE TABLE transaction(
    id SERIAL,
-   est_valide BOOLEAN,
    achat NUMERIC(15,2)  ,
    vente NUMERIC(15,2)  ,
    prix_unitaire NUMERIC(15,2)   NOT NULL,
@@ -125,7 +124,6 @@ SELECT
     COALESCE(SUM(t.achat - t.vente), 0) AS quantite_totale
 FROM transaction t
 JOIN cryptomonnaie c ON t.id_cryptomonnaie = c.id
-WHERE t.est_valide = TRUE
 GROUP BY t.id_utilisateur, t.id_cryptomonnaie, c.nom, c.symbole;
 
 CREATE TABLE photo_utilisateur(
