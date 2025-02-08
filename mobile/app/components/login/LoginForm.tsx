@@ -1,25 +1,67 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from "react";
+import { View, TextInput, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import {  signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { getFirestore, doc, collection, query, where, getDocs } from "firebase/firestore"; // Added missing imports
+import { StackScreenProps } from "@react-navigation/stack";
+import { RootStackParamList } from "../statics/type";
+import {auth, db} from "../../../firebaseConfig";
+type Props = StackScreenProps<RootStackParamList, "Login"> & {
+  onLogin: () => void;
+};
 
-export default function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function LoginForm({ navigation, onLogin }: Props) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const isLoginFormValid = email && password;
 
-  const handleSubmit = () => {
-    // Ajoutez ici la logique pour gérer la soumission du formulaire
-    console.log('Email:', email);
-    console.log('Password:', password);
+  const handleSubmit = async () => {
+    if (!isLoginFormValid) return;
+    setLoading(true);
+
+    try {
+      // Authentification Firebase
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log("Sign-in successful:", userCredential.user);
+
+      // Récupération des infos utilisateur
+      const usersCollectionRef = collection(db, "utilisateur_idp");
+      const q = query(usersCollectionRef, where("email", "==", userCredential.user.email));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        // Assuming there's only one document per email
+        const userDoc = querySnapshot.docs[0];
+        const userData = userDoc.data();
+        console.log("User data:", userData);
+
+        if (!userData.est_valide) {
+          Alert.alert("Compte non validé", "Votre compte doit être validé par un administrateur.");
+          await signOut(auth); // Déconnexion immédiate
+        } else {
+          Alert.alert("Connexion réussie", `Bienvenue ${userData.nom_utilisateur} !`);
+          onLogin(); // Mise à jour de l'état dans `MainNavigation`
+        }
+      } else {
+        console.log("User document does not exist");
+        Alert.alert("Erreur", "Utilisateur introuvable.");
+      }
+    } catch (error: any) {
+      console.error("Erreur de connexion :", error);
+      Alert.alert("Erreur de connexion", error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Text>Login</Text>
+      <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
         placeholder="Entrez votre email"
-        placeholderTextColor="#64748b" // Ajouté ici
+        placeholderTextColor="#64748b"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -28,7 +70,7 @@ export default function LoginForm() {
       <TextInput
         style={styles.input}
         placeholder="Entrez votre mot de passe"
-        placeholderTextColor="#64748b" // Ajouté ici
+        placeholderTextColor="#64748b"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -36,12 +78,11 @@ export default function LoginForm() {
       <TouchableOpacity
         style={[styles.button, !isLoginFormValid && styles.disabledButton]}
         onPress={handleSubmit}
-        disabled={!isLoginFormValid}
+        disabled={!isLoginFormValid || loading}
       >
-        <Text style={styles.buttonText}>Continuer avec l'idP</Text>
+        <Text style={styles.buttonText}>{loading ? "Connexion..." : "Se connecter"}</Text>
       </TouchableOpacity>
 
-      {/* Links */}
       <View style={styles.linksContainer}>
         <TouchableOpacity>
           <Text style={styles.linkText}>Mot de passe oublié?</Text>
@@ -54,49 +95,56 @@ export default function LoginForm() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     padding: 16,
-    backgroundColor: '#0a1a2f', // Fond bleu nuit
+    backgroundColor: "#0a1a2f",
+  },
+  title: {
+    color: "#FFFFFF",
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 20,
   },
   input: {
-    width: '100%',
+    width: "100%",
     padding: 12,
     borderWidth: 1,
-    borderColor: '#1e3a8a', // Bordure bleu foncé
+    borderColor: "#1e3a8a",
     borderRadius: 8,
     marginBottom: 16,
-    backgroundColor: '#1e293b', // Fond input bleu ardoise
-    color: '#ffffff', // Texte blanc
+    backgroundColor: "#1e293b",
+    color: "#ffffff",
   },
   button: {
-    width: '100%',
+    width: "100%",
     padding: 14,
-    backgroundColor: '#2563eb', // Bleu vif (accent)
+    backgroundColor: "#2563eb",
     borderRadius: 8,
-    alignItems: 'center',
-    shadowColor: '#2563eb', // Ombre néon
+    alignItems: "center",
+    shadowColor: "#2563eb",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 6,
-    elevation: 5, // Pour Android
+    elevation: 5,
   },
   disabledButton: {
-    backgroundColor: '#334155', // Bleu grisâtre pour bouton désactivé
-    shadowColor: 'transparent', // Pas d'ombre quand désactivé
+    backgroundColor: "#334155",
+    shadowColor: "transparent",
   },
   buttonText: {
-    color: '#ffffff', // Texte blanc
-    fontWeight: 'bold',
+    color: "#ffffff",
+    fontWeight: "bold",
     fontSize: 16,
   },
   linksContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 16,
   },
   linkText: {
-    color: '#60a5fa', // Bleu clair pour les liens
-    textDecorationLine: 'underline',
+    color: "#60a5fa",
+    textDecorationLine: "underline",
     fontSize: 14,
   },
 });

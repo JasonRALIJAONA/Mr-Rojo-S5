@@ -1,39 +1,94 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { View, Text, TouchableOpacity, Image, StyleSheet, Alert } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
-import * as ImagePicker from "expo-image-picker"
-import { Camera } from "expo-camera"
+import * as FileSystem from "expo-file-system";
+import { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, Image, StyleSheet, Alert } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker";
+import { Camera } from "expo-camera";
+import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit } from "firebase/firestore";
+import { auth, db } from "@/firebaseConfig";
 
 export default function Profile() {
-  const [profileImage, setProfileImage] = useState("https://placeholder.svg?height=100&width=100")
-  const [cameraPermission, setCameraPermission] = useState<boolean | null>(null)
+  const [profileImage, setProfileImage] = useState("https://placeholder.svg?height=100&width=100");
+  const [cameraPermission, setCameraPermission] = useState<boolean | null>(null);
+  const user = auth.currentUser;
+  if (!user) {
+    console.error("Utilisateur non authentifié");
+    return;
+  }
+
+  // Fetch the last uploaded image for the current user
+  const fetchLastUploadedImage = async () => {
+
+    try {
+      const q = query(
+        collection(db, "photo_utilisateur"),
+        where("id_utilisateur", "==", user.uid),
+        orderBy("date_changement", "desc"),
+        limit(1)
+      );
+
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        const lastImage = querySnapshot.docs[0].data();
+        setProfileImage(lastImage.lien_photo); // Set the last uploaded image
+      } else {
+        console.log("No image found for the user.");
+      }
+    } catch (error) {
+      console.error("Error fetching last uploaded image:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch the last uploaded image when the component mounts
+    fetchLastUploadedImage();
+
+    // Request camera permissions
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setCameraPermission(status === "granted");
+    })();
+  }, []);
 
   const uploadImageToCloudinary = async (imageUri: string) => {
-    const cloudName = "dpxgvv6x5"; // Remplace par ton cloud_name
-    const uploadPreset = "crypto_preset"; // Remplace par ton upload_preset
-  
+    const cloudName = "dpxgvv6x5"; // Replace with your cloud_name
+    const uploadPreset = "crypto_preset"; // Replace with your upload_preset
+
     try {
-      // 🔥 Convertir l'image locale en blob
-      const response = await fetch(imageUri);
-      const blob = await response.blob();
-  
+      // Read the file as a base64 string
+      const fileInfo = await FileSystem.getInfoAsync(imageUri);
+      if (!fileInfo.exists) {
+        throw new Error("File does not exist");
+      }
+
+      const base64 = await FileSystem.readAsStringAsync(imageUri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
       const formData = new FormData();
-      formData.append("file", blob, "photo.jpg"); // On envoie le blob
+      formData.append("file", `data:image/jpeg;base64,${base64}`);
       formData.append("upload_preset", uploadPreset);
-  
-      // 🔥 Envoyer vers Cloudinary
+
+      // Send the request to Cloudinary
       const uploadResponse = await fetch(
         `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
         {
           method: "POST",
           body: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
-  
+
+      if (!uploadResponse.ok) {
+        throw new Error(`HTTP error! Status: ${uploadResponse.status}`);
+      }
+
       const data = await uploadResponse.json();
-  
+
       if (data.secure_url) {
         console.log("✅ Image upload successful:", data.secure_url);
         return data.secure_url;
@@ -46,14 +101,27 @@ export default function Profile() {
       throw error;
     }
   };
-  
 
-  useEffect(() => {
-    ;(async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync()
-      setCameraPermission(status === "granted")
-    })()
-  }, [])
+  const saveImage = async (imageUrl: string) => {
+    const user = auth.currentUser;
+    if (!user) {
+      console.error("Utilisateur non authentifié");
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "photo_utilisateur"), {
+        date_changement: serverTimestamp(),
+        id_utilisateur: user.uid,
+        lien_photo: imageUrl,
+      });
+      console.log("Image saved successfully");
+      setProfileImage(imageUrl); // Update the profile image state
+      Alert.alert("Photo de profil", "✅ Mise à jour effectuée!");
+    } catch (error) {
+      console.error("Error saving image:", error);
+    }
+  };
 
   const handleChangeProfilePicture = async () => {
     if (cameraPermission) {
@@ -63,18 +131,18 @@ export default function Profile() {
           aspect: [1, 1],
           quality: 1,
         });
-  
+
         console.log("ImagePicker result:", result);
-  
+
         if (!result.canceled && result.assets && result.assets.length > 0) {
           const imageUri = result.assets[0].uri;
-          console.log("Selected image URI:", imageUri); // 🔥 Vérification
-  
-          setProfileImage(imageUri); // Mise à jour de l'état
-  
+          console.log("Selected image URI:", imageUri);
+
+          setProfileImage(imageUri); // Update the state with the new image
+
           try {
             const imageUrl = await uploadImageToCloudinary(imageUri);
-            console.log("✅ Image uploaded successfully. URL:", imageUrl);
+            await saveImage(imageUrl);
           } catch (error) {
             console.error("❌ Failed to upload image:", error);
             Alert.alert("Upload Failed", "Failed to upload the image to Cloudinary. Please try again.");
@@ -90,7 +158,6 @@ export default function Profile() {
       Alert.alert("Permission Required", "Camera permission is required to change profile picture.", [{ text: "OK" }]);
     }
   };
-  
 
   return (
     <View style={styles.container}>
@@ -100,12 +167,12 @@ export default function Profile() {
           <Ionicons name="camera" size={24} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
-      <Text style={styles.username}>Username</Text>
+      <Text style={styles.username}>{user.email}</Text>
       <TouchableOpacity style={styles.logoutButton}>
-        <Text style={styles.logoutButtonText}>Log Out</Text>
+        <Text style={styles.logoutButtonText}>Deconnexion</Text>
       </TouchableOpacity>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -149,5 +216,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-})
-
+});

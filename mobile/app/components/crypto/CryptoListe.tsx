@@ -9,13 +9,18 @@ export default function CryptoListe() {
 
     useEffect(() => {
         const fetchCryptos = async () => {
-            const querySnapshot = await getDocs(collection(db, "cryptomonnaie"));
-            const cryptos = [];
-            querySnapshot.forEach((doc) => {
-                cryptos.push({ id: doc.id, ...doc.data() });
-            });
-            setCards(cryptos);
-        };
+            try {
+              const querySnapshot = await getDocs(collection(db, "cryptomonnaie"));
+              const cryptos = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              }));
+              setCards(cryptos);
+              console.log(cryptos);
+            } catch (error) {
+              console.error("Erreur lors du chargement des données : ", error);
+            }
+          };
 
         fetchCryptos();
     }, []);

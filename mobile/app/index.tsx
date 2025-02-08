@@ -4,6 +4,11 @@ import CryptoCard from './components/crypto/CryptoCard'; // Assure-toi que le ch
 import CryptoListe  from './components/crypto/CryptoListe';
 import MainNavigation from './components/statics/MainNavigation';
 import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from "@react-navigation/stack";
+import LoginForm from './components/login/LoginForm';
+import AppNavigation from './components/statics/AppNavigation';
+import { createStaticNavigation } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // Définir les données des cartes
 const cards = [
   { id: '1', nom: 'Bitcoin', prix: '$45,000', username: 'satoshi_nakamoto' },
@@ -13,9 +18,21 @@ const cards = [
   { id: '5', nom: 'Polkadot', prix: '$28', username: 'gavin_wood' },
 ];
 
+// const Stack = createStackNavigator();
+const RootStack = createNativeStackNavigator({
+  initialRouteName: 'Login',
+  screens: {
+    Login: LoginForm,
+    Main: MainNavigation,
+  },
+});
+
+const Navigation = createStaticNavigation(RootStack);
 export default function App() {
   return (
+    // <NavigationContainer>
       <MainNavigation />
+    // </NavigationContainer>
   );
 }
 
