@@ -54,11 +54,12 @@ export default function AmountModal({ isVisible, onClose, onSubmit, actionType }
     }
 
     try {
-      await addDoc(collection(db, "mvt_fond"), {
+      await addDoc(collection(db, "MvtFond"), {
         depot: actionType === "Deposer" ? montant : 0,
         retrait: actionType === "Recuperer" ? montant : 0,
-        date_mvt: serverTimestamp(),
-        id_utilisateur: userId, // Utilisation de l'ID Firestore de l'utilisateur
+        dateMvt: serverTimestamp(),
+        utilisateur: 
+        // id_utilisateur: userId, // Utilisation de l'ID Firestore de l'utilisateur
       });
       console.log("Mouvement enregistré avec succès");
       Alert.alert("Succès", "Transaction enregistrée !");

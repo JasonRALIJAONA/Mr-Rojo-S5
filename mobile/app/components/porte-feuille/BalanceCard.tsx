@@ -21,7 +21,7 @@ export default function BalanceCard() {
         }
 
         // Requête Firestore pour les mouvements de fonds de l'utilisateur
-        const q = query(collection(db, "mvt_fond"), where("id_utilisateur", "==", user.id));
+        const q = query(collection(db, "MvtFond"), where("utilisateur.id", "==", user.id));
 
         // Écoute les changements en temps réel
         const unsubscribe = onSnapshot(

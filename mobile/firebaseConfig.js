@@ -9,14 +9,14 @@ import { getStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyDY6A8MwMbVWJO8eACEEj3HslsXYZRt7qM",
-    authDomain: "mini-projet-mobile-e1088.firebaseapp.com",
-    databaseURL: "https://mini-projet-mobile-e1088-default-rtdb.firebaseio.com",
-    projectId: "mini-projet-mobile-e1088",
-    storageBucket: "mini-projet-mobile-e1088.firebasestorage.app",
-    messagingSenderId: "73466862451",
-    appId: "1:73466862451:web:b20e6ec2d02b8fec360306"
-  };
+  apiKey: "AIzaSyA7phs5fDXaoCVPe1l9Sk4T-axuhPtXGe0",
+  authDomain: "prise-main.firebaseapp.com",
+  projectId: "prise-main",
+  storageBucket: "prise-main.firebasestorage.app",
+  messagingSenderId: "88522884488",
+  appId: "1:88522884488:web:dc406fecaac978f13fa63d"
+};
+
   
 
 // Initialize Firebase

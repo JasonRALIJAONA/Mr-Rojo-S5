@@ -12,7 +12,7 @@ export const getAuthenticatedUser = async () => {
           return null;
         }
 
-        const userCollection = collection(db, "utilisateur_idp");
+        const userCollection = collection(db, "Utilisateur_idp");
         const q = query(userCollection, where("email", "==", userCredential.email));
         const querySnapshot = await getDocs(q);
 

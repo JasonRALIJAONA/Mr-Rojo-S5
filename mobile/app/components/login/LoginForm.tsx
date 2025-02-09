@@ -26,7 +26,7 @@ export default function LoginForm({ navigation, onLogin }: Props) {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       console.log("Sign-in successful:", userCredential.user);
 
-      const usersCollectionRef = collection(db, "utilisateur_idp");
+      const usersCollectionRef = collection(db, "Utilisateur_idp");
       const q = query(usersCollectionRef, where("email", "==", userCredential.user.email));
       const querySnapshot = await getDocs(q);
 

@@ -38,11 +38,11 @@ export default function CryptoCard({ nom, symbole, prix: initialPrix, idCryptomo
 
   useEffect(() => {
     // Set up real-time listener for price updates
-    const coursCryptoRef = collection(db, "cours_crypto")
+    const coursCryptoRef = collection(db, "CoursCrypto")
     const q = query(
       coursCryptoRef,
-      where("id_cryptomonnaie", "==", idCryptomonnaie),
-      where("date_cours", "==", new Date().toISOString().split('T')[0]) // Get today's date
+      where("idCryptomonnaie", "==", idCryptomonnaie),
+      where("dateCours", "==", new Date().toISOString().split('T')[0]) // Get today's date
     )
     
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -66,8 +66,8 @@ export default function CryptoCard({ nom, symbole, prix: initialPrix, idCryptomo
       const favoritesRef = collection(db, "favori")
       const q = query(
         favoritesRef,
-        where("id_cryptomonnaie", "==", idCryptomonnaie),
-        where("id_utilisateur", "==", userId),
+        where("idCryptomonnaie", "==", idCryptomonnaie),
+        where("idUtilisateur", "==", userId),
       )
 
       const snapshot = await getDocs(q)
@@ -84,8 +84,8 @@ export default function CryptoCard({ nom, symbole, prix: initialPrix, idCryptomo
       const favoritesRef = collection(db, "favori")
       const q = query(
         favoritesRef,
-        where("id_cryptomonnaie", "==", idCryptomonnaie),
-        where("id_utilisateur", "==", idUtilisateur),
+        where("idCryptomonnaie", "==", idCryptomonnaie),
+        where("idUtilisateur", "==", idUtilisateur),
       )
 
       const snapshot = await getDocs(q)
