@@ -22,7 +22,7 @@ function BottomTabNavigator() {
           let iconName: keyof typeof Ionicons.glyphMap = "help"
 
           if (route.name === "Wallet") iconName = focused ? "wallet" : "wallet-outline"
-          else if (route.name === "Transactions") iconName = focused ? "list" : "list-outline"
+          // else if (route.name === "Transactions") iconName = focused ? "list" : "list-outline"
           else if (route.name === "Cours actuels") iconName = focused ? "trending-up" : "trending-up-outline"
           else if (route.name === "Profile") iconName = focused ? "person" : "person-outline"
 
@@ -37,7 +37,7 @@ function BottomTabNavigator() {
       })}
     >
       <Tab.Screen name="Wallet" component={Wallet} />
-      <Tab.Screen name="Transactions" component={Transactions} />
+      {/* <Tab.Screen name="Transactions" component={Transactions} /> */}
       <Tab.Screen name="Cours actuels" component={CryptoListe} />
       <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>

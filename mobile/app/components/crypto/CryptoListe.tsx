@@ -34,8 +34,7 @@ export default function CryptoListe() {
                     <CryptoCard
                         symbole={item.symbole}
                         nom={item.nom}
-                        prix={item.prix}
-                        username={item.username}
+                        idCryptomonnaie={item.id}
                         buttonText=""
                     />
                 )}

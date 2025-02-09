@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { getFirestore, collection, query, where, onSnapshot } from "firebase/firestore";
 import { auth, db } from "@/firebaseConfig";
+import { getAuthenticatedUser } from "../../utils/UserAuth";
 
 export default function BalanceCard() {
   const [balance, setBalance] = useState(0);
@@ -9,35 +10,51 @@ export default function BalanceCard() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const user = auth.currentUser;
-    if (!user) {
-      setError("Utilisateur non connecté");
-      setLoading(false);
-      return;
-    }
+    const fetchBalance = async () => {
+      try {
+        // Récupérer l'utilisateur authentifié
+        const user = await getAuthenticatedUser();
+        if (!user) {
+          setError("Utilisateur non connecté");
+          setLoading(false);
+          return;
+        }
 
-    const q = query(collection(db, "mvt_fond"), where("id_utilisateur", "==", user.uid));
+        // Requête Firestore pour les mouvements de fonds de l'utilisateur
+        const q = query(collection(db, "mvt_fond"), where("id_utilisateur", "==", user.id));
 
-    // Écoute les changements en temps réel
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      let totalDepot = 0;
-      let totalRetrait = 0;
+        // Écoute les changements en temps réel
+        const unsubscribe = onSnapshot(
+          q,
+          (snapshot) => {
+            let totalDepot = 0;
+            let totalRetrait = 0;
 
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        totalDepot += data.depot || 0;
-        totalRetrait += data.retrait || 0;
-      });
+            snapshot.forEach((doc) => {
+              const data = doc.data();
+              totalDepot += data.depot || 0;
+              totalRetrait += data.retrait || 0;
+            });
 
-      setBalance(totalDepot - totalRetrait);
-      setLoading(false);
-    }, (error) => {
-      console.error("Erreur lors du calcul du solde:", error);
-      setError(error.message);
-      setLoading(false);
-    });
+            setBalance(totalDepot - totalRetrait);
+            setLoading(false);
+          },
+          (error) => {
+            console.error("Erreur lors du calcul du solde:", error);
+            setError(error.message);
+            setLoading(false);
+          }
+        );
 
-    return () => unsubscribe(); // Nettoyage de l'écouteur
+        return () => unsubscribe(); // Nettoyage de l'écouteur
+      } catch (error) {
+        console.error("Erreur lors de la récupération de l'utilisateur:", error);
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+
+    fetchBalance();
   }, []);
 
   if (loading) {
