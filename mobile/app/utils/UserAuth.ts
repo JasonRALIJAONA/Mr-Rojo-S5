@@ -12,12 +12,13 @@ export const getAuthenticatedUser = async () => {
             return null;
         }
 
-        const userCollection = collection(db, "Utilisateur_idp");
+        const userCollection = collection(db, "Utilisateur");
         const q = query(userCollection, where("email", "==", userCredential.email));
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
-            return querySnapshot.docs[0].data(); // Retourne uniquement les données du document
+            console.log(querySnapshot.docs[0].data().id); // Retourne uniquement les données du document
+            return querySnapshot.docs[0].data();
         } else {
             Alert.alert("Erreur", "Utilisateur introuvable.");
             return null;

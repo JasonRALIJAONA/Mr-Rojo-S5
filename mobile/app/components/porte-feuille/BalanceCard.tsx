@@ -75,8 +75,8 @@ export default function BalanceCard() {
 
   return (
     <View style={styles.card}>
-      <Text style={styles.label}>Total</Text>
-      <Text style={styles.balance}>{balance.toFixed(2)}</Text>
+      <Text style={styles.label}>Solde actuel:</Text>
+      <Text style={styles.balance}>Ar{balance.toFixed(2)}</Text>
     </View>
   );
 }

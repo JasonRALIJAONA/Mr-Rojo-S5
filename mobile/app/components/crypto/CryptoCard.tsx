@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { View, Text, StyleSheet } from "react-native"
+import { useState, useEffect, useCallback } from "react"
+import { Text, StyleSheet, Animated } from "react-native"
 import FavoriteButton from "../utils/FavoriteButton"
 import { getFirestore, collection, query, where, getDocs, addDoc, deleteDoc, onSnapshot } from "firebase/firestore"
 import { getAuthenticatedUser } from "../../utils/UserAuth"
@@ -18,6 +18,7 @@ export default function CryptoCard({ nom, symbole, prix: initialPrix, idCryptomo
   const [idUtilisateur, setIdUtilisateur] = useState<string | null>(null)
   const [currentPrix, setCurrentPrix] = useState(initialPrix)
   const db = getFirestore()
+  const fadeAnim = useState(new Animated.Value(0))[0]
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -30,58 +31,70 @@ export default function CryptoCard({ nom, symbole, prix: initialPrix, idCryptomo
     fetchUser()
   }, [])
 
+  const checkIfFavorite = useCallback(
+    async (userId: string) => {
+      try {
+        const favoritesRef = collection(db, "favori")
+        const q = query(
+          favoritesRef,
+          where("idCryptomonnaie", "==", idCryptomonnaie),
+          where("idUtilisateur", "==", userId),
+        )
+
+        const snapshot = await getDocs(q)
+        setIsFavorite(!snapshot.empty)
+      } catch (error) {
+        console.error("Error checking favorite status:", error)
+      }
+    },
+    [db, idCryptomonnaie],
+  )
+
   useEffect(() => {
     if (idUtilisateur) {
       checkIfFavorite(idUtilisateur)
     }
-  }, [idUtilisateur])
+  }, [idUtilisateur, checkIfFavorite])
 
   useEffect(() => {
-    // Set up real-time listener for price updates
     const coursCryptoRef = collection(db, "CoursCrypto")
     const q = query(
       coursCryptoRef,
       where("idCryptomonnaie", "==", idCryptomonnaie),
-      where("dateCours", "==", new Date().toISOString().split('T')[0]) // Get today's date
+      where("dateCours", "==", new Date().toISOString().split("T")[0]),
     )
-    
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === "added" || change.type === "modified") {
-          const newPrice = change.doc.data().montant
-          setCurrentPrix(newPrice.toString())
-        }
-      })
-    }, (error) => {
-      console.error("Error listening to price updates:", error)
-    })
 
-    // Cleanup function to unsubscribe from the listener when component unmounts
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === "added" || change.type === "modified") {
+            const newPrice = change.doc.data().montant
+            setCurrentPrix(newPrice.toString())
+          }
+        })
+      },
+      (error) => {
+        console.error("Error listening to price updates:", error)
+      },
+    )
+
     return () => unsubscribe()
   }, [db, idCryptomonnaie])
 
-  const checkIfFavorite = async (userId: string) => {
-    try {
-      console.log("idCryptomonnaie"+idCryptomonnaie);
-      const favoritesRef = collection(db, "favori")
-      const q = query(
-        favoritesRef,
-        where("idCryptomonnaie", "==", idCryptomonnaie),
-        where("idUtilisateur", "==", userId),
-      )
-
-      const snapshot = await getDocs(q)
-      setIsFavorite(!snapshot.empty)
-    } catch (error) {
-      console.error("Error checking favorite status:", error)
-    }
-  }
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start()
+  }, [fadeAnim])
 
   const handleFavorite = async (newState: boolean) => {
     if (!idUtilisateur) return
 
     try {
-      const favoritesRef = collection(db, "favori")
+      const favoritesRef = collection(db, "Favori")
       const q = query(
         favoritesRef,
         where("idCryptomonnaie", "==", idCryptomonnaie),
@@ -93,9 +106,10 @@ export default function CryptoCard({ nom, symbole, prix: initialPrix, idCryptomo
       if (newState) {
         if (snapshot.empty) {
           await addDoc(favoritesRef, {
-            id_cryptomonnaie: idCryptomonnaie,
-            id_utilisateur: idUtilisateur,
-            date_ajout: new Date(),
+            id: null,
+            idCryptomonnaie: idCryptomonnaie,
+            idUtilisateur: idUtilisateur,
+            dateAjout: new Date(),
           })
           console.log("Added to favorites")
         }
@@ -109,54 +123,53 @@ export default function CryptoCard({ nom, symbole, prix: initialPrix, idCryptomo
       setIsFavorite(newState)
     } catch (error) {
       console.error("Error updating favorite status:", error)
-      // Revert the favorite state if an error occurs
       setIsFavorite(!newState)
     }
   }
 
   return (
-    <View style={styles.cardContainer}>
-      <Text style={styles.cardNom}>{nom}</Text>
+    <Animated.View style={[styles.cardContainer, { opacity: fadeAnim }]}>
       <Text style={styles.cardSymbole}>{symbole}</Text>
-      <Text style={styles.cardPrix}>{currentPrix}</Text>
+      <Text style={styles.cardNom}>{nom}</Text>
+      <Text style={styles.cardPrix}>Ar{Number.parseFloat(currentPrix).toLocaleString()}</Text>
       <FavoriteButton
         initialState={isFavorite}
         onPress={async (newState) => await handleFavorite(newState)}
-        size={28}
+        size={24}
       />
-    </View>
+    </Animated.View>
   )
 }
 
 const styles = StyleSheet.create({
   cardContainer: {
-    backgroundColor: '#ffffff',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    borderRadius: 8,
+    backgroundColor: "#1E3A5F",
+    borderRadius: 12,
     padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    margin: 8,
+    flex: 1,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
     elevation: 5,
   },
-  cardNom: {
-    fontSize: 18,
-    color: '#0F2573',
-    marginBottom: 8,
-    fontWeight: '600',
-  },
   cardSymbole: {
-    fontSize: 16,
-    color: '#0F2573',
+    fontSize: 18,
+    color: "#64B5F6",
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
+  cardNom: {
+    fontSize: 14,
+    color: "#B0BEC5",
     marginBottom: 8,
   },
   cardPrix: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#0F2573',
+    fontWeight: "bold",
+    color: "#4CAF50",
     marginBottom: 8,
   },
 })
+

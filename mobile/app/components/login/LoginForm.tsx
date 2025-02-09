@@ -3,7 +3,7 @@ import { View, TextInput, Text, StyleSheet, TouchableOpacity, Alert } from "reac
 import {  signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { getFirestore, doc, collection, query, where, getDocs } from "firebase/firestore"; // Added missing imports
 import { StackScreenProps } from "@react-navigation/stack";
-import { RootStackParamList } from "../statics/type";
+import { RootStackParamList } from "../../type/type";
 import {auth, db} from "../../../firebaseConfig";
 
 type Props = StackScreenProps<RootStackParamList, "Login"> & {
@@ -26,7 +26,7 @@ export default function LoginForm({ navigation, onLogin }: Props) {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       console.log("Sign-in successful:", userCredential.user);
 
-      const usersCollectionRef = collection(db, "Utilisateur_idp");
+      const usersCollectionRef = collection(db, "Utilisateur");
       const q = query(usersCollectionRef, where("email", "==", userCredential.user.email));
       const querySnapshot = await getDocs(q);
 
@@ -36,19 +36,14 @@ export default function LoginForm({ navigation, onLogin }: Props) {
         const userData = userDoc.data();
         console.log("User data:", userData);
 
-        if (!userData.est_valide) {
-          Alert.alert("Compte non validé", "Votre compte doit être validé par un administrateur.");
-          await signOut(auth); // Déconnexion immédiate
-        } else {
-          Alert.alert("Connexion réussie", `Bienvenue ${userData.nom_utilisateur} !`);
+          Alert.alert("Connexion réussie", `Bienvenue ${userData.nomUtilisateur} !`);
           onLogin(); // Mise à jour de l'état dans `MainNavigation`
-        }
       } else {
         console.log("User document does not exist");
         Alert.alert("Erreur", "Utilisateur introuvable.");
       }
     } catch (error: any) {
-      console.error("Erreur de connexion :", error);
+      console.error("Erreur de connexion :", error.code, error.message);
       Alert.alert("Erreur de connexion", error.message);
     } finally {
       setLoading(false);
@@ -83,11 +78,11 @@ export default function LoginForm({ navigation, onLogin }: Props) {
         <Text style={styles.buttonText}>{loading ? "Connexion..." : "Se connecter"}</Text>
       </TouchableOpacity>
 
-      <View style={styles.linksContainer}>
+      {/* <View style={styles.linksContainer}>
         <TouchableOpacity>
           <Text style={styles.linkText}>Mot de passe oublié?</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
     </View>
   );
 }

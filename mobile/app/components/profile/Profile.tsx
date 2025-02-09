@@ -2,28 +2,41 @@
 
 import * as FileSystem from "expo-file-system";
 import { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Image, StyleSheet, Alert, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { Camera } from "expo-camera";
-import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit } from "firebase/firestore";
+import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit, doc, DocumentReference } from "firebase/firestore";
 import { auth, db } from "@/firebaseConfig";
 import { getAuthenticatedUser } from "@/app/utils/UserAuth";
 
-export default function Profile() {
-  const [profileImage, setProfileImage] = useState("https://placeholder.svg?height=100&width=100");
-  const [cameraPermission, setCameraPermission] = useState<boolean | null>(null);
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+// Définir les types
+interface User {
+  id: string;
+  nomUtilisateur: string;
+}
 
-  // Fonction pour vérifier l'authentification et récupérer l'utilisateur
-  const fetchAuthenticatedUser = async () => {
+interface PhotoUtilisateur {
+  date_changement: Date;
+  utilisateur: DocumentReference;
+  lien_photo: string;
+}
+
+export default function Profile() {
+  const [profileImage, setProfileImage] = useState<string>("https://placeholder.svg?height=100&width=100");
+  const [cameraPermission, setCameraPermission] = useState<boolean | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [uploading, setUploading] = useState<boolean>(false);
+
+  // Récupérer l'utilisateur authentifié
+  const fetchAuthenticatedUser = async (): Promise<void> => {
     setLoading(true);
     try {
       const authenticatedUser = await getAuthenticatedUser();
       if (authenticatedUser) {
-        setUser(authenticatedUser); // Mettre à jour l'état de l'utilisateur
-        fetchLastUploadedImage(authenticatedUser.id); // Récupérer l'image de profil
+        setUser(authenticatedUser);
+        fetchLastUploadedImage(authenticatedUser.id);
       } else {
         Alert.alert("Erreur", "Aucun utilisateur n'est connecté.");
       }
@@ -35,48 +48,46 @@ export default function Profile() {
     }
   };
 
-  // Fetch the last uploaded image for the current user
-  const fetchLastUploadedImage = async (userId) => {
+  const fetchLastUploadedImage = async (userId: string): Promise<void> => {
     try {
+      const userRef = doc(db, "Utilisateur", userId);
       const q = query(
-        collection(db, "photo_utilisateur"),
-        where("id_utilisateur", "==", userId),
-        orderBy("date_changement", "desc"),
+        collection(db, "PhotoUtilisateur"),
+        where("utilisateur", "==", userRef),
+        orderBy("dateChangement", "desc"),
         limit(1)
       );
 
       const querySnapshot = await getDocs(q);
       if (!querySnapshot.empty) {
-        const lastImage = querySnapshot.docs[0].data();
-        setProfileImage(lastImage.lien_photo); // Set the last uploaded image
+        const lastImage = querySnapshot.docs[0].data() as PhotoUtilisateur;
+        setProfileImage(lastImage.lien_photo);
       } else {
-        console.log("No image found for the user.");
+        console.log("Aucune image trouvée pour cet utilisateur.");
       }
     } catch (error) {
-      console.error("Error fetching last uploaded image:", error);
+      console.error("Erreur recup image :", error);
     }
   };
 
   useEffect(() => {
-    // Vérifier l'authentification et récupérer l'utilisateur
     fetchAuthenticatedUser();
 
-    // Request camera permissions
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       setCameraPermission(status === "granted");
     })();
   }, []);
 
-  const uploadImageToCloudinary = async (imageUri: string) => {
-    const cloudName = "dpxgvv6x5"; // Replace with your cloud_name
-    const uploadPreset = "crypto_preset"; // Replace with your upload_preset
+  // Téléverser l'image vers Cloudinary
+  const uploadImageToCloudinary = async (imageUri: string): Promise<string> => {
+    const cloudName = "dpxgvv6x5";
+    const uploadPreset = "crypto_preset";
 
     try {
-      // Read the file as a base64 string
       const fileInfo = await FileSystem.getInfoAsync(imageUri);
       if (!fileInfo.exists) {
-        throw new Error("File does not exist");
+        throw new Error("Le fichier n'existe pas");
       }
 
       const base64 = await FileSystem.readAsStringAsync(imageUri, {
@@ -99,25 +110,26 @@ export default function Profile() {
       );
 
       if (!uploadResponse.ok) {
-        throw new Error(`HTTP error! Status: ${uploadResponse.status}`);
+        throw new Error(`Erreur HTTP ! Statut : ${uploadResponse.status}`);
       }
 
       const data = await uploadResponse.json();
 
       if (data.secure_url) {
-        console.log("✅ Image upload successful:", data.secure_url);
+        console.log(" success :", data.secure_url);
         return data.secure_url;
       } else {
-        console.error("❌ Upload failed, no secure_url:", data);
-        throw new Error(data.error?.message || "Upload failed");
+        console.error("exhec :", data);
+        throw new Error(data.error?.message || "Échec du téléversement");
       }
     } catch (error) {
-      console.error("❌ Error during upload:", error);
+      console.error("erreur :", error);
       throw error;
     }
   };
 
-  const saveImage = async (imageUrl: string) => {
+  // Sauvegarder l'image dans Firestore
+  const saveImage = async (imageUrl: string): Promise<void> => {
     if (!user) {
       console.error("Utilisateur non authentifié");
       Alert.alert("Erreur", "Aucun utilisateur n'est connecté.");
@@ -125,56 +137,52 @@ export default function Profile() {
     }
 
     try {
-      await addDoc(collection(db, "photo_utilisateur"), {
+      const userRef = doc(db, "Utilisateur", user.id);
+      await addDoc(collection(db, "PhotoUtilisateur"), {
         date_changement: serverTimestamp(),
-        id_utilisateur: user.id, // Utilisez user.uid de l'état
+        utilisateur: userRef,
         lien_photo: imageUrl,
       });
-      console.log("Image saved successfully");
-      setProfileImage(imageUrl); // Mettre à jour l'image de profil
-      Alert.alert("Photo de profil", "✅ Mise à jour effectuée!");
+      console.log("Image sauvegardée avec succès");
+      setProfileImage(imageUrl);
+      Alert.alert("Photo de profil", "✅ Mise à jour effectuée !");
     } catch (error) {
-      console.error("Error saving image:", error);
+      console.error("Erreur lors de la sauvegarde de l'image :", error);
       Alert.alert("Erreur", "Une erreur s'est produite lors de la sauvegarde de l'image.");
     }
   };
 
-  const handleChangeProfilePicture = async () => {
-    if (cameraPermission) {
-      try {
-        const result = await ImagePicker.launchCameraAsync({
-          allowsEditing: true,
-          aspect: [1, 1],
-          quality: 1,
-        });
+  // Changer la photo de profil
+  const handleChangeProfilePicture = async (): Promise<void> => {
+    if (!cameraPermission) {
+      Alert.alert("Permission requise", "Vous devez autoriser l'accès à la caméra pour changer la photo de profil.");
+      return;
+    }
 
-        console.log("ImagePicker result:", result);
+    setUploading(true);
+    try {
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
 
-        if (!result.canceled && result.assets && result.assets.length > 0) {
-          const imageUri = result.assets[0].uri;
-          console.log("Selected image URI:", imageUri);
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const imageUri = result.assets[0].uri;
+        setProfileImage(imageUri);
 
-          setProfileImage(imageUri); // Update the state with the new image
-
-          try {
-            const imageUrl = await uploadImageToCloudinary(imageUri);
-            await saveImage(imageUrl);
-          } catch (error) {
-            console.error("❌ Failed to upload image:", error);
-            Alert.alert("Upload Failed", "Failed to upload the image to Cloudinary. Please try again.");
-          }
-        } else {
-          console.log("❌ Image picking was cancelled.");
-        }
-      } catch (error) {
-        console.error("❌ Error capturing image:", error);
-        Alert.alert("Error", "An error occurred while capturing the image. Please try again.");
+        const imageUrl = await uploadImageToCloudinary(imageUri);
+        await saveImage(imageUrl);
       }
-    } else {
-      Alert.alert("Permission Required", "Camera permission is required to change profile picture.", [{ text: "OK" }]);
+    } catch (error) {
+      console.error("Erreur lors de la capture de l'image :", error);
+      Alert.alert("Erreur", "Une erreur s'est produite lors de la capture de l'image.");
+    } finally {
+      setUploading(false);
     }
   };
 
+  // Affichage pendant le chargement
   if (loading) {
     return (
       <View style={styles.container}>
@@ -183,6 +191,7 @@ export default function Profile() {
     );
   }
 
+  // Aucun utilisateur connecté
   if (!user) {
     return (
       <View style={styles.container}>
@@ -191,6 +200,17 @@ export default function Profile() {
     );
   }
 
+  // Affichage pendant le téléversement
+  if (uploading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#00A8E8" />
+        <Text style={styles.username}>Téléversement en cours...</Text>
+      </View>
+    );
+  }
+
+  // Affichage normal
   return (
     <View style={styles.container}>
       <View style={styles.profileImageContainer}>
@@ -199,14 +219,15 @@ export default function Profile() {
           <Ionicons name="camera" size={24} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
-      <Text style={styles.username}>{user.nom_utilisateur}</Text>
+      <Text style={styles.username}>{user.nomUtilisateur}</Text>
       <TouchableOpacity style={styles.logoutButton}>
-        <Text style={styles.logoutButtonText}>Deconnexion</Text>
+        <Text style={styles.logoutButtonText}>Déconnexion</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
+// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
