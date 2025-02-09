@@ -14,6 +14,9 @@ public class UtilisateurService {
     @Autowired
     private UtilisateurRepository utilisateurRepository;
 
+    @Autowired
+    private PhotoUtilisateurRepository photoUtilisateurRepository;
+
     public List<Utilisateur> getAllUtilisateurs() {
         return utilisateurRepository.findAll();
     }  
@@ -77,6 +80,11 @@ public class UtilisateurService {
         }
 
         return utilisateur;
+    }
+
+    public PhotoUtilisateur getMostRecentPhotoByUtilisateur(Long userId) {
+        Optional<PhotoUtilisateur> photoOptional = photoUtilisateurRepository.findMostRecentPhotoByUtilisateur(userId);
+        return photoOptional.orElse(null);
     }
  
 }
