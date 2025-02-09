@@ -3,6 +3,7 @@ using fournisseurIdentite.Services;
 using fournisseurIdentite.Models;
 using fournisseurIdentite.src.DTO;
 using fournisseurIdentite.src.Utils;
+using fournisseurIdentite.firebase;
 
 public class UtilisateurService
 {
@@ -28,6 +29,10 @@ public class UtilisateurService
 
         _context.Utilisateurs.Add(utilisateur);
         _context.SaveChanges();
+
+        FirebaseConfig firebaseConfig = new(_context);
+        firebaseConfig.CreateFirebaseUser(utilisateur);
+
         return utilisateur;
     }
 

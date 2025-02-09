@@ -46,7 +46,7 @@ public class FirebaseConfig
                     EmailVerified = true,
                     Disabled = false,
                 };
-                
+
                 try
                 {
                     var userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(userArgs);
@@ -58,5 +58,42 @@ public class FirebaseConfig
                 }
         }
 
+    }
+
+    public async void CreateFirebaseUser (Utilisateur utilisateur)
+    {
+        string basePath = Directory.GetCurrentDirectory();
+        string relativePath = Path.Combine(basePath, "..", "crypto", "src", "main", "resources", "firebase-service-deux.json");
+        string fullPath = Path.GetFullPath(relativePath);
+
+        Console.WriteLine($"Resolved path: {fullPath}");
+
+        if (!File.Exists(fullPath))
+        {
+            throw new FileNotFoundException("The Firebase service account key file was not found.", fullPath);
+        }
+
+        FirebaseApp.Create(new AppOptions()
+        {
+            Credential = GoogleCredential.FromFile(fullPath)
+        });
+
+        var userArgs = new UserRecordArgs
+        {
+            Email = utilisateur.Email,
+            Password = utilisateur.MotDePasse,
+            EmailVerified = true,
+            Disabled = false,
+        };
+
+        try
+        {
+            var userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(userArgs);
+            Console.WriteLine($"Successfully created user: {userRecord.Uid}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error creating user: {ex.Message}");
+        }
     }
 }
