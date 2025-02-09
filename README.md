@@ -3,5 +3,5 @@ localhost:5092/swagger/
 
 # Pour deployer le projet dans docker et le run
 docker-compose up --build
-docker build --rm -f 'Dockerfile' -t 'cryptos5:latest' '.' 
-docker run --rm -d -p 5093:80/tcp -p 8080:8080/tcp cryptos5:latest
+ctrl+C pour terminer le processus (car il y a erreur de postgres qui n'est pas encore detecte par spring boot)
+puis docker-compose up
