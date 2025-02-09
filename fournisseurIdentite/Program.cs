@@ -1,8 +1,11 @@
+using fournisseurIdentite.firebase;
 using fournisseurIdentite.Models;
 using fournisseurIdentite.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// FirebaseConfig.Initialize();
 
 // Configuration de la politique CORS
 builder.Services.AddCors(options =>
@@ -47,10 +50,21 @@ builder.Services.AddDbContext<FournisseurIdentiteContext>(options =>
 
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<UtilisateurService>();
+builder.Services.AddScoped<SyncService>();
+builder.Services.AddScoped<FirebaseConfig>();
+
 
 builder.Services.AddMemoryCache();
 
 var app = builder.Build();
+
+// Resolve FirestoreListener and call ListenToUtilisateurCollection
+using (var scope = app.Services.CreateScope())
+{
+    var FirebaseConfig = scope.ServiceProvider.GetRequiredService<FirebaseConfig>();
+
+    FirebaseConfig.Initialize();    
+}
 
 // Configuration du pipeline HTTP
 if (app.Environment.IsDevelopment())
