@@ -145,7 +145,7 @@ export default function Profile() {
       });
       console.log("Image sauvegardée avec succès");
       setProfileImage(imageUrl);
-      Alert.alert("Photo de profil", "✅ Mise à jour effectuée !");
+      Alert.alert("Photo de profil", " Mise à jour effectuée !");
     } catch (error) {
       console.error("Erreur lors de la sauvegarde de l'image :", error);
       Alert.alert("Erreur", "Une erreur s'est produite lors de la sauvegarde de l'image.");
