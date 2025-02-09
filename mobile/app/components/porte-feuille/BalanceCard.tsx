@@ -20,8 +20,7 @@ export default function BalanceCard() {
           return;
         }
 
-        // Requête Firestore pour les mouvements de fonds de l'utilisateur
-        const q = query(collection(db, "MvtFond"), where("utilisateur.id", "==", user.id));
+        const q = query(collection(db, "ValidationMvt"), where("utilisateur.id", "==", user.id));
 
         // Écoute les changements en temps réel
         const unsubscribe = onSnapshot(
@@ -32,8 +31,9 @@ export default function BalanceCard() {
 
             snapshot.forEach((doc) => {
               const data = doc.data();
-              totalDepot += data.depot || 0;
-              totalRetrait += data.retrait || 0;
+              console.log(doc.data());
+              totalDepot += data.mvtFond.depot || 0;
+              totalRetrait += data.mvtFond.retrait || 0;
             });
 
             setBalance(totalDepot - totalRetrait);
