@@ -7,9 +7,9 @@ export const getAuthenticatedUser = async () => {
     try {
         const userCredential = auth.currentUser;
         if (!userCredential) {
-          console.error("Utilisateur non authentifié");
-          Alert.alert("Erreur", "Aucun utilisateur n'est connecté.");
-          return null;
+            console.error("Utilisateur non authentifié");
+            Alert.alert("Erreur", "Aucun utilisateur n'est connecté.");
+            return null;
         }
 
         const userCollection = collection(db, "Utilisateur_idp");
@@ -17,16 +17,15 @@ export const getAuthenticatedUser = async () => {
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
-            const userDoc = querySnapshot.docs[0];
-            return { id: userDoc.id, ...userDoc.data() }; // Ajoute l'ID du document
+            return querySnapshot.docs[0].data(); // Retourne uniquement les données du document
         } else {
             Alert.alert("Erreur", "Utilisateur introuvable.");
             return null;
         }
         
     } catch (error) {
-       console.error("Erreur de récupération des données :", error);
-       Alert.alert("Erreur de connexion", error.message);
-       return null;
+        console.error("Erreur de récupération des données :", error);
+        Alert.alert("Erreur de connexion", error.message);
+        return null;
     }
 };

@@ -15,7 +15,7 @@ interface AmountModalProps {
 
 export default function AmountModal({ isVisible, onClose, onSubmit, actionType }: AmountModalProps) {
   const [amount, setAmount] = useState("");
-  const [userId, setUserId] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null); // Stocke les données complètes de l'utilisateur
 
   useEffect(() => {
     if (isVisible) {
@@ -24,11 +24,11 @@ export default function AmountModal({ isVisible, onClose, onSubmit, actionType }
   }, [isVisible]);
 
   const fetchUser = async () => {
-    const user = await getAuthenticatedUser();
-    if (user) {
-      setUserId(user.id); // Stocke l'ID Firestore
+    const authenticatedUser = await getAuthenticatedUser();
+    if (authenticatedUser) {
+      setUser(authenticatedUser); // Stocke les données complètes de l'utilisateur
     } else {
-      setUserId(null);
+      setUser(null);
       Alert.alert("Erreur", "Impossible de récupérer l'utilisateur.");
     }
   };
@@ -40,8 +40,8 @@ export default function AmountModal({ isVisible, onClose, onSubmit, actionType }
       return;
     }
 
-    if (!userId) {
-      console.error("ID utilisateur introuvable");
+    if (!user) {
+      console.error("Données utilisateur introuvables");
       Alert.alert("Erreur", "Impossible d'enregistrer l'opération.");
       return;
     }
@@ -58,9 +58,9 @@ export default function AmountModal({ isVisible, onClose, onSubmit, actionType }
         depot: actionType === "Deposer" ? montant : 0,
         retrait: actionType === "Recuperer" ? montant : 0,
         dateMvt: serverTimestamp(),
-        utilisateur: 
-        // id_utilisateur: userId, // Utilisation de l'ID Firestore de l'utilisateur
+        utilisateur: user, // Insère l'objet utilisateur complet
       });
+
       console.log("Mouvement enregistré avec succès");
       Alert.alert("Succès", "Transaction enregistrée !");
     } catch (error) {
@@ -158,3 +158,4 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+
