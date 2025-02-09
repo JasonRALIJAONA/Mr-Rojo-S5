@@ -6,7 +6,7 @@ import { View, Text, TouchableOpacity, Image, StyleSheet, Alert, ActivityIndicat
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { Camera } from "expo-camera";
-import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit, doc, DocumentReference } from "firebase/firestore";
+import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit } from "firebase/firestore";
 import { auth, db } from "@/firebaseConfig";
 import { getAuthenticatedUser } from "@/app/utils/UserAuth";
 
@@ -17,9 +17,9 @@ interface User {
 }
 
 interface PhotoUtilisateur {
-  date_changement: Date;
-  utilisateur: DocumentReference;
-  lien_photo: string;
+  dateChangement: Date;
+  utilisateur: { id: string }; // Utilisateur est un objet de mappage
+  lienPhoto: string;
 }
 
 export default function Profile() {
@@ -50,10 +50,9 @@ export default function Profile() {
 
   const fetchLastUploadedImage = async (userId: string): Promise<void> => {
     try {
-      const userRef = doc(db, "Utilisateur", userId);
       const q = query(
         collection(db, "PhotoUtilisateur"),
-        where("utilisateur", "==", userRef),
+        where("utilisateur.id", "==", userId), // Filtrer par utilisateur.id
         orderBy("dateChangement", "desc"),
         limit(1)
       );
@@ -61,12 +60,14 @@ export default function Profile() {
       const querySnapshot = await getDocs(q);
       if (!querySnapshot.empty) {
         const lastImage = querySnapshot.docs[0].data() as PhotoUtilisateur;
-        setProfileImage(lastImage.lien_photo);
+        setProfileImage(lastImage.lienPhoto);
       } else {
         console.log("Aucune image trouvée pour cet utilisateur.");
+        setProfileImage("https://placeholder.svg?height=100&width=100"); // Image par défaut
       }
     } catch (error) {
-      console.error("Erreur recup image :", error);
+      console.error("Erreur lors de la récupération de l'image :", error);
+      Alert.alert("Erreur", "Une erreur s'est produite lors de la récupération de l'image.");
     }
   };
 
@@ -119,7 +120,7 @@ export default function Profile() {
         console.log(" success :", data.secure_url);
         return data.secure_url;
       } else {
-        console.error("exhec :", data);
+        console.error("echec :", data);
         throw new Error(data.error?.message || "Échec du téléversement");
       }
     } catch (error) {
@@ -128,7 +129,6 @@ export default function Profile() {
     }
   };
 
-  // Sauvegarder l'image dans Firestore
   const saveImage = async (imageUrl: string): Promise<void> => {
     if (!user) {
       console.error("Utilisateur non authentifié");
@@ -137,11 +137,11 @@ export default function Profile() {
     }
 
     try {
-      const userRef = doc(db, "Utilisateur", user.id);
       await addDoc(collection(db, "PhotoUtilisateur"), {
-        date_changement: serverTimestamp(),
-        utilisateur: userRef,
-        lien_photo: imageUrl,
+        id: null,
+        dateChangement: serverTimestamp(),
+        utilisateur: user, // Enregistrer l'utilisateur comme un objet
+        lienPhoto: imageUrl,
       });
       console.log("Image sauvegardée avec succès");
       setProfileImage(imageUrl);
@@ -205,7 +205,7 @@ export default function Profile() {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" color="#00A8E8" />
-        <Text style={styles.username}>Téléversement en cours...</Text>
+        <Text style={styles.username}>Mise a jour...</Text>
       </View>
     );
   }
