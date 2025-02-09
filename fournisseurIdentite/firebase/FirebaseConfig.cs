@@ -18,8 +18,9 @@ public class FirebaseConfig
     public async void Initialize()
     {
         string basePath = Directory.GetCurrentDirectory();
-        string relativePath = Path.Combine(basePath, "..", "crypto", "src", "main", "resources", "firebase-service-deux.json");
+        string relativePath = Path.Combine(basePath,"firebase","firebase-service-deux.json");
         string fullPath = Path.GetFullPath(relativePath);
+        // fullPath = "firebase-service-deux.json";
 
         Console.WriteLine($"Resolved path: {fullPath}");
 
@@ -63,8 +64,9 @@ public class FirebaseConfig
     public async void CreateFirebaseUser (Utilisateur utilisateur)
     {
         string basePath = Directory.GetCurrentDirectory();
-        string relativePath = Path.Combine(basePath, "..", "crypto", "src", "main", "resources", "firebase-service-deux.json");
+        string relativePath = Path.Combine(basePath, "firebase","firebase-service-deux.json");
         string fullPath = Path.GetFullPath(relativePath);
+        // fullPath = "firebase-service-deux.json";
 
         Console.WriteLine($"Resolved path: {fullPath}");
 
