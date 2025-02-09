@@ -5,6 +5,7 @@ import { getFirestore, doc, collection, query, where, getDocs } from "firebase/f
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../statics/type";
 import {auth, db} from "../../../firebaseConfig";
+
 type Props = StackScreenProps<RootStackParamList, "Login"> & {
   onLogin: () => void;
 };
@@ -25,7 +26,6 @@ export default function LoginForm({ navigation, onLogin }: Props) {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       console.log("Sign-in successful:", userCredential.user);
 
-      // Récupération des infos utilisateur
       const usersCollectionRef = collection(db, "utilisateur_idp");
       const q = query(usersCollectionRef, where("email", "==", userCredential.user.email));
       const querySnapshot = await getDocs(q);

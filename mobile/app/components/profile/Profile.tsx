@@ -8,23 +8,39 @@ import * as ImagePicker from "expo-image-picker";
 import { Camera } from "expo-camera";
 import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit } from "firebase/firestore";
 import { auth, db } from "@/firebaseConfig";
+import { getAuthenticatedUser } from "@/app/utils/UserAuth";
 
 export default function Profile() {
   const [profileImage, setProfileImage] = useState("https://placeholder.svg?height=100&width=100");
   const [cameraPermission, setCameraPermission] = useState<boolean | null>(null);
-  const user = auth.currentUser;
-  if (!user) {
-    console.error("Utilisateur non authentifié");
-    return;
-  }
+  const [user, setUser] = useState(null); // État pour stocker l'utilisateur authentifié
+  const [loading, setLoading] = useState(true); // État pour gérer le chargement
+
+  // Fonction pour vérifier l'authentification et récupérer l'utilisateur
+  const fetchAuthenticatedUser = async () => {
+    setLoading(true);
+    try {
+      const authenticatedUser = await getAuthenticatedUser();
+      if (authenticatedUser) {
+        setUser(authenticatedUser); // Mettre à jour l'état de l'utilisateur
+        fetchLastUploadedImage(authenticatedUser.id); // Récupérer l'image de profil
+      } else {
+        Alert.alert("Erreur", "Aucun utilisateur n'est connecté.");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la récupération de l'utilisateur :", error);
+      Alert.alert("Erreur", "Une erreur s'est produite lors de la récupération de l'utilisateur.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Fetch the last uploaded image for the current user
-  const fetchLastUploadedImage = async () => {
-
+  const fetchLastUploadedImage = async (userId) => {
     try {
       const q = query(
         collection(db, "photo_utilisateur"),
-        where("id_utilisateur", "==", user.uid),
+        where("id_utilisateur", "==", userId),
         orderBy("date_changement", "desc"),
         limit(1)
       );
@@ -42,8 +58,8 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    // Fetch the last uploaded image when the component mounts
-    fetchLastUploadedImage();
+    // Vérifier l'authentification et récupérer l'utilisateur
+    fetchAuthenticatedUser();
 
     // Request camera permissions
     (async () => {
@@ -71,7 +87,6 @@ export default function Profile() {
       formData.append("file", `data:image/jpeg;base64,${base64}`);
       formData.append("upload_preset", uploadPreset);
 
-      // Send the request to Cloudinary
       const uploadResponse = await fetch(
         `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
         {
@@ -103,23 +118,24 @@ export default function Profile() {
   };
 
   const saveImage = async (imageUrl: string) => {
-    const user = auth.currentUser;
     if (!user) {
       console.error("Utilisateur non authentifié");
+      Alert.alert("Erreur", "Aucun utilisateur n'est connecté.");
       return;
     }
 
     try {
       await addDoc(collection(db, "photo_utilisateur"), {
         date_changement: serverTimestamp(),
-        id_utilisateur: user.uid,
+        id_utilisateur: user.id, // Utilisez user.uid de l'état
         lien_photo: imageUrl,
       });
       console.log("Image saved successfully");
-      setProfileImage(imageUrl); // Update the profile image state
+      setProfileImage(imageUrl); // Mettre à jour l'image de profil
       Alert.alert("Photo de profil", "✅ Mise à jour effectuée!");
     } catch (error) {
       console.error("Error saving image:", error);
+      Alert.alert("Erreur", "Une erreur s'est produite lors de la sauvegarde de l'image.");
     }
   };
 
@@ -159,6 +175,22 @@ export default function Profile() {
     }
   };
 
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.username}>Chargement...</Text>
+      </View>
+    );
+  }
+
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.username}>Aucun utilisateur connecté.</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.profileImageContainer}>
@@ -167,7 +199,7 @@ export default function Profile() {
           <Ionicons name="camera" size={24} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
-      <Text style={styles.username}>{user.email}</Text>
+      <Text style={styles.username}>{user.nom_utilisateur}</Text>
       <TouchableOpacity style={styles.logoutButton}>
         <Text style={styles.logoutButtonText}>Deconnexion</Text>
       </TouchableOpacity>

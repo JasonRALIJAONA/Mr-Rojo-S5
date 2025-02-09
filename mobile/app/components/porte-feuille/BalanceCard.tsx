@@ -10,13 +10,13 @@ export default function BalanceCard() {
   useEffect(() => {
     const fetchUserBalance = async () => {
       try {
-        // const user = auth.currentUser;
-        // if (!user) {
-        //   throw new Error("Utilisateur non connecté");
-        // }
+        const user = auth.currentUser;
+        if (!user) {
+          throw new Error("Utilisateur non connecté");
+        }
 
-        // const q = query(collection(db, 'mvt_fond'), where('id_utilisateur', '==', user.uid));
-        const q = query(collection(db, 'mvt_fond'), where('id_utilisateur', '==', 1));
+        const q = query(collection(db, 'mvt_fond'), where('id_utilisateur', '==', user.uid));
+        // const q = query(collection(db, 'mvt_fond'), where('id_utilisateur', '==', 1));
 
         const snapshot = await getDocs(q);
 
