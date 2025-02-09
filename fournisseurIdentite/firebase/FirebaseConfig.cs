@@ -29,10 +29,13 @@ public class FirebaseConfig
             throw new FileNotFoundException("The Firebase service account key file was not found.", fullPath);
         }
 
-        FirebaseApp.Create(new AppOptions()
+        if (FirebaseApp.DefaultInstance == null)
         {
-            Credential = GoogleCredential.FromFile(fullPath)
-        });
+            FirebaseApp.Create(new AppOptions()
+            {
+                Credential = GoogleCredential.FromFile(fullPath)
+            });
+        }
 
         List<Utilisateur> utilisateurs = [.. _dbContext.Utilisateurs];
 
@@ -75,10 +78,13 @@ public class FirebaseConfig
             throw new FileNotFoundException("The Firebase service account key file was not found.", fullPath);
         }
 
-        FirebaseApp.Create(new AppOptions()
+         if (FirebaseApp.DefaultInstance == null)
         {
-            Credential = GoogleCredential.FromFile(fullPath)
-        });
+            FirebaseApp.Create(new AppOptions()
+            {
+                Credential = GoogleCredential.FromFile(fullPath)
+            });
+        }
 
         var userArgs = new UserRecordArgs
         {
