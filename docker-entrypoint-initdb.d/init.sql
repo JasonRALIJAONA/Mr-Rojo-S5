@@ -243,14 +243,14 @@ INSERT INTO validation_mvt (date_validation, id_utilisateur, id_mvt_fond)
 VALUES 
 (NOW(), 4, 4);
 
--- Insérer des portefeuilles
-INSERT INTO portefeuille (montant, id_cryptomonnaie, id_utilisateur) 
-VALUES 
-(500, 1, 1), 
-(300, 2, 2),
-(800, 1, 3),
-(400, 2, 4),
-(600, 1, 5);
+-- -- Insérer des portefeuilles
+-- INSERT INTO portefeuille (montant, id_cryptomonnaie, id_utilisateur) 
+-- VALUES 
+-- (500, 1, 1), 
+-- (300, 2, 2),
+-- (800, 1, 3),
+-- (400, 2, 4),
+-- (600, 1, 5);
 
 
 -- Insérer les données de test pour les cryptomonnaies

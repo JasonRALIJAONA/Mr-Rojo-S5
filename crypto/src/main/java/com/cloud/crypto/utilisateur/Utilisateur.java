@@ -32,10 +32,10 @@ public class Utilisateur {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column()
     private String token;
 
-    @Column(name = "date_creation_compte", nullable = false)
+    @Column(name = "date_creation_compte")
     private LocalDateTime dateCreationCompte;
 
     @Column(name = "date_expiration")

@@ -33,6 +33,10 @@ public class SyncService {
 
     private final Firestore firestore;
 
+    String[] dataToSend = {"Cryptomonnaie", "Transaction" , "Utilisateur" , "Portefeuille" , "CoursCrypto" , "MvtFond" , "ValidationMvt", "PhotoUtilisateur"};
+
+    String[] dataToReceive = {"Transaction" , "Utilisateur" , "MvtFond" , "ValidationMvt", "PhotoUtilisateur"};
+
     public SyncService(Firestore firestore) {
         this.firestore = firestore;
     }
@@ -62,6 +66,7 @@ public class SyncService {
 
     private void syncTableFromFirestore(EntityType<?> entityType) throws Exception {
         String tableName = entityType.getJavaType().getSimpleName();
+        if(!isIn(dataToReceive, tableName)) return;
         QuerySnapshot querySnapshot = firestore.collection(tableName).get().get();
     
         for (QueryDocumentSnapshot document : querySnapshot.getDocuments()) {
@@ -135,6 +140,7 @@ public class SyncService {
 
     private void syncTable(EntityType<?> entityType) throws Exception {
         String tableName = entityType.getJavaType().getSimpleName(); // Use actual entity class name
+        if(!isIn(dataToSend, tableName)) return;
         List<?> entities = entityManager.createQuery("FROM " + tableName, entityType.getJavaType()).getResultList();
 
         for (Object entity : entities) {
@@ -186,6 +192,15 @@ public class SyncService {
     private Timestamp convertToTimestamp(LocalDateTime dateTime) {
         Date date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
         return Timestamp.of(date);
+    }
+
+    public static boolean isIn (String[] array, String value) {
+        for (String element : array) {
+            if (element.equalsIgnoreCase(value)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
  
