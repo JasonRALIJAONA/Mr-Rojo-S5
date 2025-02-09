@@ -82,7 +82,7 @@ import axios from 'axios';
 
 const isLoading = ref(false);
 const router = useRouter();
-const email = ref('lucas.martin@yopmail.com');
+const email = ref('sophie.durand@yopmail.com');
 const password = ref('motdepasse123');
 const pin = ref('');
 const isPinFormVisible = ref(false); // Contrôle l'affichage du formulaire PIN
