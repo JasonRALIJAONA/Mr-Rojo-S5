@@ -5,6 +5,7 @@ using fournisseurIdentite.src.DTO;
 using fournisseurIdentite.Models;
 using fournisseurIdentite.src.Utils;
 using Microsoft.Extensions.Caching.Memory;
+using fournisseurIdentite.firebase;
 
 namespace fournisseurIdentite.Controllers;
 
@@ -43,11 +44,14 @@ public class UtilisateurController : ControllerBase
             MotDePasse = _passwordService.HashPassword(user.Password ?? "")
         };
         Console.WriteLine(users);
+        FirebaseConfig firebaseConfig = new(_context);
 
         // TO DO : save to database 
         await _context.Utilisateurs.AddAsync(users);
         await _context.SaveChangesAsync();
         await _emailService.SendEmailAsync(users.Email ?? "", "Validation du compte", EmailBuilder.buildValidationMail(users.Id, users.NomUtilisateur ?? ""));
+
+        firebaseConfig.CreateFirebaseUser(users);
         return Ok("Compte créé");
     }
 
