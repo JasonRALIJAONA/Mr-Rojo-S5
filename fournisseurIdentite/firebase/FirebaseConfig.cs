@@ -46,7 +46,7 @@ public class FirebaseConfig
                 var userArgs = new UserRecordArgs
                 {
                     Email = utilisateur.Email,
-                    Password = utilisateur.MotDePasse,
+                    Password = "motdepasse123",
                     EmailVerified = true,
                     Disabled = false,
                 };
