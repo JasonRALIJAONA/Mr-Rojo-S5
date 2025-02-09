@@ -55,14 +55,15 @@ export default function AmountModal({ isVisible, onClose, onSubmit, actionType }
 
     try {
       await addDoc(collection(db, "MvtFond"), {
+        id: null,
         depot: actionType === "Deposer" ? montant : 0,
         retrait: actionType === "Recuperer" ? montant : 0,
         dateMvt: serverTimestamp(),
-        utilisateur: user, // Insère l'objet utilisateur complet
+        utilisateur: user, 
       });
 
       console.log("Mouvement enregistré avec succès");
-      Alert.alert("Succès", "Transaction enregistrée !");
+      Alert.alert("Succès", "Demande envoyée !");
     } catch (error) {
       console.error("Erreur lors de l'insertion dans Firestore :", error);
       Alert.alert("Erreur", "Échec de l'enregistrement.");
