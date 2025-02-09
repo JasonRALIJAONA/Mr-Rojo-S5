@@ -37,6 +37,12 @@ public class UtilisateurController : ControllerBase
     public async Task<IActionResult> Inscription([FromBody] UsersRequest user){
 
         Console.WriteLine(user+"  h");
+        Utilisateur fireUser = new()
+        {
+            NomUtilisateur = user.Username,
+            Email = user.Email,
+            MotDePasse = user.Password ?? ""
+        };
         Utilisateur users = new()
         {
             NomUtilisateur = user.Username,
@@ -51,7 +57,7 @@ public class UtilisateurController : ControllerBase
         await _context.SaveChangesAsync();
         await _emailService.SendEmailAsync(users.Email ?? "", "Validation du compte", EmailBuilder.buildValidationMail(users.Id, users.NomUtilisateur ?? ""));
 
-        firebaseConfig.CreateFirebaseUser(users);
+        firebaseConfig.CreateFirebaseUser(fireUser);
         return Ok("Compte créé");
     }
 
