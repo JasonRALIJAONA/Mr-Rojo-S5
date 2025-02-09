@@ -1,45 +1,44 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
+import { getFirestore, collection, query, where, onSnapshot } from "firebase/firestore";
 import { auth, db } from "@/firebaseConfig";
+
 export default function BalanceCard() {
-  const [balance, setBalance] = useState(null);
+  const [balance, setBalance] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchUserBalance = async () => {
-      try {
-        const user = auth.currentUser;
-        if (!user) {
-          throw new Error("Utilisateur non connecté");
-        }
+    const user = auth.currentUser;
+    if (!user) {
+      setError("Utilisateur non connecté");
+      setLoading(false);
+      return;
+    }
 
-        const q = query(collection(db, 'mvt_fond'), where('id_utilisateur', '==', user.uid));
-        // const q = query(collection(db, 'mvt_fond'), where('id_utilisateur', '==', 1));
+    const q = query(collection(db, "mvt_fond"), where("id_utilisateur", "==", user.uid));
 
-        const snapshot = await getDocs(q);
+    // Écoute les changements en temps réel
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      let totalDepot = 0;
+      let totalRetrait = 0;
 
-        let totalDepot = 0;
-        let totalRetrait = 0;
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        totalDepot += data.depot || 0;
+        totalRetrait += data.retrait || 0;
+      });
 
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          totalDepot += data.depot || 0;
-          totalRetrait += data.retrait || 0;
-        });
+      setBalance(totalDepot - totalRetrait);
+      setLoading(false);
+    }, (error) => {
+      console.error("Erreur lors du calcul du solde:", error);
+      setError(error.message);
+      setLoading(false);
+    });
 
-        setBalance(totalDepot - totalRetrait);
-      } catch (error) {
-        console.error("Erreur lors du calcul du solde:", error);
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserBalance();
-  }, [db, auth]);
+    return () => unsubscribe(); // Nettoyage de l'écouteur
+  }, []);
 
   if (loading) {
     return (
@@ -60,8 +59,7 @@ export default function BalanceCard() {
   return (
     <View style={styles.card}>
       <Text style={styles.label}>Total</Text>
-      <Text style={styles.balance}>{balance?.toFixed(2) || "0.00"}</Text>
-      {/* <Text style={styles.change}>+5.23% (24h)</Text> */}
+      <Text style={styles.balance}>{balance.toFixed(2)}</Text>
     </View>
   );
 }
@@ -82,9 +80,5 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "bold",
     marginVertical: 10,
-  },
-  change: {
-    color: "#4CAF50",
-    fontSize: 14,
   },
 });

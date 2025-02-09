@@ -1,9 +1,11 @@
-"use client"
+"use client";
 
-import { useState } from "react";
-import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
-import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { useState, useEffect } from "react";
+import { Modal, View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "@/firebaseConfig";
+import { getAuthenticatedUser } from "../../utils/UserAuth"; // Import de la fonction
+
 interface AmountModalProps {
   isVisible: boolean;
   onClose: () => void;
@@ -13,29 +15,56 @@ interface AmountModalProps {
 
 export default function AmountModal({ isVisible, onClose, onSubmit, actionType }: AmountModalProps) {
   const [amount, setAmount] = useState("");
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isVisible) {
+      fetchUser();
+    }
+  }, [isVisible]);
+
+  const fetchUser = async () => {
+    const user = await getAuthenticatedUser();
+    if (user) {
+      setUserId(user.id); // Stocke l'ID Firestore
+    } else {
+      setUserId(null);
+      Alert.alert("Erreur", "Impossible de récupérer l'utilisateur.");
+    }
+  };
 
   const handleSubmit = async () => {
     if (!auth.currentUser) {
       console.error("Utilisateur non authentifié");
+      Alert.alert("Erreur", "Vous devez être connecté pour effectuer cette action.");
       return;
     }
-    
+
+    if (!userId) {
+      console.error("ID utilisateur introuvable");
+      Alert.alert("Erreur", "Impossible d'enregistrer l'opération.");
+      return;
+    }
+
     const montant = parseFloat(amount);
     if (isNaN(montant) || montant <= 0) {
       console.error("Montant invalide");
+      Alert.alert("Erreur", "Veuillez entrer un montant valide.");
       return;
     }
-    
+
     try {
       await addDoc(collection(db, "mvt_fond"), {
         depot: actionType === "Deposer" ? montant : 0,
         retrait: actionType === "Recuperer" ? montant : 0,
         date_mvt: serverTimestamp(),
-        id_utilisateur: 1,
+        id_utilisateur: userId, // Utilisation de l'ID Firestore de l'utilisateur
       });
       console.log("Mouvement enregistré avec succès");
+      Alert.alert("Succès", "Transaction enregistrée !");
     } catch (error) {
       console.error("Erreur lors de l'insertion dans Firestore :", error);
+      Alert.alert("Erreur", "Échec de l'enregistrement.");
     }
 
     onSubmit(amount);

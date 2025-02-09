@@ -13,8 +13,8 @@ import { getAuthenticatedUser } from "@/app/utils/UserAuth";
 export default function Profile() {
   const [profileImage, setProfileImage] = useState("https://placeholder.svg?height=100&width=100");
   const [cameraPermission, setCameraPermission] = useState<boolean | null>(null);
-  const [user, setUser] = useState(null); // État pour stocker l'utilisateur authentifié
-  const [loading, setLoading] = useState(true); // État pour gérer le chargement
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // Fonction pour vérifier l'authentification et récupérer l'utilisateur
   const fetchAuthenticatedUser = async () => {
