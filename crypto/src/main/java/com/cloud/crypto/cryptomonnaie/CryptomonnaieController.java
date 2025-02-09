@@ -67,4 +67,10 @@ public class CryptomonnaieController {
     public List<CoursCrypto> getLast50ByIdCryptomonnaie(@PathVariable Long idCrypto) {
         return service.getLast10ByIdCryptomonnaie(idCrypto);
     }
+
+
+    @GetMapping("/coursCryptoActuel")
+    public List<CoursCryptoActuel> getAllCoursCryptoActuel() {
+        return service.getAllCoursCryptoActuel();
+    }
 }

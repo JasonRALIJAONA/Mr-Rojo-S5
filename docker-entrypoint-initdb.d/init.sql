@@ -176,6 +176,21 @@ BEFORE INSERT OR UPDATE ON mvt_fond
 FOR EACH ROW
 EXECUTE FUNCTION verifier_fonds_avant_retrait();
 
+CREATE VIEW v_cours_crypto_actuel AS
+SELECT c.id AS id_cryptomonnaie,
+       c.nom AS nom_cryptomonnaie,
+       c.symbole AS symbole_cryptomonnaie,
+       co.montant AS prix_actuel
+FROM cryptomonnaie c
+JOIN (
+    SELECT id_cryptomonnaie, montant, date_cours
+    FROM cours_crypto
+    WHERE (id_cryptomonnaie, date_cours) IN (
+        SELECT id_cryptomonnaie, MAX(date_cours)
+        FROM cours_crypto
+        GROUP BY id_cryptomonnaie
+    )
+) co ON c.id = co.id_cryptomonnaie;
 
 -- Insérer des rôles
 INSERT INTO Role (role) VALUES ('Utilisateur'), ('Administrateur');

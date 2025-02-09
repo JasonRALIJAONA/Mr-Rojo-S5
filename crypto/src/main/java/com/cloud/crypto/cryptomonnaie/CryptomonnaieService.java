@@ -17,6 +17,9 @@ public class CryptomonnaieService {
     @Autowired
     private CoursCryptoRepository coursCryptoRepository;
 
+    @Autowired
+    CoursCryptoActuelRepository coursCryptoActuelRepository;
+
     public List<Cryptomonnaie> getAllCryptos() {
         return repository.findAll();
     }
@@ -75,5 +78,9 @@ public class CryptomonnaieService {
 
     public List<CoursCrypto> getLast10ByIdCryptomonnaie(Long idCrypto) {
         return coursCryptoRepository.findTop10ByCryptomonnaieIdOrderByDateCoursDesc(idCrypto);
+    }
+
+    public List<CoursCryptoActuel> getAllCoursCryptoActuel() {
+        return coursCryptoActuelRepository.findAll();
     }
 }

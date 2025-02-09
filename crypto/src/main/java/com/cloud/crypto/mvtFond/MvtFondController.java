@@ -106,10 +106,22 @@ public class MvtFondController {
         ));
     }
 
-    @GetMapping("/fond/{idUtilisateur}")
-    public Map<String, BigDecimal> getFondActuel(@PathVariable Long idUtilisateur) {
-        BigDecimal fondActuel = mvtFondService.getFondActuel(idUtilisateur);
-        return Map.of("fondActuel", fondActuel);
+    @GetMapping("/fond")
+    public ResponseEntity<?> getFondActuel(@RequestHeader(value = "Authorization", required = false) String authHeader) throws Exception{
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body("Token manquant ou invalide.");
+        }
+    
+        // Extraction du token après "Bearer "
+        String token = authHeader.substring(7);
+    
+        // Appeler le service pour valider et récupérer l'utilisateur via le token
+        Utilisateur user = utilisateurService.findByToken(token);
+
+
+        BigDecimal fondActuel = mvtFondService.getFondActuel(user.getId());
+        return ResponseEntity.ok().body(Map.of(
+            "fondActuel", fondActuel));
     }
     
     @GetMapping("/mvt-fond/non-valide")

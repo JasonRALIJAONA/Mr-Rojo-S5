@@ -116,7 +116,7 @@ const fetchCryptoPrices = async () => {
   }
 };
 
-// Rafraîchir les données toutes les 10 secondes
+// Rafraîchir les données toutes les 5 secondes
 let interval;
 onMounted(() => {
   fetchCryptoPrices();

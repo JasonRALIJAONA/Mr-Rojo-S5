@@ -1,11 +1,5 @@
 <script setup>
 // import HelloWorld from './components/HelloWorld.vue'
-import LoginPage from './components/Login/LoginPage.vue';
-import CardList from './components/Vente/CardList.vue';
-import VenteForm from './components/Vente/VenteForm.vue';
-import TableCrypto from './components/Crypto/TableCrypto.vue';
-import ListePorteFeuille from './components/PorteFeuille/ListePorteFeuille.vue';
-import Wallet from './components/PorteFeuille/Wallet.vue';
 import './assets/tailwind.css';
 
 const cryptoData = [

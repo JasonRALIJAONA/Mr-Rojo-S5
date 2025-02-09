@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Login from './components/Login/LoginPage.vue';
 import LoginAdmin from './components/Login/LoginAdminPage.vue';
 import VenteForme from './components/Vente/VenteForm.vue';
-import CardList from './components/Vente/CardList.vue';
+import CardList from './components/Crypto/CardList.vue';
 import listeCrypto from './components/Crypto/TableCrypto.vue';
 import CryptoChart from './components/Crypto/CryptoChart.vue';
 import EvolutionCrypto from './components/Crypto/EvolutionCrypto.vue';
