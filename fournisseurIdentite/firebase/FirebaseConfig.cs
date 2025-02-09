@@ -46,7 +46,6 @@ public class FirebaseConfig
                     EmailVerified = true,
                     Disabled = false,
                 };
-
                 try
                 {
                     var userRecord = await FirebaseAuth.DefaultInstance.CreateUserAsync(userArgs);

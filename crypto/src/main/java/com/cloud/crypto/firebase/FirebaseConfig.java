@@ -1,36 +1,36 @@
-// package com.cloud.crypto.firebase;
+package com.cloud.crypto.firebase;
 
-// import com.google.auth.oauth2.GoogleCredentials;
-// import com.google.cloud.firestore.Firestore;
-// import com.google.firebase.FirebaseApp;
-// import com.google.firebase.FirebaseOptions;
-// import com.google.firebase.cloud.FirestoreClient;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.Firestore;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.cloud.FirestoreClient;
 
-// import org.springframework.context.annotation.Bean;
-// import org.springframework.context.annotation.Configuration;
-// import org.springframework.core.io.ClassPathResource;
-// import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-// import java.io.IOException;
-// import java.io.InputStream;
+import java.io.IOException;
+import java.io.InputStream;
   
-// @Configuration
-// @EnableTransactionManagement
-// public class FirebaseConfig {
+@Configuration
+@EnableTransactionManagement
+public class FirebaseConfig {
 
-//     @Bean
-//     public Firestore firestore() throws IOException {
-//         InputStream serviceAccount = new ClassPathResource("firebase-service-deux.json").getInputStream();
+    @Bean
+    public Firestore firestore() throws IOException {
+        InputStream serviceAccount = new ClassPathResource("firebase-service-deux.json").getInputStream();
 
-//         FirebaseOptions options = FirebaseOptions.builder()
-//                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-//                 .build();
+        FirebaseOptions options = FirebaseOptions.builder()
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .build();
 
-//         if (FirebaseApp.getApps().isEmpty()) {
-//             FirebaseApp.initializeApp(options);
-//         }
+        if (FirebaseApp.getApps().isEmpty()) {
+            FirebaseApp.initializeApp(options);
+        }
 
-//         return FirestoreClient.getFirestore();
-//     }
+        return FirestoreClient.getFirestore();
+    }
 
-// }
+}
