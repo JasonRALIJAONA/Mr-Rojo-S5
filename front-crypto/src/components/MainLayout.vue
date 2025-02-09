@@ -25,16 +25,25 @@
               Historique Transaction
             </router-link>
           </li>
-          <!-- Afficher uniquement si le rôle est 'admin' -->
           <li v-if="isAdmin">
             <router-link to="/home/ValidationMvtFond" class="hover:text-yellow-300 transition">
               Validation Mvt Fond
             </router-link>
           </li>
+          <li>
+            <router-link to="/home/ListeVente" class="hover:text-yellow-300 transition">
+              Cours Actuel Crypto
+            </router-link>
+          </li>
         </ul>
-        <button @click="toggleDarkMode" class="ml-4 p-2 bg-gray-700 rounded text-white">
-          <component :is="isDarkMode ? 'MoonIcon' : 'SunIcon'" class="w-6 h-6" />
-        </button>
+        <div class="flex items-center space-x-4">
+          <span v-if="fondActuel !== null && isUser"class="text-yellow-300 font-bold">
+            Fond Actuel: {{ fondActuel }} ariary
+          </span>
+          <button @click="toggleDarkMode" class="p-2 bg-gray-700 rounded text-white">
+            <component :is="isDarkMode ? 'MoonIcon' : 'SunIcon'" class="w-6 h-6" />
+          </button>
+        </div>
       </div>
     </nav>
 
@@ -50,12 +59,31 @@
 
 <script setup>
   import AppFooter from './Statics/Footer.vue';
+  import { ref, onMounted } from 'vue';
+  import axios from 'axios';
+  import { useRoute } from 'vue-router';
+
+  const fondActuel = ref(null);
+  const route = useRoute();
+
+  const loadFondActuel = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/MvtFond/fond`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`
+        }
+      });
+      fondActuel.value = response.data.fondActuel || 0;
+    } catch (error) {
+      console.error('Erreur lors de la récupération du fond:', error);
+    }
+  };
+
+  onMounted(loadFondActuel);
 </script>
 
 <script>
 import { SunIcon, MoonIcon } from '@heroicons/vue/solid';
-
-console.log('roleee:' ,localStorage.getItem('userRole'));
 
 export default {
   name: "BaseLayout",
@@ -64,9 +92,8 @@ export default {
       isDarkMode: false,
       SunIcon,
       MoonIcon,
-      // Vérifier si l'utilisateur a le rôle "admin"
       isAdmin: localStorage.getItem('userRole') === 'Administrateur',
-      isUser: localStorage.getItem('userRole') === 'Utilisateur',      
+      isUser: localStorage.getItem('userRole') === 'Utilisateur',
     };
   },
   methods: {
@@ -85,7 +112,6 @@ export default {
 </script>
 
 <style scoped>
-/* Optionnel, pour s'assurer que les éléments de la navbar sont bien alignés */
 .navbar {
   display: flex;
   justify-content: space-between;

@@ -51,8 +51,8 @@
       <table class="w-full min-w-full table-auto border-collapse text-left">
         <thead>
           <tr class="bg-blue-700 text-white">
-            <th class="py-3 px-4 text-sm font-semibold">Date</th>
             <th class="py-3 px-4 text-sm font-semibold">Utilisateur</th>
+            <th class="py-3 px-4 text-sm font-semibold">Date</th>
             <th class="py-3 px-4 text-sm font-semibold">Cryptomonnaie</th>
             <th class="py-3 px-4 text-sm font-semibold">Quantité</th>
             <th class="py-3 px-4 text-sm font-semibold">Prix Unitaire</th>
@@ -64,8 +64,16 @@
             :key="transaction.id"
             class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
           >
+            <td class="py-3 px-4 text-gray-700 dark:text-white">
+              <img 
+                v-if="transaction.utilisateur.photo" 
+                :src="transaction.utilisateur.photo" 
+                alt="Photo de l'utilisateur"
+                class="w-8 h-8 rounded-full inline-block mr-2"
+              />
+              {{ transaction.utilisateur.nom }}
+            </td>
             <td class="py-3 px-4 text-gray-700 dark:text-white">{{ transaction.dateTransaction }}</td>
-            <td class="py-3 px-4 text-gray-700 dark:text-white">{{ transaction.utilisateur.nom }}</td>
             <td class="py-3 px-4 text-gray-700 dark:text-white">{{ transaction.cryptomonnaie.nom }}</td>
             <td class="py-3 px-4 text-gray-700 dark:text-white">{{ transaction.quantite }}</td>
             <td class="py-3 px-4 text-gray-700 dark:text-white">{{ transaction.prixUnitaire }}</td>
@@ -82,8 +90,6 @@
 import axios from "axios";
 
 export default {
-  watch: {
-  },
   data() {
     return {
       dateStart: null,
@@ -107,6 +113,12 @@ export default {
           }
         });
         this.transactions = response.data;
+
+        // Charger les photos pour chaque utilisateur des transactions
+        this.transactions.forEach(async (transaction) => {
+          const photoResponse = await axios.get(`http://localhost:8080/api/utilisateurs/photo/${transaction.utilisateur.id}`);
+          transaction.utilisateur.photo = photoResponse.data.lienPhoto;
+        });
       } catch (error) {
         console.error("Erreur lors de la récupération des transactions :", error);
       }

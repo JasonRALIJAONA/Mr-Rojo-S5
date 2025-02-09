@@ -27,11 +27,19 @@
       </div>
       <button
         type="submit"
-        :disabled="!isLoginFormValid"
+        :disabled="!isLoginFormValid || isLoading"
         class="w-full py-3 bg-blue-900 text-white rounded-md font-semibold disabled:bg-gray-400 hover:bg-blue-700 focus:outline-none"
       >
-        Continuer avec l'idP
+        <span v-if="isLoading" class="flex justify-center items-center">
+          <svg class="animate-spin h-5 w-5 text-white mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C6.373 0 2 4.373 2 10h2z"></path>
+          </svg>
+          Chargement...
+        </span>
+        <span v-else>Continuer avec l'idP</span>
       </button>
+
 
       <!-- Links -->
       <div class="flex justify-between mt-4">
@@ -72,6 +80,7 @@ import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
+const isLoading = ref(false);
 const router = useRouter();
 const email = ref('lucas.martin@yopmail.com');
 const password = ref('motdepasse123');
@@ -85,6 +94,7 @@ const isPinFormValid = computed(() => pin.value.length === 5);
 // Handle Login
 const handleLogin = async () => {
   if (isLoginFormValid.value) {
+    isLoading.value = true; // Activer le chargement
     try {
       const response = await axios.post('http://localhost:5093/api/utilisateur/login', {
         Email: email.value,
@@ -93,13 +103,14 @@ const handleLogin = async () => {
 
       if (response.status === 200) {
         console.log('Login success:', response.data);
-        // Transition vers la validation du PIN après une connexion réussie
         isPinFormVisible.value = true;
       } else {
         console.error('Erreur de login:', response.data);
       }
     } catch (error) {
       console.error('Erreur lors de la connexion:', error);
+    } finally {
+      isLoading.value = false; // Désactiver le chargement
     }
   }
 };

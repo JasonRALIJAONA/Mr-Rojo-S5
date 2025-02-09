@@ -73,7 +73,6 @@ CREATE TABLE utilisateur(
 
 CREATE TABLE transaction(
    id SERIAL,
-   est_valide BOOLEAN,
    achat NUMERIC(15,2)  ,
    vente NUMERIC(15,2)  ,
    prix_unitaire NUMERIC(15,2)   NOT NULL,
@@ -125,7 +124,6 @@ SELECT
     COALESCE(SUM(t.achat - t.vente), 0) AS quantite_totale
 FROM transaction t
 JOIN cryptomonnaie c ON t.id_cryptomonnaie = c.id
-WHERE t.est_valide = TRUE
 GROUP BY t.id_utilisateur, t.id_cryptomonnaie, c.nom, c.symbole;
 
 CREATE TABLE photo_utilisateur(
@@ -178,6 +176,21 @@ BEFORE INSERT OR UPDATE ON mvt_fond
 FOR EACH ROW
 EXECUTE FUNCTION verifier_fonds_avant_retrait();
 
+CREATE VIEW v_cours_crypto_actuel AS
+SELECT c.id AS id_cryptomonnaie,
+       c.nom AS nom_cryptomonnaie,
+       c.symbole AS symbole_cryptomonnaie,
+       co.montant AS prix_actuel
+FROM cryptomonnaie c
+JOIN (
+    SELECT id_cryptomonnaie, montant, date_cours
+    FROM cours_crypto
+    WHERE (id_cryptomonnaie, date_cours) IN (
+        SELECT id_cryptomonnaie, MAX(date_cours)
+        FROM cours_crypto
+        GROUP BY id_cryptomonnaie
+    )
+) co ON c.id = co.id_cryptomonnaie;
 
 -- Insérer des rôles
 INSERT INTO Role (role) VALUES ('Utilisateur'), ('Administrateur');
@@ -243,15 +256,6 @@ INSERT INTO validation_mvt (date_validation, id_utilisateur, id_mvt_fond)
 VALUES 
 (NOW(), 4, 4);
 
--- -- Insérer des portefeuilles
--- INSERT INTO portefeuille (montant, id_cryptomonnaie, id_utilisateur) 
--- VALUES 
--- (500, 1, 1), 
--- (300, 2, 2),
--- (800, 1, 3),
--- (400, 2, 4),
--- (600, 1, 5);
-
 
 -- Insérer les données de test pour les cryptomonnaies
 INSERT INTO cours_crypto (date_cours, montant, id_cryptomonnaie)
@@ -266,3 +270,14 @@ VALUES
   (NOW(), 350.00, (SELECT id FROM cryptomonnaie WHERE symbole = 'BCH')),
   (NOW(), 0.40, (SELECT id FROM cryptomonnaie WHERE symbole = 'XLM')),
   (NOW(), 50.00, (SELECT id FROM cryptomonnaie WHERE symbole = 'AVAX'));
+
+
+-- Insertion de données de test
+INSERT INTO transaction (achat, vente, prix_unitaire, quantite, date_transaction, id_cryptomonnaie, id_utilisateur)
+VALUES 
+(1500.00, NULL, 500.00, 3, '2025-01-10 12:00:00', 1, 1),
+(NULL, 2500.00, 500.00, 5, '2025-01-15 15:30:00', 2, 2),
+(3000.00, NULL, 1000.00, 3, '2025-02-01 09:45:00', 3, 1),
+(NULL, 5000.00, 1250.00, 4, '2025-02-05 10:15:00', 1, 3),
+(7500.00, NULL, 1500.00, 5, '2025-02-09 14:20:00', 2, 4);
+

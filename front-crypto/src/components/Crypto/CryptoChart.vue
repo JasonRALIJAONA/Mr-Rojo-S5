@@ -83,9 +83,6 @@ const fetchCryptoPrices = async () => {
 
     for (let i = 0; i < cryptos.length; i++) {
       const crypto = cryptos[i];
-      await fetch(`http://localhost:8080/api/cryptos/generate/${crypto.id}`, {
-        method: 'POST',
-      });
 
       const response = await fetch(`http://localhost:8080/api/cryptos/cours/last50/${crypto.id}`);
       const data = await response.json();
@@ -119,11 +116,11 @@ const fetchCryptoPrices = async () => {
   }
 };
 
-// Rafraîchir les données toutes les 10 secondes
+// Rafraîchir les données toutes les 5 secondes
 let interval;
 onMounted(() => {
   fetchCryptoPrices();
-  interval = setInterval(fetchCryptoPrices, 10000);
+  interval = setInterval(fetchCryptoPrices, 5000);
 });
 
 onUnmounted(() => {

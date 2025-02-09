@@ -1,84 +1,46 @@
 <template>
-    <div class="crypto-card">
-      <h2 class="card-nom">{{ nom }}</h2>
-      <h3 class="card-symbole">{{ symbole }}</h3>
-      <p class="card-prix">{{ prix }}</p>
-      <p class="card-username">{{ username }}</p>
+  <div class="crypto-card bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg p-6 mb-6 transition-transform transform hover:-translate-y-1">
+    <h2 class="card-nom text-xl font-semibold text-blue-700 dark:text-white mb-2">{{ nom }}</h2>
+    <h3 class="card-symbole text-gray-600 dark:text-gray-300 mb-4">{{ symbole }}</h3>
+    <p class="card-prix text-2xl font-bold text-blue-700 dark:text-white mb-4">{{ prix }}</p>
+  </div>
+</template>
 
-      <button class="card-button">{{ buttonText }}</button>
-    </div>
-  </template>
-  
-  <script setup>
-  defineProps({
-    nom: {
-      type: String,
-      required: true,
-    },
-    prix: {
-      type: String,
-      required: true,
-    },
-    username: {
-      type: String,
-      required: true,
-    },
-    buttonText: {
-      type: String,
-      required: true,
-    },
-  });
-  </script>
-  
-  <style scoped>
-  .crypto-card {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  }
-  
-  .crypto-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  }
-  
-  .card-nom {
-    font-size: 1.25rem;
-    color: #0F2573;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-  }
-  
-  .card-prix {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #0F2573;
-    margin-bottom: 0.5rem;
-  }
-  
-  .card-username {
-    font-size: 0.9rem;
-    color: #666;
-    margin-bottom: 1rem;
-  }
-  
-  .card-button {
-    background-color: #0F2573;
-    color: #ffffff;
-    border: none;
-    border-radius: 4px;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background-color 0.2s ease-in-out;
-  }
-  
-  .card-button:hover {
-    background-color: #093061;
-  }
-  </style>
-  
+<script setup>
+defineProps({
+  nom: {
+    type: String,
+    required: true,
+  },
+  prix: {
+    type: String,
+    required: true,
+  },
+  symbole: {
+    type: String,
+    required: true,
+  },
+});
+</script>
+
+<style scoped>
+.crypto-card {
+  @apply bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-transform transform;
+}
+
+.card-nom {
+  @apply text-xl font-semibold text-blue-700 dark:text-white mb-2;
+}
+
+.card-symbole {
+  @apply text-gray-600 dark:text-gray-300 mb-4;
+}
+
+.card-prix {
+  @apply text-2xl font-bold text-blue-700 dark:text-white mb-4;
+}
+
+.card-button {
+  @apply bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-500 transition-colors;
+}
+</style>

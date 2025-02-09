@@ -1,6 +1,7 @@
 package com.cloud.crypto.utilisateur;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,4 +11,7 @@ public interface PhotoUtilisateurRepository extends JpaRepository<PhotoUtilisate
     // Méthode pour récupérer les photos d'un utilisateur spécifique
     @Query("SELECT p FROM PhotoUtilisateur p WHERE p.utilisateur.id = :userId ORDER BY p.dateChangement DESC")
     List<PhotoUtilisateur> findPhotosByUtilisateur(@Param("userId") Long userId);
+
+    @Query("SELECT p FROM PhotoUtilisateur p WHERE p.utilisateur.id = :userId ORDER BY p.dateChangement DESC")
+    Optional<PhotoUtilisateur> findMostRecentPhotoByUtilisateur(@Param("userId") Long userId);
 }

@@ -16,8 +16,6 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Boolean estValide;
-
     private BigDecimal achat;
 
     private BigDecimal vente;
@@ -39,9 +37,8 @@ public class Transaction {
     @JoinColumn(name = "id_utilisateur", nullable = false)
     private Utilisateur utilisateur;
 
-    public Transaction(Boolean estValide, BigDecimal achat, BigDecimal vente, BigDecimal prixUnitaire,
+    public Transaction(BigDecimal achat, BigDecimal vente, BigDecimal prixUnitaire,
             Integer quantite, LocalDateTime dateTransaction, Cryptomonnaie cryptomonnaie, Utilisateur utilisateur) {
-        this.estValide = estValide;
         this.achat = achat;
         this.vente = vente;
         this.prixUnitaire = prixUnitaire;
@@ -60,14 +57,6 @@ public class Transaction {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Boolean getEstValide() {
-        return estValide;
-    }
-
-    public void setEstValide(Boolean estValide) {
-        this.estValide = estValide;
     }
 
     public BigDecimal getAchat() {
