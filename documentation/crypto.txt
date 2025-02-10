@@ -30,6 +30,7 @@ CREATE TABLE utilisateur(
    dtn DATE NOT NULL,
    email VARCHAR(50)  NOT NULL,
    token VARCHAR(255)  NOT NULL,
+   date_expiration TIMESTAMP,
    date_creation_compte TIMESTAMP NOT NULL,
    id_role INTEGER NOT NULL,
    PRIMARY KEY(id),
@@ -38,19 +39,8 @@ CREATE TABLE utilisateur(
    FOREIGN KEY(id_role) REFERENCES Role(id)
 );
 
-CREATE TABLE portefeuille(
-   id SERIAL,
-   montant INTEGER NOT NULL,
-   id_cryptomonnaie INTEGER NOT NULL,
-   id_utilisateur INTEGER NOT NULL,
-   PRIMARY KEY(id),
-   FOREIGN KEY(id_cryptomonnaie) REFERENCES cryptomonnaie(id),
-   FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id)
-);
-
 CREATE TABLE transaction(
    id SERIAL,
-   est_valide BOOLEAN,
    achat NUMERIC(15,2)  ,
    vente NUMERIC(15,2)  ,
    prix_unitaire NUMERIC(15,2)   NOT NULL,
@@ -81,4 +71,31 @@ CREATE TABLE validation_mvt(
    PRIMARY KEY(id),
    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
    FOREIGN KEY(id_mvt_fond) REFERENCES mvt_fond(id)
+);
+
+CREATE TABLE favori(
+   id SERIAL,
+   date_ajout TIMESTAMP,
+   id_utilisateur INTEGER NOT NULL,
+   id_cryptomonnaie INTEGER NOT NULL,
+   PRIMARY KEY(id),
+   FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id),
+   FOREIGN KEY(id_cryptomonnaie) REFERENCES cryptomonnaie(id)
+);
+
+CREATE TABLE photo_utilisateur(
+   id SERIAL,
+   date_changement TIMESTAMP NOT NULL,
+   lien_photo VARCHAR(255)  NOT NULL,
+   id_utilisateur INTEGER NOT NULL,
+   PRIMARY KEY(id),
+   FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id)
+);
+
+CREATE TABLE utilisateur_push_token(
+   id SERIAL,
+   expo_token VARCHAR(255)  NOT NULL,
+   id_utilisateur INTEGER NOT NULL,
+   PRIMARY KEY(id),
+   FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id)
 );
