@@ -1,13 +1,84 @@
-import { View, Text, StyleSheet } from "react-native"
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import { getFirestore, collection, query, where, onSnapshot } from "firebase/firestore";
+import { auth, db } from "@/firebaseConfig";
+import { getAuthenticatedUser } from "../../utils/UserAuth";
 
 export default function BalanceCard() {
+  const [balance, setBalance] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      try {
+        // Récupérer l'utilisateur authentifié
+        const user = await getAuthenticatedUser();
+        if (!user) {
+          setError("Utilisateur non connecté");
+          setLoading(false);
+          return;
+        }
+
+        const q = query(collection(db, "ValidationMvt"), where("utilisateur.id", "==", user.id));
+
+        // Écoute les changements en temps réel
+        const unsubscribe = onSnapshot(
+          q,
+          (snapshot) => {
+            let totalDepot = 0;
+            let totalRetrait = 0;
+
+            snapshot.forEach((doc) => {
+              const data = doc.data();
+              console.log(doc.data());
+              totalDepot += data.mvtFond.depot || 0;
+              totalRetrait += data.mvtFond.retrait || 0;
+            });
+
+            setBalance(totalDepot - totalRetrait);
+            setLoading(false);
+          },
+          (error) => {
+            console.error("Erreur lors du calcul du solde:", error);
+            setError(error.message);
+            setLoading(false);
+          }
+        );
+
+        return () => unsubscribe(); // Nettoyage de l'écouteur
+      } catch (error) {
+        console.error("Erreur lors de la récupération de l'utilisateur:", error);
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+
+    fetchBalance();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.card}>
+        <Text style={styles.label}>Chargement...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.card}>
+        <Text style={styles.label}>Erreur: {error}</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.card}>
-      <Text style={styles.label}>Total</Text>
-      <Text style={styles.balance}>$10,234.56</Text>
-      <Text style={styles.change}>+5.23% (24h)</Text>
+      <Text style={styles.label}>Solde actuel:</Text>
+      <Text style={styles.balance}>Ar{balance.toFixed(2)}</Text>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -27,9 +98,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginVertical: 10,
   },
-  change: {
-    color: "#4CAF50",
-    fontSize: 14,
-  },
-})
-
+});

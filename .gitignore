@@ -81,3 +81,6 @@ front-crypto/node_modules/
 crypto/src/main/resources/firebase-service-account.json
 crypto/src/main/resources/firebase-service-deux.json
 fournisseurIdentite/firebase/firebase-service-deux.json
+
+
+google-services.json
