@@ -41,7 +41,7 @@ public class SyncService {
         this.firestore = firestore;
     }
 
-    // @Scheduled(fixedRate = 60000) // Sync every 1 minute
+    // @Scheduled(fixedRate = 10000) // Sync every 10 sec
     public void syncAllTablesToFirestore() {
         entityManager.getMetamodel().getEntities().forEach(entity -> {
             try {
@@ -52,7 +52,7 @@ public class SyncService {
         });
     }
 
-    // @Scheduled(fixedRate = 60000) // Sync every 1 minute
+    // @Scheduled(fixedRate = 10000) // Sync every 10 sec
     @Transactional(propagation=Propagation.REQUIRED, readOnly=false)
     public void syncAllTablesFromFirestore() {
         entityManager.getMetamodel().getEntities().forEach(entity -> {
@@ -75,7 +75,7 @@ public class SyncService {
                 Object entity = convertMapToEntity(entityType.getJavaType(), data);
     
                 // Log the entity being synced
-                System.out.println("Syncing entity: " + entity);
+                // System.out.println("Syncing entity: " + entity);
     
                 // Get entity ID
                 // Object entityId = getEntityId(entity);
@@ -149,7 +149,7 @@ public class SyncService {
             firestore.collection(tableName).document(documentId).set(data);
         }
 
-        System.out.println("Synced " + tableName + " successfully.");
+        // System.out.println("Synced " + tableName + " successfully.");
     }
 
     private Map<String, Object> convertEntityToMap(Object entity) {
