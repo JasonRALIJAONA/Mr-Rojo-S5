@@ -14,8 +14,8 @@ type Props = StackScreenProps<RootStackParamList, "Login"> & {
 };
 
 export default function LoginForm({ navigation, onLogin }: Props) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("lucas.martin@yopmail.com");
+  const [password, setPassword] = useState("motdepasse123");
   const [loading, setLoading] = useState(false);
 
   const isLoginFormValid = email && password;

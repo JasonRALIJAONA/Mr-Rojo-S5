@@ -1,4 +1,5 @@
 import React from 'react';
+import 'react-native-polyfill-globals/auto';
 import { View, Text, FlatList, SafeAreaView, StyleSheet } from 'react-native';
 import CryptoCard from './components/crypto/CryptoCard'; // Assure-toi que le chemin est correct
 import CryptoListe  from './components/crypto/CryptoListe';
