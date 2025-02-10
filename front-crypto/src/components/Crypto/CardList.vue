@@ -1,8 +1,9 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 import CryptoCard from './../Crypto/CryptoCard.vue';
 import axios from 'axios';
 
+// Props
 defineProps({
   title: {
     type: String,
@@ -10,10 +11,12 @@ defineProps({
   },
 });
 
+// Reactive properties
 const cryptos = ref([]);
-const selectedCrypto = ref(null);
+const selectedCryptoId = ref('');
 const quantity = ref(1);
 const transactionType = ref('achat');
+const message = ref('');
 
 // Fonction pour récupérer toutes les cryptos avec leur cours actuel
 const fetchCryptos = async () => {
@@ -21,33 +24,21 @@ const fetchCryptos = async () => {
     const response = await axios.get('http://localhost:8080/api/cryptos/coursCryptoActuel');
     cryptos.value = response.data;
   } catch (error) {
-    console.error("Erreur lors de la récupération des cryptos", error);
+    console.error('Erreur lors de la récupération des cryptos', error);
   }
 };
 
-// Récupérer le prix actuel de la crypto sélectionnée
+// Fonction pour récupérer le prix actuel de la crypto sélectionnée
 const getSelectedCryptoPrice = () => {
-  if (!selectedCrypto.value) return null;
-  const cryptoData = cryptos.value.find(crypto => crypto.id === selectedCrypto.value.id);
+  if (!selectedCryptoId.value) return null;
+  const cryptoData = cryptos.value.find(crypto => crypto.id === selectedCryptoId.value);
   return cryptoData ? cryptoData.prix_actuel : null;
 };
 
-const synchronizeSelectedCrypto = () => {
-  if (selectedCrypto.value) {
-    const existingCrypto = cryptos.value.find(
-      crypto => crypto.id === selectedCrypto.value.id
-    );
-    if (existingCrypto) {
-      selectedCrypto.value = existingCrypto;
-    }
-  }
-};
-
-watch(cryptos, synchronizeSelectedCrypto);
-
+// Fonction de soumission du formulaire
 const submitTransaction = async () => {
-  if (!selectedCrypto.value) {
-    alert("Veuillez sélectionner une crypto-monnaie.");
+  if (!selectedCryptoId.value) {
+    alert('Veuillez sélectionner une crypto-monnaie.');
     return;
   }
 
@@ -57,30 +48,37 @@ const submitTransaction = async () => {
     return;
   }
 
-  const payload = {
-    cryptomonnaieId: selectedCrypto.value.id,
-    prixUnitaire,
-    quantite: quantity.value,
-    typeTransaction: transactionType.value,
-  };
-
-  try {
-    const response = await axios.post('http://localhost:8080/api/transactions/save', payload, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
-    });
-
-    alert(response.data.message);
-  } catch (error) {
-    console.error("Erreur lors de la transaction", error);
+  if (quantity.value <= 0) {
+    alert('La quantité doit être supérieure à 0.');
+    return;
   }
 
-};
+  // Préparation du formulaire pour envoyer les paramètres sous forme de FormData
+  const formData = new FormData();
+  formData.append('cryptomonnaieId', selectedCryptoId.value);
+  formData.append('prixUnitaire', prixUnitaire);
+  formData.append('quantite', quantity.value);
+  formData.append('typeTransaction', transactionType.value);
 
-let interval;
+  try {
+    const response = await axios.post('http://localhost:8080/api/transactions/save', formData, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+      },
+    });
+
+    message.value = response.data.message || 'Transaction effectuée avec succès.';
+    alert(response.data.message);
+  } catch (error) {
+    console.error('Erreur lors de la transaction', error);
+    const errorMessage = error.response?.data || 'Erreur lors de l\'enregistrement de la transaction.';
+    message.value = errorMessage;
+    alert(errorMessage);
+  }
+};
 
 onMounted(() => {
   fetchCryptos();
-  interval = setInterval(fetchCryptos, 5000);
 });
 </script>
 
@@ -119,9 +117,9 @@ onMounted(() => {
 
         <div class="mb-4">
           <label>Choisir une Crypto-monnaie</label>
-          <select v-model="selectedCrypto" class="w-full p-3 mt-2">
+          <select v-model="selectedCryptoId" class="w-full p-3 mt-2">
             <option disabled value="">Sélectionnez une crypto</option>
-            <option v-for="crypto in cryptos" :key="crypto.id" :value="crypto">
+            <option v-for="crypto in cryptos" :key="crypto.id" :value="crypto.id">
               {{ crypto.nom_cryptomonnaie }}
             </option>
           </select>
@@ -129,13 +127,16 @@ onMounted(() => {
 
         <div class="mb-4">
           <label>Quantité</label>
-          <input v-model="quantity" type="number" min="1" />
+          <input v-model.number="quantity" type="number" min="1" class="w-full p-3 mt-2" />
         </div>
 
         <div class="mt-6">
           <button type="submit" class="w-full bg-blue-600 text-white py-3">Confirmer</button>
         </div>
       </form>
+    </div>
+    <div v-if="message" class="bg-green-100 dark:bg-green-900 p-4 rounded-lg mt-4">
+      <p class="text-green-700 dark:text-green-300">{{ message }}</p>
     </div>
   </div>
 </template>

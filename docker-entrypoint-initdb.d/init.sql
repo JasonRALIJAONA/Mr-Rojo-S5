@@ -282,9 +282,9 @@ VALUES
 -- Insertion de données de test
 INSERT INTO transaction (achat, vente, prix_unitaire, quantite, date_transaction, id_cryptomonnaie, id_utilisateur)
 VALUES 
-(1500.00, NULL, 500.00, 3, '2025-01-10 12:00:00', 1, 1),
-(NULL, 2500.00, 500.00, 5, '2025-01-15 15:30:00', 2, 2),
-(3000.00, NULL, 1000.00, 3, '2025-02-01 09:45:00', 3, 1),
-(NULL, 5000.00, 1250.00, 4, '2025-02-05 10:15:00', 1, 3),
-(7500.00, NULL, 1500.00, 5, '2025-02-09 14:20:00', 2, 4);
+(150000.00, NULL, 50000.00, 3, NOW(), 1, 1),
+(NULL, 250000.00, 50000.00, 5, NOW(), 2, 2),
+(30000.00, NULL, 10000.00, 3, NOW(), 3, 1),
+(NULL, 50000.00, 12500.00, 4, NOW(), 1, 3),
+(75000.00, NULL, 15000.00, 5, NOW(), 2, 4);
 
