@@ -11,47 +11,51 @@ defineProps({
 });
 
 const cryptos = ref([]);
-const selectedCryptoId = ref(null); // ID de la crypto-monnaie sélectionnée
+const selectedCrypto = ref(null);
 const quantity = ref(1);
-const totalPrice = ref(0);
 const transactionType = ref('achat');
 
+// Fonction pour récupérer les données depuis l'API
 const fetchCryptos = async () => {
   try {
     const response = await axios.get('http://localhost:8080/api/cryptos/coursCryptoActuel');
     cryptos.value = response.data;
-    calculateTotalPrice();
   } catch (error) {
     console.error("Erreur lors de la récupération des cryptos", error);
   }
 };
 
-const calculateTotalPrice = () => {
-  const selectedCrypto = cryptos.value.find(c => c.id === selectedCryptoId.value);
-  if (selectedCrypto) {
-    totalPrice.value = selectedCrypto.prix_actuel * quantity.value;
-  } else {
-    totalPrice.value = 0;
+// Synchronisation de la sélection après actualisation
+const synchronizeSelectedCrypto = () => {
+  if (selectedCrypto.value) {
+    const existingCrypto = cryptos.value.find(
+      crypto => crypto.id === selectedCrypto.value.id
+    );
+    if (existingCrypto) {
+      selectedCrypto.value = existingCrypto;
+    }
   }
 };
 
+// Observe les changements de `cryptos` pour resynchroniser `selectedCrypto`
+watch(cryptos, synchronizeSelectedCrypto);
+
 const submitTransaction = async () => {
-  const selectedCrypto = cryptos.value.find(c => c.id === selectedCryptoId.value);
-  if (!selectedCrypto) {
+  if (!selectedCrypto.value) {
     alert("Veuillez sélectionner une crypto-monnaie.");
     return;
   }
 
   const payload = {
-    cryptomonnaieId: selectedCrypto.id,
-    prixUnitaire: selectedCrypto.prix_actuel,
+    cryptomonnaieId: selectedCrypto.value.id,
+    prixUnitaire: selectedCrypto.value.prix_actuel,
     quantite: quantity.value,
-    [transactionType.value]: totalPrice.value,
+    typeTransaction: transactionType.value,
   };
 
   try {
     const response = await axios.post('http://localhost:8080/api/transactions/save', payload, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     });
     alert(response.data.message);
   } catch (error) {
@@ -85,8 +89,8 @@ onMounted(() => {
     </div>
 
     <!-- Formulaire d'achat / vente -->
+    <h1 class="text-4xl font-bold text-gray-800 dark:text-white mb-8">Acheter ou Vendre</h1>
     <div class="mt-12 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-      <h3 class="text-2xl font-bold text-blue-900 mb-4">Acheter ou Vendre</h3>
 
       <form @submit.prevent="submitTransaction">
         <div class="mb-4">
@@ -103,22 +107,17 @@ onMounted(() => {
 
         <div class="mb-4">
           <label>Choisir une Crypto-monnaie</label>
-          <select v-model="selectedCryptoId" class="w-full p-3 mt-2">
+          <select v-model="selectedCrypto" class="w-full p-3 mt-2">
             <option disabled value="">Sélectionnez une crypto</option>
-            <option v-for="crypto in cryptos" :key="crypto.id" :value="crypto.id">
-              {{ crypto.nom_cryptomonnaie }} - {{ crypto.prix_actuel.toLocaleString() }} Ariary
+            <option v-for="crypto in cryptos" :key="crypto.id" :value="crypto">
+              {{ crypto.nom_cryptomonnaie }}
             </option>
           </select>
         </div>
 
         <div class="mb-4">
           <label>Quantité</label>
-          <input v-model="quantity" type="number" min="1" @input="calculateTotalPrice" />
-        </div>
-
-        <div class="mb-4">
-          <label>Prix Total</label>
-          <input type="text" readonly :value="totalPrice.toLocaleString() + ' Ariary'" />
+          <input v-model="quantity" type="number" min="1" />
         </div>
 
         <div class="mt-6">
@@ -130,7 +129,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* Styles pour le formulaire */
 form {
   max-width: 600px;
   margin: 0 auto;

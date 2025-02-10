@@ -37,8 +37,7 @@ public class TransactionController {
     }    
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveTransaction(@RequestParam(required = false) BigDecimal achat,
-                                       @RequestParam(required = false) BigDecimal vente,
+    public ResponseEntity<?> saveTransaction(@RequestParam(required = false) String typeTransaction,
                                        @RequestParam(required = false) BigDecimal prixUnitaire,
                                        @RequestParam(required = false) Integer quantite,
                                        @RequestParam(required = false) Long cryptomonnaieId,
@@ -50,12 +49,16 @@ public class TransactionController {
 
         // Extraction du token après "Bearer "
         String token = authHeader.substring(7);
+        System.out.println("tokennn: " + token);
 
         // Appeler le service pour valider et récupérer l'utilisateur via le token
         Utilisateur user = utilisateurService.findByToken(token);
 
-        System.out.println("tokennn: " + token);
         System.out.println("hiiiiii----" + cryptomonnaieId);
+
+        // Utilisation de BigDecimal.ZERO si prixUnitaire ou quantite est null
+        BigDecimal totalPrix = (prixUnitaire != null ? prixUnitaire : BigDecimal.ZERO)
+        .multiply(BigDecimal.valueOf(quantite != null ? quantite : 0));
 
         LocalDateTime transactionDate = LocalDateTime.now();
         // Créer une nouvelle transaction avec les valeurs passées
@@ -66,12 +69,12 @@ public class TransactionController {
         transaction.setUtilisateur(user);
         
         String message;
-        if (vente != null) {
-            transaction.setVente(vente);
-            message = "transaction enregistré avec un vente de " + vente + " ariary.";
-        } else if (achat != null) {
-            transaction.setAchat(achat);
-            message = "transaction enregistré avec un achat de " + achat + " ariary.";
+        if (typeTransaction.equalsIgnoreCase("vente")) {
+            transaction.setVente(totalPrix);
+            message = "transaction enregistré avec un vente de " + totalPrix + " ariary.";
+        } else if (typeTransaction.equalsIgnoreCase("achat")) {
+            transaction.setAchat(totalPrix);
+            message = "transaction enregistré avec un achat de " + totalPrix + " ariary.";
         } else {
             message = "Aucune opération enregistrée.";
         }
