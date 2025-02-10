@@ -15,7 +15,7 @@ const selectedCrypto = ref(null);
 const quantity = ref(1);
 const transactionType = ref('achat');
 
-// Fonction pour récupérer les données depuis l'API
+// Fonction pour récupérer toutes les cryptos avec leur cours actuel
 const fetchCryptos = async () => {
   try {
     const response = await axios.get('http://localhost:8080/api/cryptos/coursCryptoActuel');
@@ -25,7 +25,13 @@ const fetchCryptos = async () => {
   }
 };
 
-// Synchronisation de la sélection après actualisation
+// Récupérer le prix actuel de la crypto sélectionnée
+const getSelectedCryptoPrice = () => {
+  if (!selectedCrypto.value) return null;
+  const cryptoData = cryptos.value.find(crypto => crypto.id === selectedCrypto.value.id);
+  return cryptoData ? cryptoData.prix_actuel : null;
+};
+
 const synchronizeSelectedCrypto = () => {
   if (selectedCrypto.value) {
     const existingCrypto = cryptos.value.find(
@@ -37,7 +43,6 @@ const synchronizeSelectedCrypto = () => {
   }
 };
 
-// Observe les changements de `cryptos` pour resynchroniser `selectedCrypto`
 watch(cryptos, synchronizeSelectedCrypto);
 
 const submitTransaction = async () => {
@@ -46,21 +51,29 @@ const submitTransaction = async () => {
     return;
   }
 
+  const prixUnitaire = getSelectedCryptoPrice();
+  if (!prixUnitaire) {
+    alert("Impossible de récupérer le cours actuel.");
+    return;
+  }
+
   const payload = {
     cryptomonnaieId: selectedCrypto.value.id,
-    prixUnitaire: selectedCrypto.value.prix_actuel,
+    prixUnitaire,
     quantite: quantity.value,
     typeTransaction: transactionType.value,
   };
 
   try {
     const response = await axios.post('http://localhost:8080/api/transactions/save', payload, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` },
     });
+
     alert(response.data.message);
   } catch (error) {
     console.error("Erreur lors de la transaction", error);
   }
+
 };
 
 let interval;
@@ -91,7 +104,6 @@ onMounted(() => {
     <!-- Formulaire d'achat / vente -->
     <h1 class="text-4xl font-bold text-gray-800 dark:text-white mb-8">Acheter ou Vendre</h1>
     <div class="mt-12 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-
       <form @submit.prevent="submitTransaction">
         <div class="mb-4">
           <label class="block text-lg font-medium">Type de Transaction</label>
