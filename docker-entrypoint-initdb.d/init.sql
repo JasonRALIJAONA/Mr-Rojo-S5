@@ -132,6 +132,13 @@ CREATE TABLE photo_utilisateur(
     lien_photo VARCHAR(255) NOT NULL,
     id_utilisateur INTEGER REFERENCES utilisateur(id)
 );
+
+CREATE TABLE utilisateur_push_token(
+    id SERIAL PRIMARY KEY,
+    expo_token VARCHAR(255) NOT NULL,
+    id_utilisateur INTEGER REFERENCES utilisateur(id)
+);
+
 -- Vue pour le fond actuel de chaque utilisateur
 CREATE OR REPLACE VIEW v_fond_actuel AS
 SELECT 

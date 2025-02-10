@@ -41,7 +41,7 @@ public class SyncService {
         this.firestore = firestore;
     }
 
-    // @Scheduled(fixedRate = 10000) // Sync every 10 sec
+    @Scheduled(fixedRate = 10000) // Sync every 10 sec
     public void syncAllTablesToFirestore() {
         entityManager.getMetamodel().getEntities().forEach(entity -> {
             try {
@@ -52,7 +52,7 @@ public class SyncService {
         });
     }
 
-    // @Scheduled(fixedRate = 10000) // Sync every 10 sec
+    @Scheduled(fixedRate = 10000) // Sync every 10 sec
     @Transactional(propagation=Propagation.REQUIRED, readOnly=false)
     public void syncAllTablesFromFirestore() {
         entityManager.getMetamodel().getEntities().forEach(entity -> {
@@ -97,11 +97,11 @@ public class SyncService {
     @SuppressWarnings("unchecked")
     private Object convertMapToEntity(Class<?> entityClass, Map<String, Object> data) throws Exception {
         Object entity = entityClass.getDeclaredConstructor().newInstance();
-    
+
         for (Field field : entityClass.getDeclaredFields()) {
             field.setAccessible(true);
             Object value = data.get(field.getName());
-    
+
             if (value != null) {
                 if (field.getAnnotation(Id.class) != null) {
                     // Handle ID field separately
@@ -111,7 +111,7 @@ public class SyncService {
                         field.set(entity, value.toString());
                     }
                 } else {
-                    // Handle other fields as before
+                    // Handle other fields
                     if (field.getType() == LocalDate.class) {
                         field.set(entity, LocalDate.parse(value.toString()));
                     } else if (field.getType() == LocalDateTime.class) {
@@ -122,6 +122,8 @@ public class SyncService {
                         } else if (value instanceof Number) {
                             field.set(entity, BigDecimal.valueOf(((Number) value).doubleValue()));
                         }
+                    } else if (field.getType() == Integer.class && value instanceof Long) {
+                        field.set(entity, ((Long) value).intValue());
                     } else if (field.getType() == String.class || Number.class.isAssignableFrom(field.getType()) || field.getType() == Boolean.class) {
                         field.set(entity, value);
                     } else if (value instanceof Map) {
@@ -130,7 +132,7 @@ public class SyncService {
                 }
             }
         }
-    
+
         return entity;
     }
 
