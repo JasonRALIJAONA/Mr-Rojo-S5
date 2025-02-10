@@ -78,3 +78,5 @@ crypto/src/main/resources/application.properties
 crypto/target/classes/application.properties
 
 front-crypto/node_modules/
+
+google-services.json

@@ -1,10 +1,13 @@
-import React, { useState } from "react";
-import { View, TextInput, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
-import {  signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { getFirestore, doc, collection, query, where, getDocs } from "firebase/firestore"; // Added missing imports
+import React, { useState, useEffect } from "react";
+import { View, TextInput, Text, StyleSheet, TouchableOpacity, Alert, Platform } from "react-native";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, collection, query, where, getDocs, addDoc, updateDoc, doc } from "firebase/firestore";
 import { StackScreenProps } from "@react-navigation/stack";
 import { RootStackParamList } from "../../type/type";
-import {auth, db} from "../../../firebaseConfig";
+import { auth, db } from "../../../firebaseConfig";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
+import * as Device from "expo-device";
 
 type Props = StackScreenProps<RootStackParamList, "Login"> & {
   onLogin: () => void;
@@ -17,29 +20,103 @@ export default function LoginForm({ navigation, onLogin }: Props) {
 
   const isLoginFormValid = email && password;
 
+  // Fonction pour générer le token de notification push
+  async function registerForPushNotificationsAsync() {
+    if (Platform.OS === "android") {
+      await Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+
+    if (Device.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        Alert.alert("Permission refusée", "Les notifications push ne fonctionneront pas sans permission.");
+        return;
+      }
+
+      const projectId = Constants?.expoConfig?.extra?.eas?.projectId;
+      if (!projectId) {
+        Alert.alert("Erreur", "Project ID non trouvé dans app.json");
+        return;
+      }
+
+      try {
+        const pushTokenString = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+        console.log("Token Expo généré :", pushTokenString);
+        return pushTokenString;
+      } catch (e) {
+        Alert.alert("Erreur", `Impossible de générer le token : ${e}`);
+        return;
+      }
+    } else {
+      Alert.alert("Erreur", "Utilisez un appareil physique pour les notifications push.");
+      return;
+    }
+  }
+
   const handleSubmit = async () => {
     if (!isLoginFormValid) return;
     setLoading(true);
-
+  
     try {
       // Authentification Firebase
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log("Sign-in successful:", userCredential.user);
-
+      console.log("Connexion réussie :", userCredential.user);
+  
+      // Récupérer les données de l'utilisateur depuis Firestore
       const usersCollectionRef = collection(db, "Utilisateur");
       const q = query(usersCollectionRef, where("email", "==", userCredential.user.email));
       const querySnapshot = await getDocs(q);
-
+  
       if (!querySnapshot.empty) {
-        // Assuming there's only one document per email
+        // Supposons qu'il n'y a qu'un seul document par email
         const userDoc = querySnapshot.docs[0];
         const userData = userDoc.data();
-        console.log("User data:", userData);
-
-          Alert.alert("Connexion réussie", `Bienvenue ${userData.nomUtilisateur} !`);
-          onLogin(); // Mise à jour de l'état dans `MainNavigation`
+        console.log("Donnees utilisateur :", userData);
+  
+        // Enregistrer le token Expo
+        const pushToken = await registerForPushNotificationsAsync();
+        if (pushToken) {
+          const pushTokenCollectionRef = collection(db, "UtilisateurPushToken");
+  
+          // Vérifier si un document existe déjà pour cet utilisateur
+          const tokenQuery = query(pushTokenCollectionRef, where("utilisateur.id", "==", userDoc.id));
+          
+          const tokenQuerySnapshot = await getDocs(tokenQuery);
+  
+          console.log("Nombre de documents trouvés :", tokenQuerySnapshot.size);
+  
+          if (!tokenQuerySnapshot.empty) {
+            // S'il existe un document, mettre à jour le token
+            const existingTokenDoc = tokenQuerySnapshot.docs[0];
+            await updateDoc(existingTokenDoc.ref, { expoToken: pushToken });
+            console.log("Token mis à jour dans Firestore.");
+          } else {
+            // Sinon, créer un nouveau document
+            await addDoc(pushTokenCollectionRef, {
+              expoToken: pushToken,
+              utilisateur: {
+                id: userDoc.id,
+                ...userData, // Ajouter les données utilisateur si nécessaire
+              },
+            });
+            console.log("Token ajouté à Firestore.");
+          }
+        }
+  
+        Alert.alert("Connexion réussie", `Bienvenue ${userData.nomUtilisateur} !`);
+        onLogin(); // Appeler la fonction de connexion réussie
       } else {
-        console.log("User document does not exist");
+        console.log("Document utilisateur introuvable");
         Alert.alert("Erreur", "Utilisateur introuvable.");
       }
     } catch (error: any) {
@@ -77,12 +154,6 @@ export default function LoginForm({ navigation, onLogin }: Props) {
       >
         <Text style={styles.buttonText}>{loading ? "Connexion..." : "Se connecter"}</Text>
       </TouchableOpacity>
-
-      {/* <View style={styles.linksContainer}>
-        <TouchableOpacity>
-          <Text style={styles.linkText}>Mot de passe oublié?</Text>
-        </TouchableOpacity>
-      </View> */}
     </View>
   );
 }
@@ -131,15 +202,5 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontWeight: "bold",
     fontSize: 16,
-  },
-  linksContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 16,
-  },
-  linkText: {
-    color: "#60a5fa",
-    textDecorationLine: "underline",
-    fontSize: 14,
   },
 });
