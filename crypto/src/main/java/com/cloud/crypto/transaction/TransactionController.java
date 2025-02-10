@@ -37,55 +37,62 @@ public class TransactionController {
     }    
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveTransaction(@RequestParam(required = false) String typeTransaction,
-                                       @RequestParam(required = false) BigDecimal prixUnitaire,
-                                       @RequestParam(required = false) Integer quantite,
-                                       @RequestParam(required = false) Long cryptomonnaieId,
-                                       @RequestHeader(value = "Authorization", required = false) String authHeader) throws Exception {
-
+    public ResponseEntity<?> saveTransaction(@RequestBody Map<String, Object> payload,
+                                              @RequestHeader(value = "Authorization", required = false) String authHeader) throws Exception {
+    
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(401).body("Token manquant ou invalide.");
         }
-
+    
         // Extraction du token après "Bearer "
         String token = authHeader.substring(7);
-        System.out.println("tokennn: " + token);
-
-        // Appeler le service pour valider et récupérer l'utilisateur via le token
         Utilisateur user = utilisateurService.findByToken(token);
-
-        System.out.println("hiiiiii----" + cryptomonnaieId);
-
-        // Utilisation de BigDecimal.ZERO si prixUnitaire ou quantite est null
-        BigDecimal totalPrix = (prixUnitaire != null ? prixUnitaire : BigDecimal.ZERO)
-        .multiply(BigDecimal.valueOf(quantite != null ? quantite : 0));
-
+        if (user == null) {
+            return ResponseEntity.status(404).body("Utilisateur non trouvé.");
+        }
+    
+        // Récupérer les données depuis le payload JSON
+        String typeTransaction = (String) payload.get("typeTransaction");
+        BigDecimal prixUnitaire = new BigDecimal(payload.get("prixUnitaire").toString());
+        Integer quantite = (Integer) payload.get("quantite");
+        Long cryptomonnaieId = ((Number) payload.get("cryptomonnaieId")).longValue();
+    
+        // Vérification des champs obligatoires
+        if (typeTransaction == null || prixUnitaire == null || quantite == null || cryptomonnaieId == null) {
+            return ResponseEntity.badRequest().body("Données invalides ou manquantes.");
+        }
+    
+        // Calcul du total
+        BigDecimal totalPrix = prixUnitaire.multiply(BigDecimal.valueOf(quantite));
         LocalDateTime transactionDate = LocalDateTime.now();
-        // Créer une nouvelle transaction avec les valeurs passées
-        Transaction transaction = new Transaction();   
+    
+        // Créer une transaction
+        Transaction transaction = new Transaction();
         transaction.setDateTransaction(transactionDate);
-        transaction.setCryptomonnaie(cryptomonnaieService.getCryptoById(cryptomonnaieId).get());
+        transaction.setCryptomonnaie(cryptomonnaieService.getCryptoById(cryptomonnaieId).orElseThrow(
+            () -> new RuntimeException("Crypto introuvable")));
         transaction.setPrixUnitaire(prixUnitaire);
         transaction.setUtilisateur(user);
-        
+    
         String message;
-        if (typeTransaction.equalsIgnoreCase("vente")) {
+        if ("vente".equalsIgnoreCase(typeTransaction)) {
             transaction.setVente(totalPrix);
-            message = "transaction enregistré avec un vente de " + totalPrix + " ariary.";
-        } else if (typeTransaction.equalsIgnoreCase("achat")) {
+            message = "Transaction enregistrée avec une vente de " + totalPrix + " Ariary.";
+        } else if ("achat".equalsIgnoreCase(typeTransaction)) {
             transaction.setAchat(totalPrix);
-            message = "transaction enregistré avec un achat de " + totalPrix + " ariary.";
+            message = "Transaction enregistrée avec un achat de " + totalPrix + " Ariary.";
         } else {
-            message = "Aucune opération enregistrée.";
+            return ResponseEntity.badRequest().body("Type de transaction non valide.");
         }
-        
+    
+        // Sauvegarde de la transaction
         transactionService.save(transaction);
-
+    
         return ResponseEntity.ok().body(Map.of(
             "status", "success",
             "message", message,
-            "mvtDetails", transaction
+            "transactionDetails", transaction
         ));
-    }
+    }    
 
 }
